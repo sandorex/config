@@ -1,72 +1,43 @@
-Param (
-    [String[]]$Configs,
+# this script only propagates further into the config script, does not try to be smart
 
-    [Switch]$Uninstall
+Param (
+    [String]
+    $Config,
+    
+    [Parameter(ValueFromRemainingArguments = $true)]
+    $ConfigArgs
 )
 
-function Link-All {
-    Param (
-        [System.IO.FileInfo]$Source,
-        [System.IO.FileInfo]$Destination
-    )
-
-    $src = Resolve-Path -LiteralPath $Source
-    $dest = Resolve-Path -LiteralPath $Destination
-
-    # TODO: test if any of them is not a valid path etc..
-
-    Write-Host "Copying from '$src' to '$dest'"
-
-    Push-Location $src
-
-    $iter = Get-ChildItem . -Recurse
-    $iter | % { Process {
-        $path = (Resolve-Path -Relative -LiteralPath $_.FullName).ToString().Substring(2)
-        $destpath = Join-Path -Path $dest -ChildPath $path
-
-        If ($_.PSIsContainer) {
-            Write-Host "Creating directory '$destpath'"
-            New-Item -Path $destpath -ItemType "Directory" -Force | Out-Null
-        } Else {
-            Write-Host "Linking file '$destpath' -> '$_'"
-            New-Item -ItemType "SymbolicLink" -Path $destpath -Target $_ -Force | Out-Null
-        }
-    }}
-
-    Pop-Location
-}
-
-If ($Configs.Length -eq 0) {
-    Write-Host "List of configs available for installation"
-    $iter = Get-ChildItem -Path (Join-Path -Path $PSScriptRoot -ChildPath "*.config.ps1") -Recurse
+# list all configs
+If ($Config.Length -eq 0) {
+    Write-Host "List of configs available"
+    $iter = Get-ChildItem -Path (Join-Path -Path $PSScriptRoot -ChildPath "*.config.psm1") -Recurse
     $iter | % { Process {
         $name = $_.Basename.Replace(".config","")
         Write-Host "  > $name ($_)"
     }}
     
-    Exit 0
+    Exit 1
 }
-
-Write-Host "Processing command '?' for configs '$Configs'"
-Write-Host
 
 # TODO: ask if user wants to continue
 
-$Configs | % { Process {
-    Write-Host "Processing '$_'"
+$script = @(Get-ChildItem -Path (Join-Path -Path $PSScriptRoot -ChildPath "$Config.config.psm1") -Recurse -ErrorAction SilentlyContinue)
 
-    $script = @(Get-ChildItem -Path (Join-Path -Path $PSScriptRoot -ChildPath "$_.config.ps1") -Recurse -ErrorAction SilentlyContinue)
-    
-    If ($script.Length -eq 0) {
-        Write-Host "Config '$_' has no script!"
-        Exit 1
-    } ElseIf ($script.Length -gt 1) {
-        Write-Host "Config '$_' has more than one config!"
-        Exit 1
+If ($script.Length -eq 0) {
+    Write-Host "Error config '$Config' has no script" -ForegroundColor Red
+    Exit 1
+} ElseIf ($script.Length -gt 1) {
+    Write-Host "Error config '$Config' has more than one script:" -ForegroundColor Red
+    Foreach ($file in $script) {
+        Write-Host "  - '$file'"
     }
-
-    Write-Host "Found script '$($script[0])'"
+    Write-Host
     
-    & ($script[0]) 'command?'
-}}
+    Exit 1
+}
+
+#& ($script[0]) @ConfigArgs
+$module = Import-Module -AsCustomObject -Force -Name $script[0]
+$module."Run"("help") # figure out a way to pass all parameters 
 
