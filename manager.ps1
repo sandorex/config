@@ -1,28 +1,23 @@
-# this script only propagates further into the config script, does not try to be smart
-
 Param (
     [String]
-    $Config,
-    
-    [Parameter(ValueFromRemainingArguments = $true)]
-    $ConfigArgs
+    $Config
 )
 
 # list all configs
 If ($Config.Length -eq 0) {
     Write-Host "List of configs available"
-    $iter = Get-ChildItem -Path (Join-Path -Path $PSScriptRoot -ChildPath "*.config.psm1") -Recurse
+    $iter = Get-ChildItem -Path (Join-Path -Path $PSScriptRoot -ChildPath "*.config.ps1") -Recurse
     $iter | % { Process {
         $name = $_.Basename.Replace(".config","")
         Write-Host "  > $name ($_)"
     }}
     
-    Exit 1
+    Exit 0
 }
 
 # TODO: ask if user wants to continue
 
-$script = @(Get-ChildItem -Path (Join-Path -Path $PSScriptRoot -ChildPath "$Config.config.psm1") -Recurse -ErrorAction SilentlyContinue)
+$script = @(Get-ChildItem -Path (Join-Path -Path $PSScriptRoot -ChildPath "$Config.config.ps1") -Recurse -ErrorAction SilentlyContinue)
 
 If ($script.Length -eq 0) {
     Write-Host "Error config '$Config' has no script" -ForegroundColor Red
@@ -37,7 +32,9 @@ If ($script.Length -eq 0) {
     Exit 1
 }
 
-#& ($script[0]) @ConfigArgs
-$module = Import-Module -AsCustomObject -Force -Name $script[0]
-$module."Run"("help") # figure out a way to pass all parameters 
+function TestConfig() {
+    Write-Host "Hello"
+}
+
+& ($script[0]) @args
 
