@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # bash file for tmux aliases and commands
 alias lses='tmux list-session'
 

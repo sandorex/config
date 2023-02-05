@@ -10,6 +10,19 @@ Function ShowHelp() {
     Get-Help -Full $File
 }
 
+Function ShowDiff() {
+    Param(
+        [Parameter(Mandatory)]
+        [HashTable]
+        $Files
+    )
+
+    # TODO: check if its a link, then skip it with a message
+    Foreach ($file in $Files.GetEnumerator()) {
+        git --no-pager diff --color=auto --no-index $file.Name.ToString() $file.Value.ToString()
+    }
+}
+
 Function IterFiles() {
     <#
         .DESCRIPTION

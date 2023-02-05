@@ -1,3 +1,5 @@
+#!/bin/pwsh
+
 Param (
     [String]
     $Config
