@@ -70,7 +70,7 @@ Function Install() {
         [HashTable]
         $Files,
 
-	    [System.IO.FileInfo]
+	    [String]
         $BackupDir = '',
 
         [Boolean]
@@ -81,20 +81,28 @@ Function Install() {
     )
 
     Foreach ($file in $Files.GetEnumerator()) {
-        Write-Host "$($file.Name) -> $($file.Value)" -NoNewline
+        If (!$NoSymlink) {
+            Write-Host "Linking '$($file.Value)' -> '$($file.Name)'" -NoNewline
+        } Else {
+            Write-Host "Copying '$($file.Name)' => '$($file.Value)'" -NoNewline
+        }
 
-        If (Test-Path $file.Value -and $NoBackup.Length -ne 0) {
+        If ((Test-Path $file.Value) -and ($NoBackup.Length -ne 0)) {
             Write-Host " (B)" 
         
             If (!DryRun) {
-                Move-Item $file.Value (Join-Path -Path $BackupDir -ChildPath (Spplit-Path -Leaf $file.Value)
+                Move-Item $file.Value (Join-Path -Path $BackupDir -ChildPath (Spplit-Path -Leaf $file.Value))
             }
         } Else {
             Write-Host
         }
 
         If (!$DryRun) {
-            Copy-Item $file.Name $file.Value
+            If ($NoSymlink) {
+                Copy-Item $file.Name $file.Value | Out-Null
+            } Else {
+                New-Item -ItemType "SymbolicLink" -Path $file.Value -Target $file.Name | Out-Null
+            }
         }
     }
 }
