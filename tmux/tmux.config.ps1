@@ -23,17 +23,15 @@ Param(
     $Action = "help"
 )
 
-#$FILES = @{
-#    ($PSScriptRoot + "/.gitconfig") = ($HOME + "/.gitconfig")
-#}
+$SRC_DIR = $PSScriptRoot + "/tmux"
+$DST_DIR = ($HOME + "/.config/tmux")
 
 # import common functions and things
 Import-Module -Force -Name (Resolve-Path -Path ($PSSCriptRoot + "/../ps1/common.psm1"))
 
 Switch ($Action.ToLower()) {
     "help" {
-        ShowHelp $PSCommandPath
-        Exit 0
+        CHelp $PSCommandPath
     }
 
     "install" {
@@ -41,29 +39,33 @@ Switch ($Action.ToLower()) {
             Write-Host "Dry run mode, no changes will be made" -ForegroundColor Green
         }
 
-        $fargs = @{
-            Files = $FILES
-            NoSymlink = $NoSymlink
-            DryRun = $DryRun
-        }
+        CIterFiles ($SRC_DIR) | % { Process {
+            $src = $_
+            $dest = CGetDestination -File $src -Root $SRC_DIR -DestDirectory $DST_DIR
+        
+            $fargs = @{
+                Source = $src
+                Destination = $dest
+                NoSymlink = $NoSymlink
+                DryRun = $DryRun
+            }
 
-        Install @fargs
+            CInstall @fargs
+        }}
     }
 
     "diff" {
-        # TODO: make this into a function too as this is a common usecase
-        # with configs, many are in their own directory
-        $files = IterFiles ($PSScriptRoot + "/tmux") ($HOME + "/.config/tmux")
-        $files | % { Process {
-            If (!$_.IsDirectory -and (Test-Path $_.Destination)) {
-                ShowDiff @{ $_.Source = $_.Destination }
-            }
+        CIterFiles ($SRC_DIR) | % { Process {
+            $src = $_
+            $dest = CGetDestination -File $src -Root $SRC_DIR -DestDirectory $DST_DIR
+            
+            CDiff $src $dest
         }}
     }
 
     default {
         Write-Host "Action '$Action' has not been implemented" -ForegroundColor Red
-        ShowHelp $PSCommandPath
+        CHelp $PSCommandPath
         Exit 1
     }
 }

@@ -60,6 +60,24 @@ Switch ($Action.ToLower()) {
 
             CInstall @fargs
         }}
+   
+        If ($Overlay) {
+            Write-Host "Adding initialization code to bashrc file"   
+            
+            # load the init if it exits
+            If (!$DryRun) {
+                "[[ -f ~/.config/bash/init.bash ]] && \. ~/.config/bash/init.bash" >> ($HOME + "/.bashrc")
+            }
+        } Else {
+            $fargs = @{
+                Source = ($PSScriptRoot + "/.bashrc") 
+                Destination = ($HOME + "/.bashrc")
+                NoSymlink = $NoSymlink
+                DryRun = $DryRun
+            }
+
+            CInstall @fargs
+        }
     }
 
     "diff" {
