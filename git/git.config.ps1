@@ -28,7 +28,7 @@ $FILES = @{
 }
 
 # import common functions and things
-Import-Module -Force -Name (Resolve-Path -Path ($PSSCriptRoot + "/../ps1/common.psm1"))
+Import-Module -Force -Name (Resolve-Path -Path ($PSSCriptRoot + "/../.common.psm1"))
 
 Switch ($Action.ToLower()) {
     "help" {

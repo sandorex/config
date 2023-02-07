@@ -1,0 +1,4 @@
+# if the host accepts it, it can be used to detect termux environment and
+# customize tmux, neovim, etc
+Host *
+	SetEnv TERMUX=1
