@@ -15,4 +15,6 @@ if [[ -n "$TMUX" ]]; then
     # prevents me from destroying the session all the goddamn time
     alias exit='tmux detach'
     alias detach='tmux detach'
+
+    tmux source-file ~/.config/tmux/tmux.bash
 fi
