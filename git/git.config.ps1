@@ -1,3 +1,5 @@
+#!/bin/pwsh
+
 <#
     .DESCRIPTION
     Manages configuration for git
@@ -8,55 +10,71 @@
     .PARAMETER NoSymlink
     If true all files will be copied instead of linked
 
-    .PARAMETER DryRun
-    If true no changes will be made to the system, used for debugging
+    .PARAMETER Write
+    If false no changes will be made to the filesystem, dry run essentially
+
+    .PARAMETER Prefix
+    Install path prefix
 #>
 
+[CmdletBinding(PositionalBinding=$false)]
 Param(
     [Switch]
     $NoSymlink,
 
     [Switch]
-    $DryRun,
+    $Write,
+
+    [Parameter(Mandatory)]
+    [String]
+    $Action,
 
     [String]
-    $Action = "help"
+    $Prefix
 )
-
-$FILES = @{
-    ($PSScriptRoot + "/.gitconfig") = ($HOME + "/.gitconfig")
-}
 
 # import common functions and things
 Import-Module -Force -Name (Resolve-Path -Path ($PSSCriptRoot + "/../.common.psm1"))
 
+# set default prefix if not provided
+If (!$PSBoundParameters.ContainsKey("Prefix")) {
+    $Prefix = $global:DefaultPrefix
+}
+
+$FILES = @{
+    ($PSScriptRoot + "/.gitconfig") = ($Prefix + $HOME + "/.gitconfig")
+}
+
 Switch ($Action.ToLower()) {
     "help" {
-        ShowHelp $PSCommandPath
+        CHelp $PSCommandPath
         Exit 0
     }
 
     "install" {
-        If ($DryRun) {
+        If (!$Write) {
             Write-Host "Dry run mode, no changes will be made" -ForegroundColor Green
         }
 
-        $fargs = @{
-            Files = $FILES
-            NoSymlink = $NoSymlink
-            DryRun = $DryRun
-        }
+        Foreach ($file in $FILES.GetEnumerator()) {
+            $fargs = @{
+                Source = $file.Name
+                Destination = $file.Value
+                NoSymlink = $NoSymlink
+                DryRun = !$Write
+            }
 
-        Install @fargs
+            CInstall @fargs
+        }
     }
 
     "diff" {
-        ShowDiff $FILES
+        CDiff $FILES
     }
 
     default {
         Write-Host "Action '$Action' has not been implemented" -ForegroundColor Red
-        ShowHelp $PSCommandPath
+        CHelp $PSCommandPath
         Exit 1
     }
 }

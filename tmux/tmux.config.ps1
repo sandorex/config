@@ -1,3 +1,5 @@
+#!/bin/pwsh
+
 <#
     .DESCRIPTION
     Manages configuration for tmux
@@ -10,8 +12,13 @@
 
     .PARAMETER DryRun
     If true no changes will be made to the system, used for debugging
+
+    .PARAMETER HomePath
+    Path to home directory, usually just set to home directory but can be used
+    to install config elsewhere
 #>
 
+[CmdletBinding(PositionalBinding=$false)]
 Param(
     [Switch]
     $NoSymlink,
@@ -19,12 +26,17 @@ Param(
     [Switch]
     $DryRun,
 
+    [Parameter(Mandatory)]
     [String]
-    $Action = "help"
+    $Action,
+
+    [Parameter(Mandatory)]
+    [String]
+    $HomePath
 )
 
 $SRC_DIR = $PSScriptRoot + "/tmux"
-$DST_DIR = ($HOME + "/.config/tmux")
+$DST_DIR = $HomePath + "/.config/tmux"
 
 # import common functions and things
 Import-Module -Force -Name (Resolve-Path -Path ($PSSCriptRoot + "/../.common.psm1"))
@@ -38,7 +50,7 @@ Switch ($Action.ToLower()) {
         If ($DryRun) {
             Write-Host "Dry run mode, no changes will be made" -ForegroundColor Green
         }
-
+        
         CIterFiles ($SRC_DIR) | % { Process {
             $src = $_
             $dest = CGetDestination -File $src -Root $SRC_DIR -DestDirectory $DST_DIR

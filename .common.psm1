@@ -1,5 +1,7 @@
 # this file contains common logic for configs and will be sourced by the scripts if needed
 
+$global:DefaultPrefix = $PSSCriptRoot + "/install"
+
 Function CHelp() {
     Param(
         [Parameter(Mandatory)]

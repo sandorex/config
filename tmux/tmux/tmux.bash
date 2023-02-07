@@ -16,5 +16,6 @@ if [[ -n "$TMUX" ]]; then
     alias exit='tmux detach'
     alias detach='tmux detach'
 
+    # load termux specific tmux stuff
     tmux source-file ~/.config/tmux/tmux.bash
 fi

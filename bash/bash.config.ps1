@@ -1,3 +1,5 @@
+#!/bin/pwsh
+
 <#
     .DESCRIPTION
     Manages configuration for git
@@ -15,8 +17,13 @@
     If true .bashrc will be modified to load bash config instead
     replacing it, so original distro configuration will be left untouched
     but probably will be overriden by the config itself
+
+    .PARAMETER HomePath
+    Path to home directory, usually just set to home directory but can be used
+    to install config elsewhere
 #>
 
+[CmdletBinding(PositionalBinding=$false)]
 Param(
     [Switch]
     $NoSymlink,
@@ -27,12 +34,17 @@ Param(
     [Switch]
     $Overlay,
 
+    [Parameter(Mandatory)]
     [String]
-    $Action = "help"
+    $Action,
+
+    [Parameter(Mandatory)]
+    [String]
+    $HomePath
 )
 
 $SRC_DIR = $PSScriptRoot + "/bash"
-$DST_DIR = ($HOME + "/.config/bash")
+$DST_DIR = $HomePath + "/.config/bash"
 
 # import common functions and things
 Import-Module -Force -Name (Resolve-Path -Path ($PSSCriptRoot + "/../.common.psm1"))
