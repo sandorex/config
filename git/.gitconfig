@@ -1,14 +1,14 @@
 [user]
-   name = 'Sandorex'
-   email = 'rzhw3h@gmail.com'
+    name = 'Sandorex'
+    email = 'rzhw3h@gmail.com'
 
 [alias]
-   s = status
-   l = log --oneline
-   ac = commit --allow-empty-message -m ""
+    s = status
+    l = log --oneline
+    ac = commit --allow-empty-message -m ""
 
 [push]
-	default=tracking
+    default=tracking
 
 [url "git@github.com:sandorex/"]
-   insteadOf = https://github.com/sandorex/
+    insteadOf = https://github.com/sandorex/
