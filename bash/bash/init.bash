@@ -22,3 +22,9 @@ fi
 # i do not need it anymore
 unset trysource
 
+# move elsewhere
+function genqr() {
+    # may need to be smart and not use UTF8 in some cases like raw tty?
+    qrencode -t UTF8 "$@"
+}
+
