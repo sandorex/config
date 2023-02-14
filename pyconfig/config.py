@@ -76,11 +76,13 @@ class File:
         return f"File '{self.src}' template={self.template} symlink={self.symlink}"
 
 class Config:
-    def __init__(self, name: str, file: str, files: List[File], dirs: List[Directory]):
+    def __init__(self, name: str, file: str, docs: str, files: List[File], dirs: List[Directory], variant=None):
         self.name = name
         self.file = file
+        self.docs = docs
         self.files = files
         self.dirs = dirs
+        self.variant = variant
 
     def __add__(self, x):
         if isinstance(x, File):
@@ -94,7 +96,7 @@ class Config:
             raise Exception(f"Config cannot be added together with type '{type(x)}'")
     
     def __repr__(self):
-        return f"Config '{self.name}' len(files)={len(self.files)} len(dirs)={len(self.dirs)} ({self.file})"
+        return f"Config '{self.name}' variant='{self.variant}' len(files)={len(self.files)} len(dirs)={len(self.dirs)} ({self.file})"
 
     def to_json(self, **kwargs):
         def serialize(obj, **kwargs):
@@ -107,22 +109,37 @@ class Config:
 
 # builder pattern
 class ConfigBuilder:
-    def __init__(self, name: str, file: str):
+    def __init__(self, name: str, file: str, docs=''):
         self.name = name
+        self.cur_variant = ''
         self.file = file
+        self.docs = docs
         self.dirs: List[Directory] = []
         self.files: List[File] = []
         
         self.root = Path(file).parent.resolve()
 
-    def finish(self, add_globally=True) -> Config:
-        config = Config(self.name, self.file, self.files, self.dirs)
-        
-        if add_globally:
-            defs.CONFIGS.append(config)
+    def finish(self, add_globally=True) -> 'ConfigBuilder':
+        # TODO: clean this up
+        defs.CONFIGS.append(Config(self.name, self.file, self.docs, self.files, self.dirs, variant=self.cur_variant))
 
-        return config
-    # TODO add separate list for directories that need to be created for files too, so they all can be created at once 
+        return self
+
+    def variant(self, name='', docs='') -> 'ConfigBuilder':
+        cfg = ConfigBuilder(self.name, self.file, docs)
+
+        cfg.cur_variant = name
+
+        # attempt at copying instead of referencing
+        cfg.dirs = self.dirs[:]
+        cfg.files = self.files[:]
+        
+        return cfg
+
+    def merge(self, cfg: 'ConfigBuilder') -> 'ConfigBuilder':
+        self.dirs.extend(cfg.dirs)
+        self.files.extend(cfg.files)
+
     def add(self, src: str, dst: str, *, preserve_path: Optional[Union[Path, str]]=None, template=False, symlink=None, allow_dirty=True) -> 'ConfigBuilder':
         src_is_dir = is_dir_path(src)
         dst_is_dir = is_dir_path(dst)
@@ -168,36 +185,6 @@ class ConfigBuilder:
             self.files.append(File(src, dst, symlink=symlink, template=template))
         
         return self
-        """
-        # OLD
-        # NOTE intentionally not resolving so that symlinks also can be copied
-        src = Path(src).expanduser()
-        dst = Path(dst).expanduser()
-
-        if not dst.is_absolute():
-            raise RuntimeError(f"Destination must be an absolute path")
-       
-        # make sure the path saved is absolute
-        if not src.is_absolute():
-            src = self.root / src
-
-        # the file is a symlink, linking or templating a link is pointless
-        if src.is_symlink():
-            symlink = False
-            template = False
-
-        # support both relative and absolute preserve paths
-        if not preserve_path_root is None:
-            preserve_path_root = Path(preserve_path_root).expanduser()
-            if not preserve_path_root.is_absolute():
-                preserve_path_root = self.root / preserve_path_root
-
-            dst = dst / src.relative_to(preserve_path_root)
-
-        self.files.append(File(src, dst, template, symlink))
-
-        return self
-        """
 
     #def add_glob(self, src_glob: str, dst, exclude_glob='', *, preserve_path=True)
 

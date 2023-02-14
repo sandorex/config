@@ -11,9 +11,11 @@ def main():
     sys.path.append(str(ROOT.parent.parent.resolve()))
     __import__(ROOT.parent.resolve().name)
 
+    print(defs.CONFIGS)
+    print()
     print('configs found:')
     for cfg in defs.CONFIGS:
-        print(cfg.to_json(indent=4))
+        print(cfg.name, cfg.to_json(indent=4))
     #cfg = defs.CONFIGS[0]
     #for dire in cfg.dirs:
     #    print(f"({dire}) {dire.src} -> {dire.dst}")

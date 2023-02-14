@@ -1,4 +1,4 @@
-#!/bin/pwsh
+#!/usr/bin/env pwsh
 
 <#
     .DESCRIPTION
