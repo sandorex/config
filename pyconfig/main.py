@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import json
+
 from . import defs
 
 def main():
@@ -10,6 +12,12 @@ def main():
     __import__(ROOT.parent.resolve().name)
 
     print('configs found:')
-    print(defs.CONFIGS)
+    for cfg in defs.CONFIGS:
+        print(cfg.to_json(indent=4))
+    #cfg = defs.CONFIGS[0]
+    #for dire in cfg.dirs:
+    #    print(f"({dire}) {dire.src} -> {dire.dst}")
+    #for file in cfg.files:
+    #    print(f"({file}) {file.src} -> {file.dst}")
     print()
 

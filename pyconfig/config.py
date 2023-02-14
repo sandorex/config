@@ -1,13 +1,36 @@
-from typing import List, Optional, Callable
+import os
+import json
+
+from typing import List, Optional, Callable, Union
 from pathlib import Path
 
 from . import defs
 
+def is_dir_path(path: str) -> bool:
+    '''Checks the string path if it points to a file or directory (ends with the `os.sep`)'''
+    return path.endswith(os.sep) or path.replace(os.sep, '') == ''
+
 class Action:
-    def __init__(self, text, fn: Callable):
+    """Basically stores a function call with its parameters and text of what it
+    does so it can all be listed to the user, and if need be user can intervene
+    if something fails"""
+
+    def __init__(self, text, fn: Callable, *args, **kwargs):
         self.__text = text
         self.__fn = fn
+        self.__args = args
+        self.__kwargs = kwargs
    
+    def __eq__(self, obj):
+        if not isinstance(obj, Action):
+            raise RuntimeError(f"Action cannot be compared with '{type(obj)}'")
+
+        # its equal if the function and arguments are the same, basically if it
+        # does the same thing
+        return self.__fn == obj.__fn \
+            and self.__args == obj.__args \
+            and self.__kwargs == obj.__kwargs
+
     def info(self):
         '''Returns information about the action'''
         return self.__text
@@ -16,9 +39,9 @@ class Action:
         '''Asks the user should the action be executed'''
         return False # TODO
 
-    def execute(self, *args, **kwargs) -> Optional[Exception]:
+    def execute(self) -> Optional[Exception]:
         try:
-            self.__fn(*args, **kwargs)
+            self.__fn(*self.__args, *args, **self.__kwargs, **kwargs)
         except Exception as ex:
             return ex
         
@@ -33,17 +56,17 @@ class Directory:
     allow_dirty: If disabled the directory in destination will be deleted before copying/linking
     """
 
-    def __init__(self, src, dst, symlink: Optional[bool], allow_dirty: bool):
+    def __init__(self, src, dst, *, symlink: Optional[bool], allow_dirty: bool):
         self.src = Path(src)
         self.dst = Path(dst)
         self.symlink = symlink
         self.allow_dirty = allow_dirty
 
     def __repr__(self):
-        return f"Dir '{self.src}' symlink={self.symlink} allow_dirty={self.allow_dirty}"
+        return f"Dir '{self.src}/' symlink={self.symlink} allow_dirty={self.allow_dirty}"
 
 class File:
-    def __init__(self, src, dst, template: bool, symlink: Optional[bool]):
+    def __init__(self, src, dst, *, template: bool, symlink: Optional[bool]):
         self.src = Path(src)
         self.dst = Path(dst)
         self.template = template
@@ -73,6 +96,15 @@ class Config:
     def __repr__(self):
         return f"Config '{self.name}' len(files)={len(self.files)} len(dirs)={len(self.dirs)} ({self.file})"
 
+    def to_json(self, **kwargs):
+        def serialize(obj, **kwargs):
+            try:
+                return obj.__dict__
+            except AttributeError:
+                return str(obj)
+
+        return json.dumps(self.__dict__, default=serialize, **kwargs)
+
 # builder pattern
 class ConfigBuilder:
     def __init__(self, name: str, file: str):
@@ -80,6 +112,8 @@ class ConfigBuilder:
         self.file = file
         self.dirs: List[Directory] = []
         self.files: List[File] = []
+        
+        self.root = Path(file).parent.resolve()
 
     def finish(self, add_globally=True) -> Config:
         config = Config(self.name, self.file, self.files, self.dirs)
@@ -88,14 +122,93 @@ class ConfigBuilder:
             defs.CONFIGS.append(config)
 
         return config
+    # TODO add separate list for directories that need to be created for files too, so they all can be created at once 
+    def add(self, src: str, dst: str, *, preserve_path: Optional[Union[Path, str]]=None, template=False, symlink=None, allow_dirty=True) -> 'ConfigBuilder':
+        src_is_dir = is_dir_path(src)
+        dst_is_dir = is_dir_path(dst)
 
-    def add_dir(self, src, dst, *, symlink: Optional[bool]=None, allow_dirty=True) -> 'ConfigBuilder':
-        self.dirs.append(Directory(src, dst, symlink))
+        # ensure the arguments are Path objects and expand home
+        src = Path(src).expanduser()
+        dst = Path(dst).expanduser()
 
+        # if source is relative make it absolute
+        if not src.is_absolute():
+            src = self.root / src
+
+        # do not accept source that is not in root of the config
+        if not self.root in src.parents:
+            raise RuntimeError(f"Source is outside config directory '{self.root}'")
+
+        # if dst does not have a leading slash then just move source there
+        # otherwise move it into the directory, preserve path if enabled
+        if not dst_is_dir:
+            if not preserve_path is None:
+                raise RuntimeError(f"Preserve path cannot work if destination points to a file")
+        else:
+            # support relative preserve root too
+            if not preserve_path is None:
+                preserve_path = Path(preserve_path).expanduser()
+                if not preserve_path.is_absolute():
+                    preserve_path = self.root / preserve_path
+
+                dst = dst / src.relative_to(preserve_path)
+            else:
+                dst = dst / src.name
+
+        if src_is_dir:
+            # source is a directory
+
+            if template:
+                raise RuntimeError(f"Directory cannot be templated")
+
+            self.dirs.append(Directory(src, dst, symlink=symlink, allow_dirty=allow_dirty))
+        else:
+            # source is a file
+            
+            self.files.append(File(src, dst, symlink=symlink, template=template))
+        
         return self
+        """
+        # OLD
+        # NOTE intentionally not resolving so that symlinks also can be copied
+        src = Path(src).expanduser()
+        dst = Path(dst).expanduser()
 
-    def add_file(self, src, dst, *, template=False, symlink=None) -> 'ConfigBuilder':
+        if not dst.is_absolute():
+            raise RuntimeError(f"Destination must be an absolute path")
+       
+        # make sure the path saved is absolute
+        if not src.is_absolute():
+            src = self.root / src
+
+        # the file is a symlink, linking or templating a link is pointless
+        if src.is_symlink():
+            symlink = False
+            template = False
+
+        # support both relative and absolute preserve paths
+        if not preserve_path_root is None:
+            preserve_path_root = Path(preserve_path_root).expanduser()
+            if not preserve_path_root.is_absolute():
+                preserve_path_root = self.root / preserve_path_root
+
+            dst = dst / src.relative_to(preserve_path_root)
+
         self.files.append(File(src, dst, template, symlink))
 
         return self
+        """
+
+    #def add_glob(self, src_glob: str, dst, exclude_glob='', *, preserve_path=True)
+
+# this is dumb hoe do i get destination if i add them likr this
+#    def add_glob(self, glob: str, exclude='', *, symlink=None):
+#        
+#        files = self.root.glob(glob)
+#        
+#        for file in files:
+#            if file.match(exclude)
+        #files = [x for x in self.root.glob(glob) if not x.match(exclude)]
+
+# TODO add add function with globbing, filters and shit
 
