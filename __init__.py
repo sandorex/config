@@ -6,7 +6,11 @@ from pyconfig import defs, ConfigBuilder
 
 import importlib
 
-# dynamically import all packages that contain '.pyconfig' file
+# while this is much better than initial version, i had to do it so that i do
+# not need to edit the main files to add new configs, just their own files
+#
+# looks for any directory containg '.pyconfig' file and then loads it as a
+# python module, all other logic should be inside the __init__.py file
 for i in ROOT.iterdir():
     if i.is_dir() and i != pyconfig.ROOT:
         if (i / '.pyconfig').is_file():

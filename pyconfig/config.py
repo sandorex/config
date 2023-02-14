@@ -76,13 +76,12 @@ class File:
         return f"File '{self.src}' template={self.template} symlink={self.symlink}"
 
 class Config:
-    def __init__(self, name: str, file: str, docs: str, files: List[File], dirs: List[Directory], variant=None):
+    def __init__(self, name: str, file: str, docs: str, files: List[File], dirs: List[Directory]):
         self.name = name
         self.file = file
         self.docs = docs
         self.files = files
         self.dirs = dirs
-        self.variant = variant
 
     def __add__(self, x):
         if isinstance(x, File):
@@ -96,7 +95,7 @@ class Config:
             raise Exception(f"Config cannot be added together with type '{type(x)}'")
     
     def __repr__(self):
-        return f"Config '{self.name}' variant='{self.variant}' len(files)={len(self.files)} len(dirs)={len(self.dirs)} ({self.file})"
+        return f"Config '{self.name}' len(files)={len(self.files)} len(dirs)={len(self.dirs)} ({self.file})"
 
     def to_json(self, **kwargs):
         def serialize(obj, **kwargs):
@@ -109,26 +108,35 @@ class Config:
 
 # builder pattern
 class ConfigBuilder:
-    def __init__(self, name: str, file: str, docs=''):
-        self.name = name
-        self.cur_variant = ''
+    # TODO: try using inspect module to get __file__    
+    def __init__(self, file: str, name='', docs=''):
         self.file = file
+        self.name = name
         self.docs = docs
         self.dirs: List[Directory] = []
         self.files: List[File] = []
         
         self.root = Path(file).parent.resolve()
 
-    def finish(self, add_globally=True) -> 'ConfigBuilder':
-        # TODO: clean this up
-        defs.CONFIGS.append(Config(self.name, self.file, self.docs, self.files, self.dirs, variant=self.cur_variant))
+    def __call__(self, name: str, docs='') -> 'ConfigBuilder':
+        builder = ConfigBuilder(self.file)
+        builder.name = name
+        builder.docs = docs
+        builder.dirs = self.dirs[:]
+        builder.files = self.files[:]
+
+        return builder
+
+    def save(self) -> 'ConfigBuilder':
+        cfg = Config(self.name, self.file, self.docs, self.files, self.dirs)
+
+        defs.CONFIGS.append(cfg)
 
         return self
 
-    def variant(self, name='', docs='') -> 'ConfigBuilder':
-        cfg = ConfigBuilder(self.name, self.file, docs)
-
-        cfg.cur_variant = name
+    def fork(self, name, docs=None) -> 'ConfigBuilder':
+        '''Makes a variant of the config with same files/dirs'''
+        cfg = ConfigBuilder(name, self.file, docs if docs else self.docs)
 
         # attempt at copying instead of referencing
         cfg.dirs = self.dirs[:]

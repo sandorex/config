@@ -6,7 +6,7 @@ Just has .gitconfig for now
 
 from .. import ConfigBuilder
 
-ConfigBuilder('git', __file__, __doc__) \
+ConfigBuilder(__file__, 'git', __doc__) \
     .add('.gitconfig', '~/') \
-    .finish()
+    .save()
 
