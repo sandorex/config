@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# ffmpeg-split - script that splits input audio/video into parts (10m by default)
+# usage: ffmpeg-split <input file> <output file> [<segment duration mm:ss>]
+# the segment defaults to 10 min
+
+filename=$(basename -- "$2")
+extension="${filename##*.}"
+filename="${filename%.*}"
+
+ffmpeg -i "$1" \
+       -threads 4 \
+       -vcodec copy \
+       -f segment \
+       -segment_time "${3:-10:00}" \
+       -reset_timestamps 1 \
+       "${filename}_%02d.${extension}"
+

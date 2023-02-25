@@ -1,0 +1,18 @@
+#!/bin/bash
+#
+# dotman - script that manages the dotfiles
+
+DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
+
+cmd=$1
+shift
+
+if [[ -z "$cmd" || "$cmd" = "help" ]]; then
+   cat << EOF
+Usage: $0 <cmd> [<args>]
+
+Commands:
+    git - basically just runs git inside the dotfile repo
+    autocommit - commits with predefined commit message
+EOF
+fi

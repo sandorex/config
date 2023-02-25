@@ -1,6 +1,5 @@
+# do not remove this
 [user]
-    name = 'Sandorex'
-    email = 'rzhw3h@gmail.com'
 
 [alias]
     s = status
@@ -12,3 +11,4 @@
 
 [url "git@github.com:sandorex/"]
     insteadOf = https://github.com/sandorex/
+

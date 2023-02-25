@@ -2,29 +2,21 @@
 # the beginning and the end
 
 function trysource() {
-    file=$1
-    shift
-    if [[ -f "$file" ]]; then
-        \. "$file" $@
+    if [[ -f "$1" ]]; then
+        \. "$1"
     fi
 }
 
-# load tmux
-if command -v tmux &> /dev/null; then
-    trysource ~/.config/tmux/tmux.bash
-fi
+# minimal prompt
+export PS1="\[$(tput setaf 2)\]%\[$(tput sgr0)\] "
 
-# load termux
-if command -v termux-setup-storage; then
-    trysource ~/.config/termux/termux.bash
-fi
+# load aliases
+source ~/.config/bash/aliases.bash
+
+export PATH=$PATH:"$HOME"/.bin
+
+trysource "~/.config/bash/host/$(hostname).bash"
 
 # i do not need it anymore
 unset trysource
-
-# move elsewhere
-function genqr() {
-    # may need to be smart and not use UTF8 in some cases like raw tty?
-    qrencode -t UTF8 "$@"
-}
 
