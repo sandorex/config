@@ -12,8 +12,6 @@ local options = {
 
     --showmode = false,
 
-    showtabline = 2,
-    
     cursorline = true,
     --cursorlineopt = 'number',
 

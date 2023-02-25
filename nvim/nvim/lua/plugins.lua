@@ -32,7 +32,10 @@ return require('packer').startup(function(use)
     -- HAS TO BE FIRST
     use 'wbthomason/packer.nvim'
 
-    use 'scrooloose/nerdtree'
+    -- theming
+    use "EdenEast/nightfox.nvim"
+
+    --use 'scrooloose/nerdtree'
 
     --use 'vim-airline/vim-airline'
     --use 'vim-airline/vim-airline-themes'
