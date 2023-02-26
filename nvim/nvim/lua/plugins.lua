@@ -33,10 +33,14 @@ return require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
 
     -- theming
-    if vim.fn.has('nvim-0.8') == 1 then
-        -- unfortunately does not support older versions
-        use "EdenEast/nightfox.nvim"
-    end
+    -- TODO make select highlight brighter
+    use {
+        'EdenEast/nightfox.nvim',
+        cond = "vim.fn.has('nvim-0.8')",
+        config = function()
+            vim.cmd('colorscheme carbonfox')
+        end
+    }
 
     --use 'scrooloose/nerdtree'
 
@@ -47,10 +51,7 @@ return require('packer').startup(function(use)
 
     --use {'neoclide/coc.nvim', branch = 'release'}
 
-    if vim.fn.has('nvim-0.8') == 1 then
-        -- its pretty experimental anyways
-        use 'neovim/nvim-lspconfig'
-    end
+    use { 'neovim/nvim-lspconfig', cond = "vim.fn.has('nvim-0.7')" }
 
     -- apply the config if packer was just installed
     if packer_bootstrap then

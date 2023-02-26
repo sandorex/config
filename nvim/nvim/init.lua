@@ -1,6 +1,3 @@
--- load all the plugins
-require('plugins')
-
 local options = {
     encoding = 'utf-8',
 
@@ -51,8 +48,9 @@ vim.opt.runtimepath:remove("/usr/share/vim/vimfiles")
 -- allow comments in JSON
 vim.cmd([[autocmd FileType json syntax match Comment +\/\/.\+$+]])
 
-require('keybindings')
 require('theming')
+require('keybindings')
+require('plugins')
 
 -- load machine specific file 'lua/host_<host>.lua'
 local cfg = vim.fn.stdpath('config')
