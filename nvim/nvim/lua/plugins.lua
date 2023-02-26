@@ -33,7 +33,10 @@ return require('packer').startup(function(use)
     use 'wbthomason/packer.nvim'
 
     -- theming
-    use "EdenEast/nightfox.nvim"
+    if vim.fn.has('nvim-0.8') == 1 then
+        -- unfortunately does not support older versions
+        use "EdenEast/nightfox.nvim"
+    end
 
     --use 'scrooloose/nerdtree'
 
@@ -44,7 +47,10 @@ return require('packer').startup(function(use)
 
     --use {'neoclide/coc.nvim', branch = 'release'}
 
-    use 'neovim/nvim-lspconfig'
+    if vim.fn.has('nvim-0.8') == 1 then
+        -- its pretty experimental anyways
+        use 'neovim/nvim-lspconfig'
+    end
 
     -- apply the config if packer was just installed
     if packer_bootstrap then
