@@ -12,5 +12,5 @@ echo "Setting up git identity"
 echo "Username: '$username'"
 echo "Email: '$GIT_EMAIL'"
 
-git config user.name "$username"
-git config user.email "$GIT_EMAIL"
+git config --global user.name "$username"
+git config --global user.email "$GIT_EMAIL"
