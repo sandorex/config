@@ -7,7 +7,7 @@ local options = {
     softtabstop = 4,
     expandtab = true,
 
-    --showmode = false,
+    showmode = false,
 
     cursorline = true,
     --cursorlineopt = 'number',
@@ -21,7 +21,7 @@ local options = {
     sidescrolloff = 8,
 
     number = true,
-    
+
     updatetime = 300,
 
     -- guide lines, TODO
@@ -40,7 +40,6 @@ vim.opt.wildignore:append('*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.im
 vim.opt.whichwrap:append('<,>,h,l,[,]')
 
 -- TODO: add recognizible character when line does not fit
--- TODO: custimize cursorline to change color slightly so i know where cursor is
 
 -- separate vim plugins just in case
 vim.opt.runtimepath:remove("/usr/share/vim/vimfiles")
@@ -48,9 +47,16 @@ vim.opt.runtimepath:remove("/usr/share/vim/vimfiles")
 -- allow comments in JSON
 vim.cmd([[autocmd FileType json syntax match Comment +\/\/.\+$+]])
 
-require('theming')
-require('keybindings')
-require('plugins')
+-- remove trailing whitespaces
+vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+    pattern = { "*" },
+    command = [[%s/\s\+$//e]],
+})
+
+require('core.theming')
+require('core.statusline')
+require('core.keybindings')
+require('core.plugins')
 
 -- load machine specific file 'lua/host_<host>.lua'
 local cfg = vim.fn.stdpath('config')

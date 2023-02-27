@@ -4,7 +4,7 @@ vim.cmd("nmap <space> <nop>")
 vim.cmd("nnoremap <space>; :")
 
 -- reload config
-vim.cmd("nnoremap <space><F12> :source ~/.config/nvim/init.lua<CR>")
+vim.cmd("nnoremap <space><F12> :luafile ~/.config/nvim/init.lua<CR>")
 
 -- often used
 vim.cmd("nnoremap <space>q :q<CR>")

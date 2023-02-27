@@ -1,4 +1,4 @@
-modes = {
+local modes = {
     ["n"] = "NORMAL",
     ["no"] = "NORMAL",
     ["v"] = "VISUAL",
@@ -64,7 +64,7 @@ local function filename()
     if fname == "" then
         return ""
     end
-    return fname .. " "
+    return fname .. " " .. "%m"
 end
 
 local function lsp()
