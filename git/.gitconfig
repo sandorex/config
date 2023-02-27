@@ -5,6 +5,7 @@
     s = status
     l = log --oneline
     ac = commit --allow-empty-message -m ""
+    ap = add --pick
 
 [push]
     default=tracking
