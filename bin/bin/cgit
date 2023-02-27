@@ -1,0 +1,7 @@
+#!/bin/bash
+#
+# cgit - just a wrapper to call the git on config repo, simpler than bunch
+# of scripts inside shell rc
+
+git -C "$(realpath "$(dirname "${BASH_SOURCE[0]}")/../..")" "$@"
+

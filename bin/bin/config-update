@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# config-update - safely updates the config
+
+ROOT=$(realpath "$(dirname "${BASH_SOURCE[0]}")/../..")
+
+# only stash if there are any changes
+git -C "$ROOT" diff --exit-code
+CHANGED=$?
+
+[ $CHANGED -ne 0 ] && git -C "$ROOT" stash    
+
+git -C "$ROOT" pull
+
+[ $CHANGED -ne 0 ] && git -C "$ROOT" stash pop
+

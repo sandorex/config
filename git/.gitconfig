@@ -3,9 +3,11 @@
 
 [alias]
     s = status
+    d = diff
+    ds = diff --staged
     l = log --oneline
-    ac = commit --allow-empty-message -m ""
-    ap = add --pick
+    p = add --patch
+    ecommit = commit --allow-empty-message -m ""
 
 [push]
     default=tracking
