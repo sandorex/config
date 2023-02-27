@@ -36,7 +36,7 @@ return require('packer').startup(function(use)
     -- TODO make select highlight brighter
     use {
         'EdenEast/nightfox.nvim',
-        cond = "vim.fn.has('nvim-0.8')",
+        cond = "vim.fn.has('nvim-0.8') == 1",
         config = function()
             vim.cmd('colorscheme carbonfox')
         end
@@ -51,7 +51,7 @@ return require('packer').startup(function(use)
 
     --use {'neoclide/coc.nvim', branch = 'release'}
 
-    use { 'neovim/nvim-lspconfig', cond = "vim.fn.has('nvim-0.7')" }
+    use { 'neovim/nvim-lspconfig', cond = "vim.fn.has('nvim-0.7') == 1" }
 
     -- apply the config if packer was just installed
     if packer_bootstrap then
