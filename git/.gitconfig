@@ -3,11 +3,13 @@
 
 [alias]
     s = status
+    # short status
+    ss = status -sb
     d = diff
     ds = diff --staged
     l = log --oneline
     p = add --patch
-    ecommit = commit --allow-empty-message -m ""
+    ac = "!git commit --message=\"#A $(hostname) ($(date +'%Y-%m-%dT%H:%M:%S%z'))\" --edit"
 
 [push]
     default=tracking
