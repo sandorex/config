@@ -8,5 +8,8 @@ ROOT=$(realpath "$(dirname "${BASH_SOURCE[0]}")/../..")
 git -C "$ROOT" add --patch
 
 # then allow editing the message but provide default
-git -C "$ROOT" commit --message="#A $(hostname) ($(date +"%Y-%m-%dT%H:%M:%S%z"))" --edit
+git -C "$ROOT" commit --message="#A $(hostname) ($(date +"%Y-%m-%dT%H:%M:%S%z"))" --edit || exit 0
+
+# push
+git -C "$ROOT" push
 
