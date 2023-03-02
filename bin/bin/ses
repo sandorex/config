@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# ses - attaches or starts a tmux session, originally an alias but used to
+# run tmux directly
+
+# "/" is default name in tmux, so that its not show unless renamed
+tmux new -A -s "${1:-$USER}" -n "/"
+

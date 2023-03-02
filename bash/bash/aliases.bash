@@ -17,11 +17,6 @@ if command -v tmux &> /dev/null; then
     alias msg='tmux display-message -d 0'
     alias lses='tmux list-session'
 
-    function ses() {
-        # "/" is default name in tmux, so that its not show unless renamed
-        tmux new -A -s "${1:-$USER}" -n "/"
-    }
-
     function kses() {
         tmux kill-session -t "${1:-$USER}"
     }
