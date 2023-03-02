@@ -5,9 +5,9 @@
 # run using `curl -s https://raw.githubusercontent.com/sandorex/config/master/bootstrap/bootstrap.sh | bash -s`
 
 REPO="https://github.com/sandorex/config"
-CONFIG_DIR=${1:~/config}
+CONFIG_DIR=${1:-"~/config"}
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DIR=$CONFIG_DIR/bootstrap
 
 # clone the repository
 git clone "$REPO" "$CONFIG_DIR"
