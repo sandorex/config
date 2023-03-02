@@ -1,0 +1,11 @@
+# these are all commands
+tmux
+nvim
+bash
+zsh
+wget
+git
+
+# the templater
+gomplate
+

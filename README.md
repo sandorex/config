@@ -7,7 +7,9 @@ The dotfiles may work for you but i do not recommend installing them anywhere ex
 
 ### Bootstrap
 
-TODO
+```
+$ curl -s https://raw.githubusercontent.com/sandorex/config/master/bootstrap/bootstrap.sh | bash -s
+```
 
 ### Installation
 
