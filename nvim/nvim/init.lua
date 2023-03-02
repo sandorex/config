@@ -12,6 +12,9 @@ local options = {
     cursorline = true,
     --cursorlineopt = 'number',
 
+    -- enable clipboard syncing, works with tmux without any additional config
+    clipboard = 'unnamedplus',
+
     undofile = true, -- undo history persistance between sessions (nvim defaults are ok)
     backup = false,
     writebackup = false,
