@@ -15,7 +15,8 @@ local options = {
     -- enable clipboard syncing, works with tmux without any additional config
     clipboard = 'unnamedplus',
 
-    undofile = true, -- undo history persistance between sessions (nvim defaults are ok)
+    -- undo history persistance between sessions (nvim defaults are good)
+    undofile = true,
     backup = false,
     writebackup = false,
 
@@ -27,9 +28,21 @@ local options = {
 
     updatetime = 300,
 
-    -- guide lines, TODO
-    --colorcolumn = '80,100',
+    foldmethod = 'marker',
+    foldmarker = '--/,/--',
+    foldtext = 'v:lua.better_fold_text()',
+    fillchars = 'fold: ',
+
+    -- guide lines
+    colorcolumn = '80,100',
 }
+
+function better_fold_text()
+    local line = vim.fn.getline(vim.v.foldstart)
+    local _, index = string.find(line, '--/ ', 1, true)
+
+    return '+' .. vim.v.folddashes .. '/ ' .. string.sub(line, index) .. ' /' .. vim.v.folddashes .. '+'
+end
 
 for k, v in pairs(options) do
     vim.opt[k] = v
