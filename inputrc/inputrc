@@ -1,0 +1,16 @@
+# read system configuration
+$include /etc/inputrc
+
+# ignore case when completing
+set completion-ignore-case On
+
+set colored-stats On
+set completion-prefix-display-length 3
+set mark-symlinked-directories On
+set show-all-if-ambiguous On
+set show-all-if-unmodified On
+set visible-stats On
+
+
+# vim: filetype=readline syntax=readline
+

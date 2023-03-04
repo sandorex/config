@@ -49,10 +49,5 @@ get() {
     esac
 }
 
-if [[ -n "$WSL_DISTRO_NAME" ]]; then
-    # windows first as its a WSL
-    printf ' '
-fi
-
-printf "$(get $ID)"
+get $ID
 
