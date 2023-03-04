@@ -13,7 +13,7 @@ else
     git -C "$ROOT" diff --cached --compact-summary
 
     while true; do
-        read -p "Do you wish to add anything else before commiting? (Y/n)" yn
+        read -p "Do you wish to add anything else before commiting? (Y/n) " yn
         case $yn in
             # no, just continue
             [Nn]* ) break;;
