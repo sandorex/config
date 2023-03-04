@@ -22,6 +22,9 @@ export PATH=$PATH:"$HOME"/.bin
 export EDITOR=nvim
 export SUDO_EDITOR=nvim
 
+# set ls colors
+[ -f ~/.shell/gruvbox.dircolors ] && eval `dircolors --sh ~/.shell/gruvbox.dircolors`
+
 trysource "~/.config/bash/host/$(hostname).bash"
 
 # i do not need it anymore
