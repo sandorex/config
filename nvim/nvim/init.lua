@@ -33,15 +33,28 @@ local options = {
     foldtext = 'v:lua.better_fold_text()',
     fillchars = 'fold: ',
 
+    -- default to everything unfolded
+    foldlevel = 99,
+
     -- guide lines
     colorcolumn = '80,100',
 }
 
 function better_fold_text()
     local line = vim.fn.getline(vim.v.foldstart)
-    local _, index = string.find(line, '--/ ', 1, true)
+    local _, index = string.find(line, '--/', 1, true)
 
-    return '+' .. vim.v.folddashes .. '/ ' .. string.sub(line, index) .. ' /' .. vim.v.folddashes .. '+'
+    line = string.sub(line, index + 1)
+
+    if string.sub(line, 1, 1) == ' ' then
+        line = string.sub(line, 2)
+    end
+
+    if line == '' then
+        return '+' .. vim.v.folddashes .. ' ' .. (vim.v.foldend - vim.v.foldstart) .. ' lines ' .. vim.v.folddashes .. '+'
+    end
+
+    return '+' .. vim.v.folddashes .. '/ ' .. line .. ' /' .. vim.v.folddashes .. '+'
 end
 
 for k, v in pairs(options) do

@@ -20,6 +20,7 @@ export PATH=$PATH:"$HOME"/.bin
 
 # set neovim as default editor
 export EDITOR=nvim
+export SUDO_EDITOR=nvim
 
 trysource "~/.config/bash/host/$(hostname).bash"
 
