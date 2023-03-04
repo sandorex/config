@@ -9,6 +9,9 @@ alias l='ls -l --color=auto'
 alias ll='ls -al --color=auto'
 alias diff='diff --report-identical-files --color=auto'
 alias grep='grep --color=auto'
+alias rcat='cat -A' # safely read escape sequences
+
+alias cal='cal -3'
 
 # tmux aliases
 if command -v tmux &> /dev/null; then
