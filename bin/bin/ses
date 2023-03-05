@@ -1,8 +1,19 @@
 #!/bin/bash
 #
-# ses - attaches or starts a tmux session, originally an alias but used to
-# run tmux directly
+# ses - starts / attaches session for the user
+#
+# - default window name is "/" cause of tmux scripting
+# - detaching other clients intentionally as i do not need multiple clients and
+#   the tmux configuration changes based on environment where attached
 
-# "/" is default name in tmux, so that its not show unless renamed
-tmux new -A -s "${1:-$USER}" -n "/"
+SESSION=${1:-$USER}
+
+# create the session if it does not exist
+tmux has-session -t "$SESSION"
+if [[ $? -eq 1 ]]; then
+    tmux new-session -s "$SESSION" -n "/" >/dev/null
+fi
+
+# attach to the session and detach other clients
+tmux attach-session -t "$SESSION" -d
 

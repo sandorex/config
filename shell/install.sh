@@ -2,8 +2,10 @@
 #
 # install.sh - links common shell scripts
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$(dirname "${BASH_SOURCE[0]}")"
+
+. ../config.sh
 
 # link the shell dir
-ln -sfb "$DIR"/shell "$HOME"/.shell
+link ./shell "$HOME"/.shell
 

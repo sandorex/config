@@ -1,31 +1,3 @@
-# do not remove this
 [user]
-
-[alias]
-    s = status
-    ss = status -sb # less detailed short stats
-    d = diff
-    ds = diff --staged # show only files to be commited
-    l = log --oneline # less detailed log
-    p = add --patch
-
-    # auto commit with hostname and ISO date
-    ac = "!git commit --message=\"#A $(hostname) ($(date +'%Y-%m-%dT%H:%M:%S%z'))\" --edit"
-
-    # aliases for changes not yet pulled
-    hlog = "!git remote update; git log HEAD..origin/HEAD"
-    hl = "!git remote update; git l HEAD..origin/HEAD"
-    hd = "!git remote update; git diff HEAD..origin/HEAD"
-
-[push]
-    default=tracking
-
-# allows using ssh keys with https remote
-[url "git@github.com:sandorex/"]
-    insteadOf = https://github.com/sandorex/
-
-[url "git@gitlab.com:sandorex/"]
-    insteadOf = https://gitlab.com/sandorex/
-
-[init]
-	defaultBranch = master
+	name = 
+	email = rzhw3h@gmail.com

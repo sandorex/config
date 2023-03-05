@@ -1,16 +1,21 @@
 #!/bin/bash
 #
-# install.sh - links git config
+# install.sh - links git config and sets the identity
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$(dirname "${BASH_SOURCE[0]}")"
+. ../config.sh
 
-# make the link but backup the file
-ln -sfb "$DIR"/.gitconfig "$HOME"/.gitconfig
+if [[ -z "$GIT_USERNAME" ]] || [[ -z "$GIT_EMAIL" ]]; then
+    echo "Please set GIT_USERNAME and GIT_EMAIL for git identity"
+    exit 1
+fi
 
-username=${GIT_USERNAME:-"$USER ($(hostname))"}
-echo "Setting up git identity"
-echo "Username: '$username'"
+link ./gitconfig "$HOME"/.gitconfig
+
+echo "Setting git identity"
+echo "Username: '$GIT_USERNAME'"
 echo "Email: '$GIT_EMAIL'"
 
-git config --global user.name "$username"
+git config --global user.name "$GIT_USERNAME"
 git config --global user.email "$GIT_EMAIL"
+

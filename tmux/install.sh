@@ -2,9 +2,9 @@
 #
 # install.sh - links tmux configuration
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$(dirname "${BASH_SOURCE[0]}")"
 
-# move the directory as ln cannot overwrite it...
-[ -d "$HOME/.config/tmux" ] && mv "$HOME"/.config/tmux "$HOME"/.config/tmux~
-ln -sf "$DIR"/tmux "$HOME"/.config/tmux
+. ../config.sh
+
+link ./tmux "$HOME"/.config/tmux
 

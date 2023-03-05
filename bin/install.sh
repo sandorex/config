@@ -2,7 +2,8 @@
 #
 # install.sh - links .bin directory
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$(dirname "${BASH_SOURCE[0]}")"
+. ../config.sh
 
-ln -sfb "$DIR"/bin "$HOME"/.bin
+link ./bin "$HOME"/.bin
 

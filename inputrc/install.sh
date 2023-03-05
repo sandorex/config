@@ -2,8 +2,9 @@
 #
 # install.sh - links inputrc config
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$(dirname "${BASH_SOURCE[0]}")"
 
-# make the link but backup the file
-ln -sfb "$DIR"/inputrc "$HOME"/.inputrc
+. ../config.sh
+
+link ./inputrc "$HOME"/.inputrc
 
