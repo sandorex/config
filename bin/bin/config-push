@@ -28,7 +28,7 @@ else
 fi
 
 # then allow editing the message but provide default
-git -C "$ROOT" commit --message="#A $(hostname) ($(date +"%Y-%m-%dT%H:%M:%S%z"))" --edit || exit 0
+git -C "$ROOT" commit --message="#A $(hostname)" --edit || exit 0
 
 # push
 git -C "$ROOT" push
