@@ -1,0 +1,14 @@
+#!/usr/bin/sh
+
+marker='@nogit'
+files=$(git diff --staged --name-only | xargs)
+
+echo "Checking for $marker marker in staged"
+
+grep -q "$marker" $files
+if [[ $? -eq 0 ]]; then
+    echo -e "$(tput setaf 1)Error $marker marker found in following files:$(tput sgr0)"
+    grep --color=always -l "$marker" $files | sed 's/^/   /'
+    exit 1
+fi
+
