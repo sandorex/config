@@ -1,9 +1,14 @@
 ## Config
 
-These are dotfiles, there are many like it but these are mine.
+**These are dotfiles, there are many like it but these are mine.**
 
-The goal is to make it easy to setup a work VM with all my customizations as i often code at work, and i only have access to an android phone or tablet.\
-The dotfiles may work for you but i do not recommend installing them anywhere except in a VM
+Cross platform dotfiles, Linux + WSL + Windows
+
+### Management
+Installation is done using bash scripts\
+Changes are managed using git and `git add --patch` for precise commits
+
+It is still work in progress
 
 ### Bootstrap
 
