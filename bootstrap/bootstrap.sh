@@ -5,7 +5,7 @@
 # run using `curl -s https://raw.githubusercontent.com/sandorex/config/master/bootstrap/bootstrap.sh | bash -s`
 
 # clone the repository
-git clone https://github.com/sandorex/config ~/config
+git clone --recurse-submodules -j4 https://github.com/sandorex/config ~/config
 
 # link pre commit script
 ln -s ../../.git-pre-commit ~/config/.git/hooks/pre-commit
