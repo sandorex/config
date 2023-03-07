@@ -1,6 +1,9 @@
 #!/bin/bash
 # the beginning and the end
 
+alias reload-shell='source ~/.bashrc'
+alias reload-bash='source ~/.bashrc'
+
 function trysource() {
     if [[ -f "$1" ]]; then
         \. "$1"
@@ -8,7 +11,7 @@ function trysource() {
 }
 
 # minimal prompt
-export PS1="\[$(tput setaf 2)\]%\[$(tput sgr0)\] "
+export PS1="\[$(tput setaf 2)\]$\[$(tput sgr0)\] "
 
 # load aliases
 \. ~/.config/bash/aliases.bash
@@ -29,5 +32,4 @@ trysource "~/.config/bash/host/$(hostname).bash"
 
 # i do not need it anymore
 unset trysource
-
 
