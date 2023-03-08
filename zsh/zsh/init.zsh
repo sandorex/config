@@ -2,16 +2,16 @@
 #
 # init.zsh - the actual initialization of zsh
 
-alias reload-shell='source ~/.zshrc'
-alias reload-zsh='source ~/.zshrc'
+alias reload-shell='compinit; source ~/.zshrc'
+alias reload-zsh='compinit; source ~/.zshrc'
 
 source ~/.shell/init.sh
 
 # the rest is only if it's an interactive shell
 [[ -o interactive ]] || return
 
-# minimal prompt TODO BROKEN!
-#export PS1="%{$(tput setaf 2)%}%#%{$(tput sgr0)%} "
+# minimal prompt
+PROMPT='%F{green}%# '
 
 ## OPTIONS ##
 HISTFILE=~/.zhistory
@@ -36,9 +36,9 @@ zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 autoload -Uz compinit
 
 # generate compinit only every 8 hours
-#for _ in ~/.zcompdump(N.mh+8); do
-compinit
-#done
+for _ in ~/.zcompdump(N.mh+8); do
+    compinit
+done
 
 compinit -C
 
