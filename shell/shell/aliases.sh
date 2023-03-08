@@ -1,8 +1,9 @@
-#!/bin/bash
+#!/bin/sh
 #
-# aliases.bash - aliases for bash
+# aliases.sh - posix complient shell aliases
 
-alias reload-bash='source ~/.bashrc'
+alias e='nvim'
+alias se='sudo -e'
 
 alias ls='ls --color=auto'
 alias l='ls -l --color=auto'
@@ -15,18 +16,19 @@ alias cal='cal -3'
 
 # tmux aliases
 if command -v tmux &> /dev/null; then
-    alias reload-tmux='tmux source-file ~/.config/tmux/tmux.conf'
+    if test -n "$TMUX"; then
+        alias reload-tmux='tmux source-file ~/.config/tmux/tmux.conf'
+    fi
 
     alias msg='tmux display-message -d 0'
     alias lses='tmux list-session'
 
-    function kses() {
+    kses() {
         tmux kill-session -t "${1:-$USER}"
     }
 
-    if [[ -n "$TMUX" ]]; then
-        # prevents me from destroying the session all the goddamn time
-        alias exit='tmux detach'
+    if test -n "$TMUX"; then
+        alias reload-tmux='tmux source-file ~/.config/tmux/tmux.conf'
         alias detach='tmux detach'
     fi
 fi

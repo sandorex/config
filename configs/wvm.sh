@@ -14,6 +14,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.."
 ./git/install.sh
 ./inputrc/install.sh
 ./bash/install.sh
+./zsh/install.sh
 ./nvim/install.sh
 ./tmux/install.sh
 

@@ -9,8 +9,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 link ./bash "$HOME"/.config/bash
 
 if [[ ! -f "$HOME/.bashrc" ]]; then
-    # this does not need to be a link as its a shim and should not change
-    cp ./.bashrc "$HOME"/.bashrc
+    link ./bash/init.bash "$HOME"/.bashrc
 else
     # load the init.bash from .bashrc
     cat <<'EOF' >> "$HOME"/.bashrc

@@ -35,6 +35,46 @@ return require('packer').startup(function(use)
     }
 
     use {
+        'stevearc/resession.nvim',
+        config = function()
+            local resession = require('resession')
+            resession.setup()
+
+            vim.keymap.set('n', '<space>ss', resession.save)
+            vim.keymap.set('n', '<space>sl', resession.load)
+            vim.keymap.set('n', '<space>sd', resession.delete)
+
+            -- save the session automatically
+            vim.api.nvim_create_autocmd('VimLeavePre', {
+                callback = function()
+                    if os.getenv('TMUX') ~= nil then
+                        local tmux_session = vim.fn.system('tmux display-message -p "#S"')
+                        resession.save('tmux-' .. tmux_session)
+                    else
+                        resession.save('last')
+                    end
+                end
+            })
+
+            -- autoload tmux session if in tmux and no files or directories are opened
+            vim.api.nvim_create_autocmd('VimEnter', {
+                callback = function()
+                    if os.getenv('TMUX') == nil then
+                        return
+                    end
+
+                    local filename = vim.fn.expand('%')
+                    if vim.bo.filetype == '' and (filename == '' or vim.fn.filereadable(filename) == 0) then
+                        local tmux_session = vim.fn.system('tmux display-message -p "#S"')
+                        resession.load('tmux-' .. tmux_session)
+                        print("Loaded last tmux session")
+                    end
+                end
+            })
+        end
+    }
+
+    use {
         'williamboman/mason-lspconfig.nvim',
         requires = {
             { 'williamboman/mason.nvim' },
