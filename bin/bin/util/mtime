@@ -34,14 +34,13 @@ EOF
     exit 0
 fi
 
-if [[ ! -e "$1" ]]; then
+if [[ ! -e "$1" && ! -L "$1" ]]; then
     echo "Path does not exist '$1'" >/dev/stderr
     exit 1
 fi
 
 if [[ -d "$1" ]]; then
-    find "$1" -type f -exec stat \{} --printf="%Y\n" \; | sort -n -r | head -n 1
+    find "$1" -not -type -exec stat \{} --printf="%Y\n" \; | sort -n -r | head -n 1
 else
     stat --printf "%Y" "$1"
 fi
-

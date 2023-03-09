@@ -34,15 +34,18 @@ if [[ -z "$1" || -z "$2" || -n "$HELP" ]]; then
 Usage: $0 [-h] [-a/--absolute] <file> <target>
 
 Creates a sybolic link at <file> that points to <target>, where target is used verbatim unless --absolute is passed then it is converted into absolute path
-
 The target is backed up with a tilde ~ suffix, IF A BACKUP ALREADY EXISTS IT IS DELETED PERMANENTLY
 EOF
     exit 0
 fi
 
-if [[ -e "$1" ]]; then
+if [[ -e "$1" || -L "$1" ]]; then
+    echo "Backing up $1"
+
     # delete old backup if it exists
-    [[ -e "${1}~" || -L "${1}~" ]] && rm -rf "${1:?}~"
+    if [[ -e "${1:?}~" || -L "${1:?}~" ]]; then
+        rm -rf "${1:?}~"
+    fi
 
     # backup the current version
     mv "$1" "${1:?}~"
@@ -56,5 +59,6 @@ if [[ -n "$ABSOLUTE" ]]; then
     TARGET=$(realpath --no-symlinks "$TARGET")
 fi
 
+echo "Linking $1 to $TARGET"
 ln -s "$TARGET" "$1"
 

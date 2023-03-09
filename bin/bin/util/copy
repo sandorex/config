@@ -1,0 +1,57 @@
+#!/bin/bash
+#
+# copy - copies verbatim, while backing up the destination
+
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h)
+            HELP=1
+            shift
+            ;;
+        -*|--*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            # save positional arg
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+if [[ -z "$1" || -z "$2" || -n "$HELP" ]]; then
+    cat << EOF
+Usage: $0 [-h] <src> <dst>
+
+Copies <src> to <dst> verbatim, if <dst> exists it is renamed into '<dst>~' if a backup already exists it is deleted
+EOF
+    exit 0
+fi
+
+if [[ ! -e "$1" && ! -L "$1" ]]; then
+    echo "Source does not exist." >/dev/stderr
+    exit 1
+fi
+
+if [[ -e "$2" || -L "$2" ]]; then
+    echo "Backing up $2"
+
+    # delete old backup if it exists
+    if [[ -e "${2:?}~" || -L "${2:?}~" ]]; then
+        rm -rf "${2:?}~"
+    fi
+
+    # backup the current version
+    mv "$2" "${2:?}~"
+fi
+
+echo "Copying $1 to $2"
+
+cp "$1" "$2"
+

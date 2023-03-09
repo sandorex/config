@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+# sync - sync two paths so both paths have the latest version
+
+POSITIONAL_ARGS=()
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -h)
+            HELP=1
+            shift
+            ;;
+        -*|--*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            # save positional arg
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+if [[ -z "$1" || -z "$2" || -n "$HELP" ]]; then
+    cat << EOF
+Usage: $0 [-h] <path1> <path2>
+
+Checks which path is newer, then copies the newer one so they are both equal, if one of them does not exist then it is assumed older
+The copying is done using copy script
+EOF
+    exit 0
+fi
+
+# if neither exist its pointless
+if [ ! -e "$1" && ! -L "$1"] && [ ! -e "$2" && ! -L "$2" ]; then
+    echo "Neither paths exist." >/dev/stderr
+    exit 1
+fi
+
+# if one does not exist at all then just copy the other
+if [[ ! -e "$1" && -L "$1" ]]; then
+    echo "Syncing $1 to $2"
+    copy "$1" "$2"
+    exit 0
+elif [[ ! -e "$2" && -L "$2" ]]; then
+    echo "Syncing $2 to $1"
+    copy "$2" "$1"
+    exit 0
+fi
+
+time1=$(mtime "$1")
+time2=$(mtime "$2")
+
+if [[ $time1 -eq $time2 ]]; then
+    # they are equal nothing to do
+    echo "The files mtime are equal"
+    exit 0
+elif [[ $time1 -gt $time2 ]]; then
+    echo "Syncing $1 to $2"
+    copy "$1" "$2"
+elif [[ $time1 -lt $time2 ]]; then
+    echo "Syncing $2 to $1"
+    copy "$2" "$1"
+fi
+
