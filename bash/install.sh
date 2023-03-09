@@ -1,15 +1,15 @@
 #!/bin/bash
 #
-# install.sh - links bash config, if the bashrc does not exist then adds a shim that loads init.bash
+# install.sh - links bash config
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 . ../config.sh
 
-link ./bash "$HOME"/.config/bash
+link -a "$HOME"/.config/bash ./bash
 
 if [[ ! -f "$HOME/.bashrc" ]]; then
-    link ./bash/init.bash "$HOME"/.bashrc
+    link -a "$HOME"/.bashrc ./bash/init.bash
 else
     # load the init.bash from .bashrc
     cat <<'EOF' >> "$HOME"/.bashrc

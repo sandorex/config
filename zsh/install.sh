@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# install.sh - links zsh config, if the zshrc does not exist then adds a shim that loads init.zsh
+# install.sh - links zsh config
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
 
 . ../config.sh
 
-link ./zsh "$HOME"/.config/zsh
-link ./zsh/init.zsh "$HOME"/.zshrc
+link -a "$HOME"/.config/zsh ./zsh
+link -a "$HOME"/.zshrc ./zsh/init.zsh
 

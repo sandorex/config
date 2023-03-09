@@ -6,5 +6,5 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 
 . ../config.sh
 
-link ./inputrc "$HOME"/.inputrc
+link -a "$HOME"/.inputrc ./inputrc
 

@@ -10,7 +10,7 @@ if [[ -z "$GIT_USERNAME" ]] || [[ -z "$GIT_EMAIL" ]]; then
     exit 1
 fi
 
-link ./gitconfig "$HOME"/.gitconfig
+link -a "$HOME"/.gitconfig ./gitconfig
 
 echo "Setting git identity"
 echo "Username: '$GIT_USERNAME'"

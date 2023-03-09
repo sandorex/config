@@ -8,6 +8,7 @@ vim.cmd("nnoremap <space><F12> :source ~/.config/nvim/init.lua<CR>")
 
 -- often used
 vim.cmd("nnoremap <space>q :q<CR>")
+vim.cmd("nnoremap <space>Q :qall<CR>")
 vim.cmd("nnoremap <space>w :w<CR>")
 
 -- edit file

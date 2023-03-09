@@ -6,5 +6,5 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 
 . ../config.sh
 
-link ./nvim "$HOME"/.config/nvim
+link -a "$HOME"/.config/nvim ./nvim
 

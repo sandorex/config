@@ -7,5 +7,5 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 . ../config.sh
 
 # link the shell dir
-link ./shell "$HOME"/.shell
+link -a "$HOME"/.shell ./shell
 

@@ -6,5 +6,5 @@ cd "$(dirname "${BASH_SOURCE[0]}")"
 
 . ../config.sh
 
-link ./tmux "$HOME"/.config/tmux
+link -a "$HOME"/.config/tmux ./tmux
 
