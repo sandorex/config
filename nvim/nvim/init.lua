@@ -25,6 +25,7 @@ local options = {
     sidescrolloff = 8,
 
     number = true,
+    signcolumn = 'yes',
 
     updatetime = 300,
 

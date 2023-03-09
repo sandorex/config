@@ -44,31 +44,17 @@ return require('packer').startup(function(use)
             vim.keymap.set('n', '<space>sl', resession.load)
             vim.keymap.set('n', '<space>sd', resession.delete)
 
-            -- save the session automatically
-            vim.api.nvim_create_autocmd('VimLeavePre', {
+            vim.api.nvim_create_autocmd('VimEnter', {
                 callback = function()
-                    if os.getenv('TMUX') ~= nil then
-                        local tmux_session = vim.fn.system('tmux display-message -p "#S"')
-                        resession.save('tmux-' .. tmux_session)
-                    else
-                        resession.save('last')
+                    if vim.fn.argc(-1) == 0 then
+                        resession.load(vim.fn.getcwd(), { dir = "dirsession", silence_errors = true })
                     end
                 end
             })
 
-            -- autoload tmux session if in tmux and no files or directories are opened
-            vim.api.nvim_create_autocmd('VimEnter', {
+            vim.api.nvim_create_autocmd('VimLeavePre', {
                 callback = function()
-                    if os.getenv('TMUX') == nil then
-                        return
-                    end
-
-                    local filename = vim.fn.expand('%')
-                    if vim.bo.filetype == '' and (filename == '' or vim.fn.filereadable(filename) == 0) then
-                        local tmux_session = vim.fn.system('tmux display-message -p "#S"')
-                        resession.load('tmux-' .. tmux_session)
-                        print("Loaded last tmux session")
-                    end
+                    resession.save(vim.fn.getcwd(), { dir = "dirsession", notify = false })
                 end
             })
         end
@@ -84,10 +70,15 @@ return require('packer').startup(function(use)
         config = function()
             require('mason').setup()
             require('mason-lspconfig').setup({
-                ensure_installed = { "lua_ls" }
+                ensure_installed = {
+                    'lua_ls',
+                    'denols',
+                }
             })
 
-            require("lspconfig").lua_ls.setup {}
+            local cfg = require('lspconfig')
+            cfg.lua_ls.setup {}
+            cfg.denols.setup {}
         end
     }
 
