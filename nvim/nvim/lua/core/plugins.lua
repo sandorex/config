@@ -40,23 +40,32 @@ return require('packer').startup(function(use)
             local resession = require('resession')
             resession.setup()
 
-            vim.keymap.set('n', '<space>ss', resession.save)
-            vim.keymap.set('n', '<space>sl', resession.load)
-            vim.keymap.set('n', '<space>sd', resession.delete)
+            vim.keymap.set('n', '<space>ss', resession.save, { desc = 'Session Save' })
+            vim.keymap.set('n', '<space>sl', resession.load, { desc = 'Session Load' })
+            vim.keymap.set('n', '<space>sd', resession.delete, { desc ='Session Delete' })
 
             vim.api.nvim_create_autocmd('VimEnter', {
                 callback = function()
                     if vim.fn.argc(-1) == 0 then
-                        resession.load(vim.fn.getcwd(), { dir = "dirsession", silence_errors = true })
+                        resession.load(vim.fn.getcwd(), { dir = 'dirsession', silence_errors = true })
                     end
                 end
             })
 
             vim.api.nvim_create_autocmd('VimLeavePre', {
                 callback = function()
-                    resession.save(vim.fn.getcwd(), { dir = "dirsession", notify = false })
+                    resession.save(vim.fn.getcwd(), { dir = 'dirsession', notify = false })
                 end
             })
+        end
+    }
+
+    use {
+        'folke/which-key.nvim',
+        config = function()
+            vim.o.timeout = true
+            vim.o.timeoutlen = 500
+            require('which-key').setup {}
         end
     }
 

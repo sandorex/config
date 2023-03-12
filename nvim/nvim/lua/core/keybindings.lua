@@ -1,25 +1,24 @@
 ---- KEYBINDINGS ----
 -- its a waste to make space only do commands as its not used that often
-vim.cmd("nmap <space> <nop>")
-vim.cmd("nnoremap <space>; :")
-
--- reload config
-vim.cmd("nnoremap <space><F12> :source ~/.config/nvim/init.lua<CR>")
+vim.keymap.set('n', '<space>', '<nop>')
+vim.keymap.set('n', '<space>;', ':', { desc = 'Command' })
 
 -- often used
-vim.cmd("nnoremap <space>q :q<CR>")
-vim.cmd("nnoremap <space>Q :qall<CR>")
-vim.cmd("nnoremap <space>w :w<CR>")
+vim.keymap.set('n', '<space>q', '<cmd>q<cr>', { silent = true })
+vim.keymap.set('n', '<space>Q', '<cmd>qall<cr>', { silent = true })
+vim.keymap.set('n', '<space>w', '<cmd>w<cr>', { silent = true })
+vim.keymap.set('n', '<space>W', '<cmd>wall<cr>', { silent = true })
 
 -- edit file
-vim.cmd("nnoremap <space>e :e ")
-vim.cmd("nnoremap <space>E :tabe ")
+vim.keymap.set('n', '<space>e', ':e ', { desc = 'Open file' })
+vim.keymap.set('n', '<space>E', ':tabe ', { desc = 'Open file (tab)' })
 
 -- explore
-vim.cmd("nnoremap <space>f :E<CR>")
+vim.keymap.set('n', '<space>f', '<cmd>E<cr> ', { desc = 'Open netrw in cwd', silent = true })
 
 -- switch tabs
-vim.cmd("nnoremap <M-/> :tabn<CR>")
+vim.keymap.set('n', '<M-/>', '<cmd>tabn<cr> ', { desc = 'Next tab', silent = true })
 
 -- easier redo
-vim.cmd("nnoremap <S-u> <C-r>")
+vim.keymap.set('n', '<S-u>', '<C-r>', { desc = 'Redo', silent = true })
+
