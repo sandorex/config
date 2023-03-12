@@ -13,6 +13,14 @@ source ~/.shell/init.sh
 # minimal prompt
 PROMPT='%F{green}%# '
 
+precmd() {
+    if [[ -n "$TMUX" ]]; then
+        local ID=$(tmux display-message -pF "#{=-1:window_id}")
+        tmux set -gq "@custom_centre_${ID}" "$(pwd)"
+    fi
+    # TODO add the last command exit code if not 0
+}
+
 ## OPTIONS ##
 HISTFILE=~/.zhistory
 HISTSIZE=SAVEHIST=10000
