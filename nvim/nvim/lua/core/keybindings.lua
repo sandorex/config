@@ -1,6 +1,12 @@
 ---- KEYBINDINGS ----
+vim.keymap.set('n', '[b', '<cmd>bprev<cr>', { desc = 'Previous buffer', silent = true })
+vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next buffer', silent = true })
+
+vim.keymap.set('n', '[t', '<cmd>tabp<cr>', { desc = 'Previous tab', silent = true })
+vim.keymap.set('n', ']t', '<cmd>tabn<cr>', { desc = 'Next tab', silent = true })
+
+--- custom ---
 vim.keymap.set('n', '<space>', '<nop>')
-vim.keymap.set('n', '<space><space>', '<cmd>WhichKey<cr>')
 vim.keymap.set('n', '<space>;', ':', { desc = 'Command' })
 
 -- often used
@@ -15,10 +21,9 @@ vim.keymap.set('n', '<space>E', ':tabe ', { desc = 'Open file (tab)' })
 
 -- explore
 vim.keymap.set('n', '<space>f', '<cmd>E<cr>', { desc = 'Open netrw in cwd', silent = true })
-vim.keymap.set('n', '<space>F', '<cmd>tabnew<cr><cmd>Explore<cr>', { desc = 'Open netrw in cwd (tab)', silent = true })
 
 -- switch tabs
-vim.keymap.set('n', '<M-/>', '<cmd>tabn<cr> ', { desc = 'Next tab', silent = true })
+--vim.keymap.set('n', '<M-/>', '<cmd>tabn<cr> ', { desc = 'Next tab', silent = true })
 
 -- easier redo
 vim.keymap.set('n', '<S-u>', '<C-r>', { desc = 'Redo', silent = true })

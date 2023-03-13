@@ -61,11 +61,23 @@ return require('packer').startup(function(use)
     }
 
     use {
+        'junegunn/fzf.vim',
+        requires = { 'junegunn/fzf', run = ':call fzf#install()' },
+        config = function()
+            vim.keymap.set('n', '<space>b', '<cmd>Buffers<cr>', { desc = 'Select buffer fzf', silent = true })
+            vim.keymap.set('n', '<space>f', '<cmd>Files %:p:h<cr>', { desc = 'Open fzf in current file dir', silent = true })
+        end
+    }
+
+    use {
         'folke/which-key.nvim',
         config = function()
+            -- TODO: move these to the main config file so they dont change in case the plugin is missing
             vim.o.timeout = true
             vim.o.timeoutlen = 500
             require('which-key').setup {}
+
+            vim.keymap.set('n', '<space><space>', '<cmd>WhichKey<cr>')
         end
     }
 
