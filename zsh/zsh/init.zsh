@@ -17,8 +17,6 @@ RPROMPT='%(?..%B%F{red}[ %?%  ]%b)'
 precmd() {
     if [[ -n "$TMUX" ]]; then
         (~/.config/tmux/set-extra.sh extra-center "$(pwd)" &)
-        #local ID=$(tmux display-message -p "#{=-1:window_id}")
-        #tmux set -g @extra_center_${ID} "$(pwd)"
     fi
 
     # TODO add the last command exit code if not 0
