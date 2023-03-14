@@ -12,6 +12,9 @@ local options = {
     cursorline = true,
     --cursorlineopt = 'number',
 
+    -- set terminal title
+    title = true,
+
     -- enable clipboard syncing, works with tmux without any additional config
     clipboard = 'unnamedplus',
 

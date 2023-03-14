@@ -12,15 +12,7 @@ source ~/.shell/init.sh
 
 # minimal prompt
 PROMPT='%F{green}%# '
-RPROMPT='%(?..%B%F{red}[ %?%  ]%b)'
-
-precmd() {
-    if [[ -n "$TMUX" ]]; then
-        (~/.config/tmux/set-extra.sh extra-center "$(pwd)" &)
-    fi
-
-    # TODO add the last command exit code if not 0
-}
+RPROMPT='%(?..%B%F{red}[ %?%  ]%b)' # show exit code if not 0
 
 ## OPTIONS ##
 HISTFILE=~/.zhistory

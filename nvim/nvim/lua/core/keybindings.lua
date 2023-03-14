@@ -19,11 +19,15 @@ vim.keymap.set('n', '<space>W', '<cmd>wall<cr>', { silent = true })
 vim.keymap.set('n', '<space>e', ':e ', { desc = 'Open file' })
 vim.keymap.set('n', '<space>E', ':tabe ', { desc = 'Open file (tab)' })
 
+-- move content
+vim.keymap.set('n', '<A-Up>', '<cmd>m .-2<cr>==', { desc = 'Move line up', silent = true })
+vim.keymap.set('n', '<A-Down>', '<cmd>m .+1<cr>==', { desc = 'Move line down', silent = true })
+
 -- explore
 vim.keymap.set('n', '<space>f', '<cmd>E<cr>', { desc = 'Open netrw in cwd', silent = true })
 
--- switch tabs
---vim.keymap.set('n', '<M-/>', '<cmd>tabn<cr> ', { desc = 'Next tab', silent = true })
+-- dont yank when pasting
+vim.keymap.set('v', 'p', '"_dP', { desc = 'Paste without yanking', silent = true })
 
 -- easier redo
 vim.keymap.set('n', '<S-u>', '<C-r>', { desc = 'Redo', silent = true })

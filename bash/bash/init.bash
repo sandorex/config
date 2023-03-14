@@ -8,7 +8,7 @@ alias reload-bash='source ~/.bashrc'
 \. ~/.shell/init.sh
 
 if [[ -n "$TMUX" ]]; then
-    PROMPT_COMMAND='(~/.config/tmux/set-extra.sh extra-center "$(pwd)" &)'
+    PROMPT_COMMAND='echo -en "\033]0;$(pwd)\a"'
 fi
 
 # minimal prompt
