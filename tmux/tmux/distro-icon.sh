@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # distro-icon.sh - prints icon depending on distro
 
@@ -49,5 +49,9 @@ get() {
     esac
 }
 
-get $ID
+if [ "$1" = "1" ] || [ "$1" = "" ]; then
+    get "$ID"
+else
+    printf "[$ID]"
+fi
 

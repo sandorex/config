@@ -1,6 +1,0 @@
-#!/usr/bin/env zsh
-#
-# .zshrc - just a shim that loads ~/.config/zsh/init.zsh
-
-source ~/.config/zsh/init.zsh
-
