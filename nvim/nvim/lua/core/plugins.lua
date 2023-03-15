@@ -82,6 +82,13 @@ return require('packer').startup(function(use)
     }
 
     use {
+        'numToStr/Comment.nvim',
+        config = function()
+            require('Comment').setup()
+        end
+    }
+
+    use {
         'williamboman/mason-lspconfig.nvim',
         requires = {
             { 'williamboman/mason.nvim' },
