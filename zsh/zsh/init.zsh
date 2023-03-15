@@ -14,6 +14,13 @@ source ~/.shell/init.sh
 PROMPT='%F{green}%# '
 RPROMPT='%(?..%B%F{red}[ %?%  ]%b)' # show exit code if not 0
 
+# set title to pwd whenever it changes
+if [[ -n "$TMUX" ]]; then
+    chpwd() {
+        echo -en "\033]0;$(pwd)\a"
+    }
+fi
+
 ## OPTIONS ##
 HISTFILE=~/.zhistory
 HISTSIZE=SAVEHIST=10000

@@ -13,7 +13,7 @@ local options = {
     --cursorlineopt = 'number',
 
     -- set terminal title
-    title = true,
+    title = os.getenv('TMUX') ~= nil,
 
     -- enable clipboard syncing, works with tmux without any additional config
     clipboard = 'unnamedplus',
