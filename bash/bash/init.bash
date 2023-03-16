@@ -7,10 +7,22 @@ alias reload-bash='source ~/.bashrc'
 
 \. ~/.shell/init.sh
 
-if [[ -n "$TMUX" ]]; then
-    PROMPT_COMMAND='echo -en "\033]0;$(pwd)\a"'
-fi
+# recreating zsh rprompt with exit code if its not 0
+__bash_rprompt() {
+    if [ "$code" -ne 0 ]; then
+        tput setaf 1
+        printf "%*s" $COLUMNS "[$code]"
+        tput sgr0
+    fi
+}
 
 # minimal prompt
-export PS1="\[$(tput setaf 2)\]$\[$(tput sgr0)\] "
+__prompt_cmd() {
+    code=$?
+    PS1='\[$(tput sc; __bash_rprompt; tput rc; tput setaf 2)\]$\[$(tput sgr0)\] '
+
+    [ -n "$TMUX" ] && echo -en "\033]0;$(pwd)\a"
+}
+
+PROMPT_COMMAND='__prompt_cmd'
 
