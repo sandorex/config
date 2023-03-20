@@ -34,7 +34,7 @@ local options = {
 
     foldmethod = 'marker',
     foldmarker = '--/,/--',
-    foldtext = 'v:lua.better_fold_text()',
+    foldtext = 'v:lua.CustomFoldText()',
     fillchars = 'fold: ',
 
     -- default to everything unfolded
@@ -44,7 +44,8 @@ local options = {
     colorcolumn = '80,100',
 }
 
-function better_fold_text()
+
+function CustomFoldText()
     local line = vim.fn.getline(vim.v.foldstart)
     local _, index = string.find(line, '--/', 1, true)
 
@@ -86,16 +87,11 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     command = [[%s/\s\+$//e]],
 })
 
+vim.api.nvim_create_user_command('CoreHealth', 'checkhealth core', {})
+
 require('core.theming')
 require('core.statusline')
+require('core.netrw')
 require('core.keybindings')
 require('core.plugins')
-
--- load machine specific file 'lua/host_<host>.lua'
-local cfg = vim.fn.stdpath('config')
-local custom_lua_file = 'host_' .. vim.fn.hostname():lower()
-if vim.fn.glob(cfg .. '/lua/' .. custom_lua_file .. '.lua') ~= '' then
-    vim.g.custom_file_loaded = true
-    require(custom_lua_file)
-end
 

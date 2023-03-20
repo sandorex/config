@@ -88,25 +88,30 @@ return require('packer').startup(function(use)
         end
     }
 
+    -- sets tab stuff from the file itself
+    use { 'tpope/vim-sleuth', cond = "vim.fn.has('nvim-0.7') == 1" }
+    use { 'nvim-tree/nvim-web-devicons', cond = "vim.fn.has('nvim-0.7') == 1" }
+
     use {
-        'williamboman/mason-lspconfig.nvim',
+        'neovim/nvim-lspconfig',
         requires = {
             { 'williamboman/mason.nvim' },
-            { 'neovim/nvim-lspconfig' },
+            { 'williamboman/mason-lspconfig.nvim' },
+
+            -- adds neovim api completion
+            { 'folke/neodev.nvim' },
         },
         cond = "vim.fn.has('nvim-0.7') == 1",
         config = function()
-            require('mason').setup()
-            require('mason-lspconfig').setup({
-                ensure_installed = {
-                    'lua_ls',
-                    'denols',
-                }
-            })
+            local core = require('core.lsp')
 
-            local cfg = require('lspconfig')
-            cfg.lua_ls.setup {}
-            cfg.denols.setup {}
+            require('mason').setup()
+            require('mason-lspconfig').setup(core.mason_lsp_options)
+
+            -- has to be loaded before lspconfig
+            require('neodev').setup {}
+
+            core.setup()
         end
     }
 
