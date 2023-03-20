@@ -84,9 +84,6 @@ return require('packer').startup(function(use)
     use {
         'folke/which-key.nvim',
         config = function()
-            -- TODO: move these to the main config file so they dont change in case the plugin is missing
-            vim.o.timeout = true
-            vim.o.timeoutlen = 500
             require('which-key').setup {}
 
             vim.keymap.set('n', '<space><space>', '<cmd>WhichKey<cr>')
@@ -110,6 +107,9 @@ return require('packer').startup(function(use)
             { 'williamboman/mason.nvim' },
             { 'williamboman/mason-lspconfig.nvim' },
 
+            -- adds status update for LSP
+            { 'j-hui/fidget.nvim' },
+
             -- adds neovim api completion
             { 'folke/neodev.nvim' },
         },
@@ -119,6 +119,8 @@ return require('packer').startup(function(use)
 
             require('mason').setup()
             require('mason-lspconfig').setup(core.mason_lsp_options)
+
+            require('fidget').setup {}
 
             -- has to be loaded before lspconfig
             require('neodev').setup {}

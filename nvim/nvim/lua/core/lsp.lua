@@ -36,5 +36,13 @@ function m.setup()
     end
 end
 
+-- CONFIGS --
+m.cfg.lua_ls = {
+    Lua = {
+        workspace = { checkThirdParty = false },
+        telemetry = { enable = false },
+    }
+}
+
 return m
 

@@ -18,6 +18,9 @@ local options = {
     -- enable clipboard syncing, works with tmux without any additional config
     clipboard = 'unnamedplus',
 
+    ignorecase = true,
+    smartcase = true,
+
     -- undo history persistance between sessions (nvim defaults are good)
     undofile = true,
     backup = false,
@@ -32,6 +35,11 @@ local options = {
 
     updatetime = 300,
 
+    -- key timeout timing, setting this too high will break WhichKey but
+    -- setting it too low will make it harder to hit combo keys
+    timeout = true,
+    timeoutlen = 500,
+
     foldmethod = 'marker',
     foldmarker = '--/,/--',
     foldtext = 'v:lua.CustomFoldText()',
@@ -43,7 +51,6 @@ local options = {
     -- guide lines
     colorcolumn = '80,100',
 }
-
 
 function CustomFoldText()
     local line = vim.fn.getline(vim.v.foldstart)

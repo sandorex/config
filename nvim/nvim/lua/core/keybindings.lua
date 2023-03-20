@@ -1,13 +1,15 @@
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
+
 ---- KEYBINDINGS ----
+vim.keymap.set({ 'n', 'v' }, '<space>', '<nop>', { silent = true })
+vim.keymap.set('n', '<leader>;', ':', { desc = 'Command' })
+
 vim.keymap.set('n', '[b', '<cmd>bprev<cr>', { desc = 'Previous buffer', silent = true })
 vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next buffer', silent = true })
 
 vim.keymap.set('n', '[t', '<cmd>tabp<cr>', { desc = 'Previous tab', silent = true })
 vim.keymap.set('n', ']t', '<cmd>tabn<cr>', { desc = 'Next tab', silent = true })
-
---- custom ---
-vim.keymap.set('n', '<space>', '<nop>')
-vim.keymap.set('n', '<space>;', ':', { desc = 'Command' })
 
 -- often used
 vim.keymap.set('n', '<space>q', '<cmd>q<cr>', { silent = true })
