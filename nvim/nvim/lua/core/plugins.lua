@@ -38,7 +38,19 @@ return require('packer').startup(function(use)
         'stevearc/resession.nvim',
         config = function()
             local resession = require('resession')
-            resession.setup()
+            resession.setup({
+                buf_filter = function(bufnr)
+                    if not resession.default_buf_filter(bufnr) then
+                        return false
+                    end
+
+                    if vim.fn.expand('#' .. bufnr .. ':t') == 'COMMIT_EDITMSG' then
+                        return false
+                    end
+
+                    return true
+                end
+            })
 
             vim.keymap.set('n', '<space>ss', resession.save, { desc = 'Session Save' })
             vim.keymap.set('n', '<space>sl', resession.load, { desc = 'Session Load' })

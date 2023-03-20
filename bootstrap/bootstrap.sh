@@ -8,7 +8,7 @@
 git clone --recurse-submodules -j4 https://github.com/sandorex/config ~/config
 
 # link pre commit script
-ln -s ../../.git-pre-commit ~/config/.git/hooks/pre-commit
+ln -s ../git/template/hooks/pre-commit ~/config/.git/hooks/pre-commit
 
 if ! command -v brew &>/dev/null; then
     cat << 'EOF'

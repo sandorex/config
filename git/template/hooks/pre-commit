@@ -1,0 +1,17 @@
+#!/bin/sh
+#
+# .git-pre-commit - pre-commit hook that prevents commiting code that is marked with marker
+
+# split up to avoid matching itself
+at='@'
+marker="${at}nogit"
+
+echo "$(tput setaf 4)Checking for $marker marker in staged$(tput sgr0)"
+if var=$(git grep --color=always --cached --name-only "$marker"); then
+    echo "$(tput setaf 1)Error $marker marker found in following files:$(tput sgr0)"
+
+    # indent the file names
+    echo "$var" | sed 's/^/   /'
+    exit 1
+fi
+
