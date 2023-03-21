@@ -96,6 +96,9 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 
 vim.api.nvim_create_user_command('CoreHealth', 'checkhealth core', {})
 
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
+
 require('core.theming')
 require('core.statusline')
 require('core.netrw')

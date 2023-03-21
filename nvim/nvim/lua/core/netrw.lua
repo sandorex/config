@@ -13,7 +13,17 @@ for k, v in pairs(global_options) do
     vim.g[k] = v
 end
 
--- TODO add keybindings to netrw
+-- put netrw keybindings here
+function NetrwMapping()
+    -- go to next or prev directory with arrow keys
+    vim.keymap.set('n', '<left>', '-', { desc = 'Go to parent', remap = true, buffer = true })
+    vim.keymap.set('n', '<right>', '<cr>', { desc = 'Enter', remap = true, buffer = true })
+end
+
+vim.api.nvim_create_autocmd('FileType', {
+    pattern = 'netrw',
+    callback = NetrwMapping,
+})
 
 -- TODO highlighting netrw marked files
 -- hi! link netrwMarkFile Search

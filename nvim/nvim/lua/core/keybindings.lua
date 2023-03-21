@@ -1,6 +1,3 @@
-vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
-
 ---- KEYBINDINGS ----
 vim.keymap.set({ 'n', 'v' }, '<space>', '<nop>', { silent = true })
 vim.keymap.set('n', '<leader>;', ':', { desc = 'Command' })
