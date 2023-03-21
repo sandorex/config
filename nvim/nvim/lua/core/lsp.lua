@@ -1,16 +1,11 @@
 local m = {}
 
 -- these plugins are installed automatically
-m.plugins_auto = {
+m.plugins = {
     'lua_ls',
     'bashls',
-}
-
--- these plugins are installed when Mason is called
-m.plugins = {
     'denols',
     'pylsp',
-    table.unpack(m.plugins_auto),
 }
 
 -- contains configs for lsp plugins
@@ -24,7 +19,7 @@ setmetatable(m.cfg, {
 })
 
 m.mason_lsp_options = {
-    ensure_installed = m.plugins_auto,
+    ensure_installed = m.plugins,
 }
 
 function m.setup()
