@@ -5,6 +5,12 @@ local global_options = {
     -- hide banner
     netrw_banner = 0,
 
+    -- hide current dir
+    netrw_list_hide = '^\\./$',
+
+    -- hide files in netrw_list_hide by default, press 'a' to cycle
+    netrw_hide = 1,
+
     -- recursive copy
     netrw_localcopydircmd = 'cp -r'
 }
