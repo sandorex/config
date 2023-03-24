@@ -27,8 +27,8 @@ local options = {
     writebackup = false,
 
     -- scrolls when cursor gets too close to bounds of the screen
-    scrolloff = 8,
-    sidescrolloff = 8,
+    scrolloff = 12,
+    sidescrolloff = 12,
 
     number = true,
     signcolumn = 'yes',
@@ -96,6 +96,7 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
 
 vim.api.nvim_create_user_command('CoreHealth', 'checkhealth core', {})
 
+-- set leader key
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
@@ -103,5 +104,21 @@ require('core.theming')
 require('core.statusline')
 require('core.netrw')
 require('core.keybindings')
-require('core.plugins')
+
+-- bootstrap lazy.nvim
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system({
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  })
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- load the actual plugins
+require('lazy').setup('plugins')
 

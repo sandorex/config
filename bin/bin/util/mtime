@@ -10,7 +10,7 @@ while [[ $# -gt 0 ]]; do
             HELP=1
             shift
             ;;
-        -*|--*)
+        --*|-*)
             echo "Unknown option $1"
             exit 1
             ;;
@@ -40,7 +40,7 @@ if [[ ! -e "$1" && ! -L "$1" ]]; then
 fi
 
 if [[ -d "$1" ]]; then
-    find "$1" -not -type -exec stat \{} --printf="%Y\n" \; | sort -n -r | head -n 1
+    find "$1" -not -type -exec stat \{\} --printf="%Y\n" \; | sort -n -r | head -n 1
 else
     stat --printf "%Y" "$1"
 fi

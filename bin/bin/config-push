@@ -5,15 +5,15 @@
 ROOT=$(realpath "$(dirname "${BASH_SOURCE[0]}")/../..")
 
 # always add patch if there is nothing staged
-git -C "$ROOT" diff --cached --quiet
-if [ $? -eq 0 ]; then
+
+if git -C "$ROOT" diff --cached --quiet; then
     git -C "$ROOT" add --patch
 else
     # show changes but shortened
     git -C "$ROOT" diff --cached --compact-summary
 
     while true; do
-        read -p "Do you wish to add anything else before commiting? (Y/n) " yn
+        read -r -p "Do you wish to add anything else before commiting? (Y/n) " yn
         case $yn in
             # no, just continue
             [Nn]* ) break;;

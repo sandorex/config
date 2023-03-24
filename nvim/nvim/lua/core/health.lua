@@ -10,8 +10,8 @@ end
 
 M.check = function()
     vim.health.report_start('External Dependencies (Recommended)')
-    check_exe('npm', 'required for mason')
-    check_exe('cargo', 'required for mason')
+    check_exe('npm', 'required for mason', '')
+    check_exe('cargo', 'required for mason', '')
 
     check_exe(
         'bat',

@@ -2,7 +2,7 @@
 #
 # install.sh - links neovim configuration
 
-cd "$(dirname "${BASH_SOURCE[0]}")"
+cd "$(dirname "${BASH_SOURCE[0]}")" || exit
 
 . ../config.sh
 
