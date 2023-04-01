@@ -1,0 +1,43 @@
+mem = 8192
+vcpu = 6
+
+name = 'wvm-vagrant'
+
+require 'socket'
+hostname = Socket.gethostname.downcase
+
+Vagrant.configure('2') do |config|
+    config.vm.box = 'generic/fedora37'
+
+    config.vm.hostname = "wvm-#{hostname}"
+
+    # vagrant machine name not the virtual machine name!
+    config.vm.define name
+
+    config.vm.provider 'virtualbox' do |vb|
+        vb.name = name
+        vb.memory = mem.to_s
+        vb.cpus = vcpu
+        vb.linked_clone = true
+    end
+
+    config.vm.provider "vmware_desktop" do |v|
+        v.vmx['displayname'] = name
+        v.vmx["memsize"] = mem.to_s
+        v.vmx["numvcpus"] = vcpu.to_s
+    end
+
+    # prevent destruction of the vm without force flag
+    config.trigger.before :destroy do |trigger|
+        trigger.warn = 'Destruction of this virtual machine is disabled to prevent accidents, use --force flag'
+        trigger.abort = true
+    end
+
+    # disable passwordless sudo, i do not like it
+    config.vm.provision 'shell', inline: 'sudo rm -rf /etc/sudoers.d/vagrant'
+
+    # TODO install tmux, neovim, and all the other tools
+end
+
+# vim: ft=ruby ff=unix
+
