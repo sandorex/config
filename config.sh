@@ -5,9 +5,14 @@
 ROOT=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 export ROOT
 
-GIT_USERNAME="$USER ($(hostname))"
-export GIT_USERNAME
-export GIT_EMAIL="rzhw3h@gmail.com"
+if [[ -z "$GIT_USERNAME" ]]; then
+    GIT_USERNAME="$USER ($(hostname))"
+    export GIT_USERNAME
+fi
+
+if [[ -z "$GIT_EMAIL" ]]; then
+    export GIT_EMAIL="rzhw3h@gmail.com"
+fi
 
 # add tools and scripts to path
 export PATH="$ROOT"/bin/bin/util:$PATH

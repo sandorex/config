@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
 # wvm.sh - configuration for the Work Virtual Machine
 
-cd "$(dirname "${BASH_SOURCE[0]}")/.."
+cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit
 
 # scripts
 ./bin/install.sh
