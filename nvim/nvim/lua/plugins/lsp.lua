@@ -3,6 +3,8 @@ local plugins = {
     'bashls',
     'denols',
     'pylsp',
+    'clangd',
+    'cmake',
 }
 
 -- contains configs for lsp plugins
@@ -30,6 +32,7 @@ configs.lua_ls = {
 return {
     {
         'neovim/nvim-lspconfig',
+        event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
             'williamboman/mason.nvim',
             'williamboman/mason-lspconfig.nvim',
