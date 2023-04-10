@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # init.bash - init file for bash, either loaded from bashrc or ran directly
 

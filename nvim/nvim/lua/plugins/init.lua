@@ -70,7 +70,7 @@ return {
         dependencies = { 'junegunn/fzf' },
         keys = {
             { '<leader>b', '<cmd>Buffers<cr>', desc = 'Select buffer (fzf)', silent = true},
-            { '<leader>f', '<cmd>Files %:p:h<cr>', desc = 'Open fzf in current file dir (fzf)', silent = true},
+            -- { '<leader>f', '<cmd>Files %:p:h<cr>', desc = 'Open fzf in current file dir (fzf)', silent = true},
         },
         build = ':call fzf#install()',
     },

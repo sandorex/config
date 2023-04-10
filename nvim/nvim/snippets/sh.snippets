@@ -1,0 +1,34 @@
+snippet #!
+	#!/usr/bin/env bash
+
+snippet CDDIR
+	cd "$(dirname "${BASH_SOURCE[0]}")" || exit
+
+snippet DIR
+	# add --no-symlinks (not that portable outside linux)
+	DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
+
+snippet parseargs
+	POSITIONAL_ARGS=()
+
+	while [[ $# -gt 0 ]]; do
+		case \$1 in
+			--example${0:${VISUAL}})
+				EXAMPLE=\$1
+				shift 2
+				;;
+			--*|-*)
+				echo "Unknown option \$1"
+				exit 1
+				;;
+			*)
+				# save positional arg
+				POSITIONAL_ARGS+=("\$1")
+				shift
+				;;
+		esac
+	done
+
+	# restore positional parameters
+	set -- "${POSITIONAL_ARGS[@]}"
+
