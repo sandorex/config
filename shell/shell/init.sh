@@ -14,7 +14,7 @@ trysource() {
 # load linux terminal theming
 \. ~/.shell/bare-terminal-theming.sh
 
-export PATH=$PATH:"$HOME"/.bin
+export PATH="$PATH":"$HOME"/.bin
 
 # set neovim as default editor
 export EDITOR=nvim

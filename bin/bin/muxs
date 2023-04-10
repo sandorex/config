@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+# muxs - attach to mux session
+
+select sel in $(tmux ls -F '#S'); do
+    break;
+done
+tmux attach -t "$sel"
