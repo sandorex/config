@@ -8,6 +8,10 @@ vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next buffer', silent = tru
 vim.keymap.set('n', '[t', '<cmd>tabp<cr>', { desc = 'Previous tab', silent = true })
 vim.keymap.set('n', ']t', '<cmd>tabn<cr>', { desc = 'Next tab', silent = true })
 
+-- remap shift arrow up/down to be half page not full page
+vim.keymap.set('n', '<S-Up>', '<C-u>', { desc = 'Half page up' })
+vim.keymap.set('n', '<S-Down>', '<C-d>', { desc = 'Half page down' })
+
 -- often used
 vim.keymap.set('n', '<space>q', '<cmd>q<cr>', { silent = true })
 vim.keymap.set('n', '<space>Q', '<cmd>qall<cr>', { silent = true })

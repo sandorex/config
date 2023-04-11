@@ -8,6 +8,25 @@ alias reload-bash='source ~/.bashrc'
 # shellcheck source=../../shell/shell/init.sh
 \. ~/.shell/init.sh
 
+# append to history
+shopt -s histappend
+
+# if a history substitution fails the prompt will just retain the original text
+shopt -s histreedit
+
+# do not automatically execute substitution from history
+shopt -s histverify
+
+HISTFILE=~/.bash_history
+HISTSIZE=1000000
+HISTTIMEFORMAT="[%F %T %Z]"
+
+# updates history every command
+PROMPT_COMMAND="history -a; history -c; history -r;"
+
+# ignore duplicate commands and those that start with space
+HISTCONTROL='ignoreboth'
+
 # as bash cant really do right aligned prompt im just printing next line with center alignment
 __center_align_printf() {
     termwidth="$(tput cols)"
@@ -27,6 +46,6 @@ __prompt_cmd() {
     [ -n "$TMUX" ] && echo -en "\033]0;$(pwd)\a"
 }
 
-PROMPT_COMMAND='__prompt_cmd'
+PROMPT_COMMAND="__prompt_cmd ; $PROMPT_COMMAND"
 PS1='\[$(tput setaf 2)\]$\[$(tput sgr0)\] '
 

@@ -32,7 +32,8 @@ configs.lua_ls = {
 return {
     {
         'neovim/nvim-lspconfig',
-        event = { 'BufReadPre', 'BufNewFile' },
+        lazy = false,
+        -- event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
             'williamboman/mason.nvim',
             'williamboman/mason-lspconfig.nvim',

@@ -8,6 +8,11 @@ snippet DIR
 	# add --no-symlinks (not that portable outside linux)
 	DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
+snippet isroot
+	if [ "$(id -u)" -ne 0 ]; then
+		${0:${VISUAL}}
+	fi
+
 snippet parseargs
 	POSITIONAL_ARGS=()
 
