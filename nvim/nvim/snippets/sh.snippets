@@ -1,5 +1,8 @@
-snippet #!
+snippet shebang-bash
 	#!/usr/bin/env bash
+
+snippet shebang
+	#!/bin/sh
 
 snippet CDDIR
 	cd "$(dirname "${BASH_SOURCE[0]}")" || exit
@@ -13,10 +16,13 @@ snippet isroot
 		${0:${VISUAL}}
 	fi
 
+snippet whiptail-redirect
+	var=$(whiptail ${0:${VISUAL}} 3>&1 1>&2 2>&3)
+
 snippet parseargs
 	POSITIONAL_ARGS=()
 
-	while [[ $# -gt 0 ]]; do
+	while [ $# -gt 0 ]; do
 		case \$1 in
 			--example${0:${VISUAL}})
 				EXAMPLE=\$1
