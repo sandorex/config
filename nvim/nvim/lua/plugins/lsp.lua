@@ -85,7 +85,18 @@ return {
                         luasnip.lsp_expand(args.body)
                     end,
                 },
-                mapping = cmp.mapping.preset.insert {
+                -- i am not using presets because i hate that it captures arrows keys
+                mapping = cmp.mapping {
+                    ['<S-Down>'] = {
+                        i = cmp.mapping.select_next_item {
+                            behavior = cmp.SelectBehavior.Select
+                        },
+                    },
+                    ['<S-Up>'] = {
+                        i = cmp.mapping.select_prev_item {
+                            behavior = cmp.SelectBehavior.Select
+                        },
+                    },
                     ['<C-d>'] = cmp.mapping.scroll_docs(-4),
                     ['<C-f>'] = cmp.mapping.scroll_docs(4),
                     ['<C-Space>'] = cmp.mapping.complete {},
