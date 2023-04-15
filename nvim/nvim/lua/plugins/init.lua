@@ -8,12 +8,15 @@ return {
         keys = {
             '<leader><space>', '<cmd>WhichKey<cr>',
         },
-        config = true,
+        config = function(plugin)
+            require('which-key').setup {}
+        end,
         lazy = false, -- load on start
     },
 
     {
         'EdenEast/nightfox.nvim',
+        lazy = false,
         config = function(plugin)
             -- intentionally setting it here so i can have a default theme when
             -- this is not available

@@ -57,13 +57,16 @@ return {
             require('mason').setup()
             local mason_lspconfig = require('mason-lspconfig')
 
-            -- TODO clean this up and put it all in lsp.lua
             mason_lspconfig.setup(configs.mason_lsp)
             mason_lspconfig.setup_handlers {
                 function(server_name)
                     require('lspconfig')[server_name].setup {
                         capabilities = capabilities,
-                        --on_attach = on_attach,
+                        on_attach = function()
+                            vim.keymap.set({ 'n' }, '<F2>', function() vim.diagnostic.open_float(nil, { focus = false }) end, { desc = 'Show diagnostics', buffer = true, silent = true })
+
+                            -- TODO add keybindings for diagnostics in whole file, all buffers etc
+                        end,
                         settings = configs[server_name],
                     }
                 end,
@@ -77,7 +80,7 @@ return {
 
             -- load snippets lazily
             require("luasnip.loaders.from_snipmate").lazy_load()
-            require("luasnip.loaders.from_lua").lazy_load({paths = "~/.config/nvim/LuaSnip/"})
+            require("luasnip.loaders.from_lua").lazy_load({ paths = "~/.config/nvim/LuaSnip/" })
 
             cmp.setup {
                 snippet = {
@@ -128,6 +131,18 @@ return {
                     { name = 'luasnip' },
                 },
             }
+
+            vim.diagnostic.config({
+                underline = false,
+                signs = true,
+                virtual_text = true,
+                float = {
+                    show_header = true,
+                    source = 'always',
+                    border = 'rounded',
+                    focusable = false,
+                },
+            })
         end,
     },
 }
