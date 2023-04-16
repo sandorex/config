@@ -33,7 +33,6 @@ return {
     {
         'neovim/nvim-lspconfig',
         lazy = false,
-        -- event = { 'BufReadPre', 'BufNewFile' },
         dependencies = {
             'williamboman/mason.nvim',
             'williamboman/mason-lspconfig.nvim',
@@ -63,7 +62,28 @@ return {
                     require('lspconfig')[server_name].setup {
                         capabilities = capabilities,
                         on_attach = function()
-                            vim.keymap.set({ 'n' }, '<F2>', function() vim.diagnostic.open_float(nil, { focus = false }) end, { desc = 'Show diagnostics', buffer = true, silent = true })
+                            -- add toggle for floating diagnostics
+                            local group_name = 'core_float_diagnostics'
+                            local set_floating_diagnostics = function(value)
+                                if value == nil then
+                                    value = not vim.b.float_diagnostics_enabled
+                                end
+
+                                local group = vim.api.nvim_create_augroup(group_name, { clear = true })
+                                if value then
+                                    vim.api.nvim_create_autocmd('CursorHold', {
+                                        desc = 'Open diagnostics floating window automatically',
+                                        group = group,
+                                        callback = function()
+                                            vim.diagnostic.open_float(nil, { focus = false })
+                                        end
+                                    })
+                                end
+
+                                vim.b.float_diagnostics_enabled = value
+                            end
+
+                            vim.keymap.set({ 'n' }, '<F2>f', function() set_floating_diagnostics(nil) end, { desc = 'Toggle between floating and inline diagnostics', buffer = true, silent = true })
 
                             -- TODO add keybindings for diagnostics in whole file, all buffers etc
                         end,
