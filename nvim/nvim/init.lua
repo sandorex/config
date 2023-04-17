@@ -38,7 +38,7 @@ local options = {
     -- key timeout timing, setting this too high will break WhichKey but
     -- setting it too low will make it harder to hit combo keys
     timeout = true,
-    timeoutlen = 500,
+    timeoutlen = 300,
 
     foldmethod = 'marker',
     foldmarker = '--/,/--',

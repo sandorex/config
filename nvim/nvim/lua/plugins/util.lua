@@ -4,27 +4,6 @@ vim.g.localmapleader = ' '
 
 return {
     {
-        'folke/which-key.nvim',
-        keys = {
-            '<leader><space>', '<cmd>WhichKey<cr>',
-        },
-        config = function(plugin)
-            require('which-key').setup {}
-        end,
-        lazy = false, -- load on start
-    },
-
-    {
-        'EdenEast/nightfox.nvim',
-        lazy = false,
-        config = function(plugin)
-            -- intentionally setting it here so i can have a default theme when
-            -- this is not available
-            vim.cmd('colorscheme carbonfox')
-        end,
-    },
-
-    {
         'stevearc/resession.nvim',
         config = function(plugin)
             local resession = require('resession')
@@ -78,7 +57,10 @@ return {
         build = ':call fzf#install()',
     },
 
-    -- nicer icons, probably useless?
-    --'nvim-tree/nvim-web-devicons',
+    {
+        'folke/which-key.nvim',
+        lazy = false, -- load on start
+        config = true,
+    },
 }
 

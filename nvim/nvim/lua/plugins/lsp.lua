@@ -83,6 +83,9 @@ return {
                                 vim.b.float_diagnostics_enabled = value
                             end
 
+                            -- default to true
+                            set_floating_diagnostics(true)
+
                             vim.keymap.set({ 'n' }, '<F2>f', function() set_floating_diagnostics(nil) end, { desc = 'Toggle between floating and inline diagnostics', buffer = true, silent = true })
 
                             -- TODO add keybindings for diagnostics in whole file, all buffers etc
