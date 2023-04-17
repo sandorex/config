@@ -14,7 +14,15 @@ trysource() {
 # load linux terminal theming
 \. ~/.shell/bare-terminal-theming.sh
 
-export PATH="$PATH":"$HOME"/.bin
+PATH="$PATH:$HOME/.bin"
+PATH="$PATH:$HOME/.local/bin"
+PATH="$PATH:$HOME/.cargo/bin"
+PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
+PATH="/home/sandorex/.local/share/fnm:$PATH"
+eval "`fnm env`"
+
+export PATH
+# loads the actual configuration
 
 # set neovim as default editor
 export EDITOR=nvim

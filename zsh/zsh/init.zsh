@@ -61,6 +61,19 @@ source ~/.config/zsh/plugins.zsh
 bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word
 
+# make tab on empty buffer autocomplete like cd
+first-tab() {
+    if [[ $#BUFFER == 0 ]]; then
+        BUFFER="cd "
+        CURSOR=3
+        zle list-choices
+    else
+        zle expand-or-complete
+    fi
+}
+zle -N first-tab
+bindkey '^I' first-tab
+
 # delete and ctrl delete
 bindkey '^[[3~' delete-char
 bindkey "^[[3;5~" delete-word
@@ -74,4 +87,7 @@ bindkey "^Q" push-input
 autoload -z edit-command-line
 zle -N edit-command-line
 bindkey "^X^E" edit-command-line
+
+# sets title on startup as zsh doesnt do it automatically
+echo -en "\033]0;$(pwd)\a"
 
