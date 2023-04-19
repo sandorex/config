@@ -43,7 +43,8 @@ __prompt_cmd() {
         tput sgr0
     fi
 
-    [ -n "$TMUX" ] && echo -en "\033]0;$(pwd)\a"
+    # set title
+    echo -en "\033]0;$(pwd)\a"
 }
 
 PROMPT_COMMAND="__prompt_cmd ; $PROMPT_COMMAND"

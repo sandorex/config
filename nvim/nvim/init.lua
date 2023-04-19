@@ -2,10 +2,11 @@ local options = {
     encoding = 'utf-8',
 
     -- indent options
-    tabstop = 4,
-    shiftwidth = 4,
-    softtabstop = 4,
+    autoindent = true,
     expandtab = true,
+    tabstop = 4,
+    softtabstop = 4,
+    shiftwidth = 4,
 
     showmode = false,
 

@@ -15,11 +15,9 @@ PROMPT='%F{green}%# '
 RPROMPT='%(?..%B%F{red}[ %?%  ]%b)' # show exit code if not 0
 
 # set title to pwd whenever it changes
-if [[ -n "$TMUX" ]]; then
-    chpwd() {
-        echo -en "\033]0;$(pwd)\a"
-    }
-fi
+chpwd() {
+    echo -en "\033]0;$(pwd)\a"
+}
 
 ## OPTIONS ##
 HISTFILE=~/.zhistory
@@ -39,6 +37,7 @@ setopt no_banghist  # disable !x history expansion
 
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
+zstyle ':completion:*' completer _complete _ignored _files
 
 # this has to be below options
 autoload -Uz compinit
@@ -73,6 +72,9 @@ first-tab() {
 }
 zle -N first-tab
 bindkey '^I' first-tab
+
+# tmux messes it up so im redefining it here
+bindkey '^R' history-incremental-search-backward
 
 # delete and ctrl delete
 bindkey '^[[3~' delete-char
