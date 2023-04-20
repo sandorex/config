@@ -2,13 +2,15 @@
 #
 # init.zsh - the actual initialization of zsh
 
-alias reload-shell='compinit; source ~/.zshrc'
-alias reload-zsh='compinit; source ~/.zshrc'
-
-source ~/.shell/init.sh
+source ~/.shell/path.sh
 
 # the rest is only if it's an interactive shell
 [[ -o interactive ]] || return
+
+source ~/.shell/init.sh
+
+alias reload-shell='compinit; source ~/.zshrc'
+alias reload-zsh='compinit; source ~/.zshrc'
 
 # minimal prompt
 PROMPT='%F{green}%# '
@@ -72,6 +74,20 @@ first-tab() {
 }
 zle -N first-tab
 bindkey '^I' first-tab
+
+# makes ctrl z on empty buffer run fg
+fg-switcher() {
+    # TODO select the job you want to continue?
+    # for now only working if there is only one job
+    if [[ $#BUFFER -eq 0 ]] && [[ "$(jobs -sp | wc -l)" -eq 1 ]]; then
+        fg
+        zle redisplay
+    else
+        zle push-input
+    fi
+}
+zle -N fg-switcher
+bindkey '^Z' fg-switcher
 
 # tmux messes it up so im redefining it here
 bindkey '^R' history-incremental-search-backward

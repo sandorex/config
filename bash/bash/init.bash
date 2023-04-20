@@ -2,11 +2,11 @@
 #
 # init.bash - init file for bash, either loaded from bashrc or ran directly
 
-alias reload-shell='source ~/.bashrc'
-alias reload-bash='source ~/.bashrc'
-
 # shellcheck source=../../shell/shell/init.sh
 \. ~/.shell/init.sh
+
+alias reload-shell='source ~/.bashrc'
+alias reload-bash='source ~/.bashrc'
 
 # append to history
 shopt -s histappend
