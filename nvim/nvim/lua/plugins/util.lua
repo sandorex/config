@@ -1,4 +1,4 @@
--- -- NOTE has to be defined in this file for some reason..
+-- NOTE has to be defined in every file for some reason..
 vim.g.mapleader = ' '
 vim.g.localmapleader = ' '
 

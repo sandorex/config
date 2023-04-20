@@ -22,9 +22,13 @@ vim.keymap.set('n', '<space>W', '<cmd>wall<cr>', { silent = true })
 vim.keymap.set('n', '<space>e', ':e ', { desc = 'Open file' })
 vim.keymap.set('n', '<space>E', ':tabe ', { desc = 'Open file (tab)' })
 
--- move content
+-- move content lines
 vim.keymap.set('n', '<A-Up>', '<cmd>m .-2<cr>==', { desc = 'Move line up', silent = true })
 vim.keymap.set('n', '<A-Down>', '<cmd>m .+1<cr>==', { desc = 'Move line down', silent = true })
+
+-- NOTE: intentionally using ':' instead of <cmd> as it does not work with visual mode
+vim.keymap.set("v", "<A-Up>", ":m '<-2<cr>gv=gv", { desc = 'Move lines up', silent = true })
+vim.keymap.set("v", "<A-Down>", ":m '>+1<cr>gv=gv", { desc = 'move lines down', silent = true })
 
 -- explore
 vim.keymap.set('n', '<space>f', '<cmd>E<cr>', { desc = 'Open netrw in cwd', silent = true })

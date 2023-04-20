@@ -14,7 +14,7 @@ local options = {
     --cursorlineopt = 'number',
 
     -- set terminal title
-    title = os.getenv('TMUX') ~= nil,
+    title = true,
 
     -- enable clipboard syncing, works with tmux without any additional config
     clipboard = 'unnamedplus',
@@ -90,10 +90,30 @@ vim.opt.runtimepath:remove("/usr/share/vim/vimfiles")
 vim.cmd([[autocmd FileType json syntax match Comment +\/\/.\+$+]])
 
 -- remove trailing whitespaces
-vim.api.nvim_create_autocmd({ "BufWritePre" }, {
+local group = vim.api.nvim_create_augroup('whitespace-remover', {})
+vim.api.nvim_create_autocmd("BufWritePre", {
+    group = group,
     pattern = { "*" },
     command = [[%s/\s\+$//e]],
 })
+
+local function toggle_cursor_centering(value)
+    if value == nil then
+        value = not vim.g.cursor_centering
+    end
+
+    group = vim.api.nvim_create_augroup('cursor-center', {})
+    if value then
+        vim.api.nvim_create_autocmd("CursorMoved", {
+            group = group,
+            command = 'norm! zz',
+        })
+    end
+
+    vim.g.cursor_centering = value
+end
+
+toggle_cursor_centering(false)
 
 vim.api.nvim_create_user_command('CoreHealth', 'checkhealth core', {})
 
