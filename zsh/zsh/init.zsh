@@ -16,9 +16,16 @@ alias reload-zsh='compinit; source ~/.zshrc'
 PROMPT='%F{green}%# '
 RPROMPT='%(?..%B%F{red}[ %?%  ]%b)' # show exit code if not 0
 
+ZSH_AUTOCD_LS=true
+
 # set title to pwd whenever it changes
 chpwd() {
     echo -en "\033]0;$(pwd)\a"
+
+    # list files on dir change
+    if [ "$ZSH_AUTOCD_LS" = true ]; then
+        ls -F
+    fi
 }
 
 ## OPTIONS ##
