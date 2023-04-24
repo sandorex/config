@@ -2,11 +2,20 @@
 #
 # init.bash - init file for bash, either loaded from bashrc or ran directly
 
-# shellcheck source=../../shell/shell/init.sh
-\. ~/.shell/init.sh
+# shellcheck source=../../shell/shell/path.sh
+source ~/.config/shell/path.sh
+
+# If not running interactively, don't do anything
+case $- in
+    *i*) ;;
+      *) return;;
+esac
 
 alias reload-shell='source ~/.bashrc'
 alias reload-bash='source ~/.bashrc'
+
+# updates LINES & COLUMN
+shopt -s checkwinsize
 
 # append to history
 shopt -s histappend
@@ -49,4 +58,18 @@ __prompt_cmd() {
 
 PROMPT_COMMAND="__prompt_cmd ; $PROMPT_COMMAND"
 PS1='\[$(tput setaf 2)\]$\[$(tput sgr0)\] '
+
+# enable bash completion
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# shellcheck source=../../shell/shell/aliases.sh
+source ~/.config/shell/aliases.sh
 

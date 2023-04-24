@@ -2,8 +2,13 @@
 #
 # install.sh - links git config and sets the identity
 
-cd "$(dirname "${BASH_SOURCE[0]}")" || exit
+cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
+
 . ../config.sh
+
+if is-installed git; then
+    exit
+fi
 
 if [[ -z "$GIT_USERNAME" ]] || [[ -z "$GIT_EMAIL" ]]; then
     echo "Please set GIT_USERNAME and GIT_EMAIL for git identity"

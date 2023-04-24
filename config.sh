@@ -17,3 +17,15 @@ fi
 # add tools and scripts to path
 export PATH="$ROOT"/bin/bin/util:$PATH
 
+export STATE_DIR="$ROOT/state"
+is-installed() {
+    [[ ! -d "$STATE_DIR" ]] && mkdir -p "$STATE_DIR"
+
+    if [[ -e "$STATE_DIR/$1" ]]; then
+        return 0
+    else
+        touch "$STATE_DIR/$1"
+        return 1
+    fi
+}
+

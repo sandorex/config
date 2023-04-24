@@ -7,13 +7,15 @@ PATH="$PATH:$HOME/.local/bin"
 PATH="$PATH:$HOME/.cargo/bin"
 PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
 PATH="/home/sandorex/.local/share/fnm:$PATH"
-eval "$(fnm env)"
+if command -v fnm >/dev/null; then
+    eval "$(fnm env)"
+fi
 
 export PATH
 
 # set neovim as default editor
 export EDITOR=nvim
-export SUDO_EDITOR=nvim
+export SUDO_EDITOR=nano
 
 # set ls colors
-eval "$(dircolors --sh ~/.shell/gruvbox.dircolors)"
+eval "$(dircolors --sh ~/.config/shell/gruvbox.dircolors)"

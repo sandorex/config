@@ -11,6 +11,5 @@ set show-all-if-ambiguous On
 set show-all-if-unmodified On
 set visible-stats On
 
-
 # vim: filetype=readline syntax=readline
 

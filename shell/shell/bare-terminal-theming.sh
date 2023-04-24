@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 # bare-terminal-theming.sh - sets colors for bare linux terminal
 
@@ -21,6 +21,7 @@ if [ "$TERM" = "linux" ]; then
   \e]PE52bdff
   \e]PFe4e4e5
   "
+
   # get rid of artifacts
   clear
 fi
