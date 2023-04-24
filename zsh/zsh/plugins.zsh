@@ -5,10 +5,10 @@
 # sudo plugin, press escape to sudo a command
 source "${0:A:h}"/plugins/ohmyzsh/plugins/sudo/sudo.plugin.zsh
 
-# fish like abbrev
-source "${0:A:h}"/plugins/zsh-abbr/zsh-abbr.zsh
+# fish like abbreviations
+source "${0:A:h}"/plugins/abbrevs.zsh
 
 # THIS HAS TO BE LAST!!
-# highlighting
+# syntax highlighting
 source "${0:A:h}"/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 

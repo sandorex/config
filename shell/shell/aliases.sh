@@ -1,12 +1,30 @@
 #!/bin/sh
 #
 # aliases.sh - aliases for bash and zsh
+#
+# this script is sourced by both bash and zsh, beware of bashisms
 
-alias e='nvim'
-alias se='sudo -e'
+[[ -n "$ZSH_VERSION" ]] && abbr-clear
 
-alias -- -='cd -'
+# macro to create aliases and abbreviations without duplicated code
+abbr() {
+    if [[ -n "$ZSH_VERSION" ]]; then
+        # shellcheck disable=SC2086
+        abbr-add $1 $2
+    else
+        # shellcheck disable=SC2139
+        alias -- "$1=$2"
+    fi
+}
 
+abbr e "$EDITOR"
+abbr s 'sudo'
+abbr se 'sudo -e'
+
+abbr '-' 'cd -'
+
+# -F adds character to symbolize type of file, directory is a slash
+# star for an executable.. etc
 alias ls='ls -F --color=auto'
 alias l='ls -lF --color=auto'
 alias ll='ls -alF --color=auto'
@@ -15,21 +33,6 @@ alias grep='grep --color=auto'
 alias rcat='cat -A' # safely read escape sequences
 
 alias cal='cal -3'
-
-# tmux aliases
-if command -v tmux &> /dev/null; then
-    if test -n "$TMUX"; then
-        alias reload-tmux='tmux source-file ~/.config/tmux/tmux.conf'
-        alias msg='tmux display-message -d 0'
-        alias detach='tmux detach'
-    fi
-
-    alias lses='tmux list-session'
-
-    kses() {
-        tmux kill-session -t "${1:-$USER}"
-    }
-fi
 
 # termux aliases
 if command -v termux-setup-storage; then

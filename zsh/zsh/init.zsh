@@ -7,7 +7,8 @@ source ~/.shell/path.sh
 # the rest is only if it's an interactive shell
 [[ -o interactive ]] || return
 
-source ~/.shell/init.sh
+# load bare console colors
+source ~/.shell/bare-terminal-theming.sh
 
 alias reload-shell='compinit; source ~/.zshrc'
 alias reload-zsh='compinit; source ~/.zshrc'
@@ -16,22 +17,19 @@ alias reload-zsh='compinit; source ~/.zshrc'
 PROMPT='%F{green}%# '
 RPROMPT='%(?..%B%F{red}[ %?%  ]%b)' # show exit code if not 0
 
-ZSH_AUTOCD_LS=true
-
-# set title to pwd whenever it changes
 chpwd() {
+    # set title to pwd whenever it changes
     echo -en "\033]0;$(pwd)\a"
 
     # list files on dir change
-    if [ "$ZSH_AUTOCD_LS" = true ]; then
-        ls -F
-    fi
+    ls --color=auto -F
 }
 
 ## OPTIONS ##
 HISTFILE=~/.zhistory
 HISTSIZE=SAVEHIST=10000
 setopt extended_history append_history hist_ignore_dups hist_ignore_space
+# TODO save history after every command like in bash
 
 setopt no_beep      # no bell
 setopt no_clobber   # do not overwrite stuff with redirection
@@ -39,7 +37,7 @@ setopt no_match     # error when glob doesnt match anything
 setopt auto_cd      # cd into a dir by typing in the path
 setopt notify       # report when background job finishes
 setopt long_list_jobs # long format for jobs
-setopt no_globdots  # TODO figure out what this does exactly
+setopt no_globdots
 setopt extendedglob
 setopt no_caseglob
 setopt no_banghist  # disable !x history expansion
@@ -47,6 +45,9 @@ setopt no_banghist  # disable !x history expansion
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' completer _complete _ignored _files
+
+# time commands that take longer than 10 second system/cpu time
+REPORTTIME=10
 
 # this has to be below options
 autoload -Uz compinit
@@ -64,13 +65,18 @@ _comp_options+=(globdots)
 # load all plugins
 source ~/.config/zsh/plugins.zsh
 
+# load aliases
+source ~/.shell/aliases.sh
+
 ## KEYBINDINGS ##
-# left / right arrow keys
+# ctr + left / right arrow keys
 bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word
 
 # make tab on empty buffer autocomplete like cd
 first-tab() {
+    emulate -LR zsh
+
     if [[ $#BUFFER == 0 ]]; then
         BUFFER="cd "
         CURSOR=3
@@ -84,6 +90,8 @@ bindkey '^I' first-tab
 
 # makes ctrl z on empty buffer run fg
 fg-switcher() {
+    emulate -LR zsh
+
     # TODO select the job you want to continue?
     # for now only working if there is only one job
     if [[ $#BUFFER -eq 0 ]] && [[ "$(jobs -sp | wc -l)" -eq 1 ]]; then
