@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#
+# tmux-select - select session to attach to
+
+tmux attach -t "$(tmux ls -F "#{session_id} #{session_name}" | fzf | awk '{ print $1 }')"
+
