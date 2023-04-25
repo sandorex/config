@@ -18,11 +18,15 @@ PROMPT='%F{green}%# '
 RPROMPT='%(?..%B%F{red}[ %?%  ]%b)' # show exit code if not 0
 
 chpwd() {
-    # set title to pwd whenever it changes
-    echo -en "\033]0;$(pwd)\a"
-
     # list files on dir change
     ls --color=auto -F
+}
+
+precmd() {
+    # update the title
+    # this used to be in chpwd but leaving another application would leave old
+    # title
+    echo -en "\033]0;$(pwd)\a"
 }
 
 ## OPTIONS ##

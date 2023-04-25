@@ -4,24 +4,30 @@
 #
 # this script is sourced by both bash and zsh, beware of bashisms
 
-[[ -n "$ZSH_VERSION" ]] && abbr-clear
+# abbr makes an abbreviation in zsh, but is an alias in bash
+if [[ -n "$ZSH_VERSION" ]]; then
+    abbr-clear
 
-# macro to create aliases and abbreviations without duplicated code
-abbr() {
-    if [[ -n "$ZSH_VERSION" ]]; then
+    abbr() {
         # shellcheck disable=SC2086
         abbr-add $1 $2
-    else
+    }
+else
+    # bash does not support it so
+
+    abbr() {
         # shellcheck disable=SC2139
         alias -- "$1=$2"
-    fi
-}
+    }
+fi
 
 abbr e "$EDITOR"
 abbr s 'sudo'
 abbr se 'sudo -e'
 
 abbr '-' 'cd -'
+
+abbr g 'git'
 
 # -F adds character to symbolize type of file, directory is a slash
 # star for an executable.. etc
