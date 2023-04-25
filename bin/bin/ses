@@ -9,7 +9,7 @@ SESSION=${1:-$USER}
 # create the session with default window name if it does not exist
 tmux has-session -t "$SESSION"
 if [[ $? -eq 1 ]]; then
-    tmux new-session -d -s "$SESSION" -n "/" >/dev/null
+    tmux new-session -d -s "$SESSION" >/dev/null
 fi
 
 # attach to the session
