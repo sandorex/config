@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 #
-# tmux-select - select session to attach to
+# tmux-select - select session to attach to without any external dependencies
 
-tmux attach -t "$(tmux ls -F "#{session_id} #{session_name}" | fzf | awk '{ print $1 }')"
+if [[ -n "$TMUX" ]]; then
+    # nothing special in this case, just run it in the existing session
+    tmux choose-tree -s
+else
+    # create temporary session without a status bar and kill it after switch
+    # using /bin/sh to skip any initialization that may slow things down
+    tmux new-session -s _tmux_select '/bin/sh' \; \
+         set status off \; \
+         choose-tree -s -f "#{!=:#{session_name},_tmux_select}" "switch-client -t '%%'; kill-session -t _tmux_select"
+fi
 
