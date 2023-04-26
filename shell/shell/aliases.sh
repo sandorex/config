@@ -24,6 +24,7 @@ fi
 abbr e "$EDITOR"
 abbr s 'sudo'
 abbr se 'sudo -e'
+abbr ts 'tmux-select'
 
 abbr '-' 'cd -'
 

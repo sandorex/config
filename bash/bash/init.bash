@@ -73,3 +73,4 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 # shellcheck source=../../shell/shell/aliases.sh
 source ~/.config/shell/aliases.sh
 
+~/.config/shell/init.sh

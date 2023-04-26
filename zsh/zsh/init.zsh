@@ -2,13 +2,13 @@
 #
 # init.zsh - the actual initialization of zsh
 
-source ~/.shell/path.sh
+source ~/.config/shell/path.sh
 
 # the rest is only if it's an interactive shell
 [[ -o interactive ]] || return
 
 # load bare console colors
-source ~/.shell/bare-terminal-theming.sh
+source ~/.config/shell/bare-terminal-theming.sh
 
 alias reload-shell='source ~/.zshrc; compinit'
 alias reload-zsh='source ~/.zshrc; compinit'
@@ -70,7 +70,7 @@ _comp_options+=(globdots)
 source ~/.config/zsh/plugins.zsh
 
 # load aliases
-source ~/.shell/aliases.sh
+source ~/.config/shell/aliases.sh
 
 ## KEYBINDINGS ##
 # ctr + left / right arrow keys
@@ -128,4 +128,6 @@ bindkey "^Q" push-input
 autoload -z edit-command-line
 zle -N edit-command-line
 bindkey "^X^E" edit-command-line
+
+~/.config/shell/init.sh
 
