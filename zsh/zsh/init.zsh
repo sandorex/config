@@ -10,11 +10,11 @@ source ~/.shell/path.sh
 # load bare console colors
 source ~/.shell/bare-terminal-theming.sh
 
-alias reload-shell='compinit; source ~/.zshrc'
-alias reload-zsh='compinit; source ~/.zshrc'
+alias reload-shell='source ~/.zshrc; compinit'
+alias reload-zsh='source ~/.zshrc; compinit'
 
 # minimal prompt
-PROMPT='%F{green}%# '
+PROMPT='%(?.%F{green}.%F{red})%% '
 RPROMPT='%(?..%B%F{red}[ %?%  ]%b)' # show exit code if not 0
 
 chpwd() {
