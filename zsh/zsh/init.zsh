@@ -96,10 +96,14 @@ bindkey '^I' first-tab
 fg-switcher() {
     emulate -LR zsh
 
-    # TODO select the job you want to continue?
-    # for now only working if there is only one job
-    if [[ $#BUFFER -eq 0 ]] && [[ "$(jobs -sp | wc -l)" -eq 1 ]]; then
-        fg
+    job_count=$(jobs | wc -l)
+    if [[ $#BUFFER -eq 0 ]] && [[ "$job_count" -ne 0 ]]; then
+        if [[ "$job_count" -gt 1 ]]; then
+            job_id=$(jobs | fzf | gawk 'match($0, /\[([0-9]+)\] .*/, g) { print "%" g[1] }')
+            fg "$job_id"
+        else
+            fg
+        fi
         zle redisplay
     else
         zle push-input
@@ -124,7 +128,4 @@ bindkey "^Q" push-input
 autoload -z edit-command-line
 zle -N edit-command-line
 bindkey "^X^E" edit-command-line
-
-# sets title on startup as zsh doesnt do it automatically
-echo -en "\033]0;$(pwd)\a"
 
