@@ -8,6 +8,8 @@ source "${0:A:h}"/plugins/ohmyzsh/plugins/sudo/sudo.plugin.zsh
 # fish like abbreviations
 source "${0:A:h}"/plugins/abbrevs.zsh
 
+source "${0:A:h}"/plugins/job-switcher.zsh
+
 # THIS HAS TO BE LAST!!
 # syntax highlighting
 source "${0:A:h}"/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
