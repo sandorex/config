@@ -14,7 +14,7 @@ alias reload-shell='source ~/.zshrc; compinit'
 alias reload-zsh='source ~/.zshrc; compinit'
 
 # minimal prompt
-PROMPT='%(?.%F{green}.%F{red})%% '
+PROMPT='%F{green}%% '
 RPROMPT='%(?..%B%F{red}[ %?%  ]%b)' # show exit code if not 0
 
 chpwd() {
