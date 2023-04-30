@@ -45,7 +45,7 @@ _abbr_try_expand() {
     fi
 }
 
-abbr-space-n-expand() {
+_abbr-space-n-expand() {
     emulate -LR zsh
 
     _abbr_try_expand
@@ -53,18 +53,18 @@ abbr-space-n-expand() {
     # insert the space
     zle self-insert
 }
-zle -N abbr-space-n-expand
-bindkey ' ' abbr-space-n-expand
+zle -N _abbr-space-n-expand
+bindkey ' ' _abbr-space-n-expand
 
-abbr-enter-n-expand() {
+_abbr-enter-n-expand() {
     emulate -LR zsh
 
     _abbr_try_expand
 
     zle accept-line
 }
-zle -N abbr-enter-n-expand
-bindkey '^M' abbr-enter-n-expand
+zle -N _abbr-enter-n-expand
+bindkey '^M' _abbr-enter-n-expand
 
 # enter space without expansion
 bindkey "^ " magic-space

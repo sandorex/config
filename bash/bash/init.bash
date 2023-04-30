@@ -2,8 +2,7 @@
 #
 # init.bash - init file for bash, either loaded from bashrc or ran directly
 
-# shellcheck source=../../shell/shell/path.sh
-source ~/.config/shell/path.sh
+source "$HOME"/.config/shell/path.sh
 
 # If not running interactively, don't do anything
 case $- in
@@ -70,7 +69,10 @@ fi
 
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# shellcheck source=../../shell/shell/aliases.sh
-source ~/.config/shell/aliases.sh
+# fish like abbreviations
+# HAS TO BE LOADED BEFORE ALIASES
+source "$HOME"/.config/shell/plugins/sha-abbr/sha-abbr.bash
 
-~/.config/shell/init.sh
+source "$HOME"/.config/shell/aliases.sh
+
+"$HOME"/.config/shell/init.sh

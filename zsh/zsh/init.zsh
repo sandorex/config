@@ -2,13 +2,13 @@
 #
 # init.zsh - the actual initialization of zsh
 
-source ~/.config/shell/path.sh
+source "$HOME"/.config/shell/path.sh
 
 # the rest is only if it's an interactive shell
 [[ -o interactive ]] || return
 
 # load bare console colors
-source ~/.config/shell/bare-terminal-theming.sh
+source "$HOME"/.config/shell/bare-terminal-theming.sh
 
 alias reload-shell='source ~/.zshrc; compinit'
 alias reload-zsh='source ~/.zshrc; compinit'
@@ -57,7 +57,7 @@ REPORTTIME=10
 autoload -Uz compinit
 
 # generate compinit only every 8 hours
-for _ in ~/.zcompdump(N.mh+8); do
+for _ in "$HOME"/.zcompdump(N.mh+8); do
     compinit
 done
 
@@ -67,10 +67,10 @@ compinit -C
 _comp_options+=(globdots)
 
 # load all plugins
-source ~/.config/zsh/plugins.zsh
+source "$HOME"/.config/zsh/plugins.zsh
 
 # load aliases
-source ~/.config/shell/aliases.sh
+source "$HOME"/.config/shell/aliases.sh
 
 ## KEYBINDINGS ##
 # ctr + left / right arrow keys
@@ -78,7 +78,7 @@ bindkey '^[[1;5D' backward-word
 bindkey '^[[1;5C' forward-word
 
 # make tab on empty buffer autocomplete like cd
-first-tab() {
+_first-tab() {
     emulate -LR zsh
 
     if [[ $#BUFFER == 0 ]]; then
@@ -89,8 +89,8 @@ first-tab() {
         zle expand-or-complete
     fi
 }
-zle -N first-tab
-bindkey '^I' first-tab
+zle -N _first-tab
+bindkey '^I' _first-tab
 
 # tmux messes it up so im redefining it here
 bindkey '^R' history-incremental-search-backward
@@ -109,5 +109,5 @@ autoload -z edit-command-line
 zle -N edit-command-line
 bindkey "^X^E" edit-command-line
 
-~/.config/shell/init.sh
+"$HOME"/.config/shell/init.sh
 

@@ -5,9 +5,6 @@
 # sudo plugin, press escape to sudo a command
 source "${0:A:h}"/plugins/ohmyzsh/plugins/sudo/sudo.plugin.zsh
 
-# fish like abbreviations
-source "${0:A:h}"/plugins/abbrevs.zsh
-
 source "${0:A:h}"/plugins/job-switcher.zsh
 
 # THIS HAS TO BE LAST!!
