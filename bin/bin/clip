@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+#
+# clip - helper script for clipboard management
+#
+# uses xclip or tmux
+
+# default to xclip if it exists
+if command -v xclip &>/dev/null; then
+    clip-in() {
+        xclip -sel clip
+    }
+
+    clip-out() {
+        xclip -sel clip -out
+    }
+else
+    clip-in() {
+        tmux load-buffer -
+    }
+
+    clip-out() {
+        tmux save-buffer -
+    }
+fi
+
+# check if there is any data piped in
+if [ -p /dev/stdin ]; then
+    cat | clip-in
+else
+    # if arg provided then put into clipboard
+    if [[ -n "$1" ]]; then
+        echo "$1" | clip-in
+    else
+        clip-out
+    fi
+fi
