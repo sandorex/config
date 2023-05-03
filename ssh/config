@@ -1,0 +1,6 @@
+# allows specific keys to be automatically used for hosts and optionally specific users
+# git@github.com -> ~/.ssh/id_hostname_git@github.com
+Host *
+    IdentityFile %d/.ssh/id_%l_%r@%h
+    IdentityFile %d/.ssh/id_%l@%h
+    IdentitiesOnly yes
