@@ -1,6 +1,7 @@
-# allows specific keys to be automatically used for hosts and optionally specific users
-# git@github.com -> ~/.ssh/id_hostname_git@github.com
+# for example user@github.com for computer host will go to
+# ~/.ssh/_computer/user@github.com or just @github.com as
+# fallback
 Host *
-    IdentityFile %d/.ssh/id_%l_%r@%h
-    IdentityFile %d/.ssh/id_%l@%h
+    IdentityFile %d/.ssh/_%l/%r@%h
+    IdentityFile %d/.ssh/_%l/@%h
     IdentitiesOnly yes
