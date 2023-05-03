@@ -14,7 +14,14 @@ fi
 export PATH
 
 # set neovim as default editor
-export EDITOR=nvim
+# nano is default unless nvim exists or sudo
+EDITOR=nano
+
+if command -v nvim &>/dev/null; then
+    EDITOR=nvim
+fi
+
+export EDITOR
 export SUDO_EDITOR=nano
 
 # set ls colors
