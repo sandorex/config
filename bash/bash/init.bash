@@ -75,4 +75,8 @@ source "$HOME"/.config/shell/plugins/sha-abbr/sha-abbr.bash
 
 source "$HOME"/.config/shell/aliases.sh
 
+if [[ -f "$HOME"/.config/shell/custom.sh ]]; then
+    source "$HOME"/.config/shell/custom.sh
+fi
+
 "$HOME"/.config/shell/init.sh

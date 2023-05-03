@@ -109,5 +109,8 @@ autoload -z edit-command-line
 zle -N edit-command-line
 bindkey "^X^E" edit-command-line
 
-"$HOME"/.config/shell/init.sh
+if [[ -f "$HOME"/.config/shell/custom.sh ]]; then
+    source "$HOME"/.config/shell/custom.sh
+fi
 
+"$HOME"/.config/shell/init.sh
