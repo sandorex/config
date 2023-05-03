@@ -13,9 +13,17 @@ source "$HOME"/.config/shell/bare-terminal-theming.sh
 alias reload-shell='source ~/.zshrc; compinit'
 alias reload-zsh='source ~/.zshrc; compinit'
 
+PROMPT_PREFIX=
+
+if [[ "$container" = "oci" ]]; then
+    PROMPT_PREFIX='%F{4}󰡖 '
+fi
+
 # minimal prompt
-PROMPT='%F{green}%% '
+PROMPT=$PROMPT_PREFIX'%F{green}%% '
 RPROMPT='%(?..%B%F{red}[ %?%  ]%b)' # show exit code if not 0
+
+unset PROMPT_PREFIX
 
 chpwd() {
     # list files on dir change
