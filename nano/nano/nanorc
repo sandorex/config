@@ -1,0 +1,52 @@
+# nano config, this could be sutable for root usage too
+
+# indentation
+set tabsize 4
+set tabstospaces
+
+# column guide at 80 characters
+set guidestripe 80
+
+# wrap at blanks in line
+set atblanks
+
+# delete and backspace deletes marked region
+set zap
+
+# trim whitespaces from wrapped lines
+set trimblanks
+
+# reads file with ^R as new buffer
+set multibuffer
+
+# shows flags for I auto-indent, M mark, L hard wrapping, R macro, S soft wrap
+set stateflags
+
+# theming
+set stripecolor cyan,yellow
+set numbercolor white,normal
+
+# allows ^S and ^Q
+set preserve
+
+# hides help at the bottom
+set nohelp
+
+## Keybindings
+bind ^Z suspend main
+
+# i am appalled at default keybindings for these..
+bind M-Z undo main
+bind Sh-M-Z redo main
+bind M-Y redo main
+
+# alt + {X, C, V} => cut, copy, paste
+bind M-X cut main
+bind M-C copy main
+bind M-V paste main
+
+# rebind this as it may be useful
+bind ^V verbatim main
+
+# i did not know nano could automatically comment things, wow
+bind Sh-M-C comment main

@@ -7,3 +7,5 @@ if command -v tmux &>/dev/null; then
     tmux start-server
 fi
 
+# allows ^S usage, legacy stuff
+stty -ixon
