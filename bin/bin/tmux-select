@@ -16,7 +16,6 @@ else
     # using /bin/sh to skip any initialization that may slow things down
     tmux new-session -s _tmux_select '/bin/sh' \; \
          set status off \; \
-         unbind d \; \
          choose-tree -s -f "#{!=:#{session_name},_tmux_select}" "switch-client -t '%%'; kill-session -t _tmux_select"
 fi
 

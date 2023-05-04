@@ -105,17 +105,20 @@ bindkey '^R' history-incremental-search-backward
 
 # delete and ctrl delete
 bindkey '^[[3~' delete-char
-bindkey "^[[3;5~" delete-word
+bindkey '^[[3;5~' delete-word
 
 # ctrl backspace
 bindkey '^H' backward-delete-word
 
 stty -ixon # enables ^Q and ^S
-bindkey "^Q" push-input
+bindkey '^Q' push-input
 
 autoload -z edit-command-line
 zle -N edit-command-line
-bindkey "^X^E" edit-command-line
+bindkey '^X^E' edit-command-line
+
+# run tmux-select
+bindkey -s '' 'tmux-select\n'
 
 if [[ -f "$HOME"/.config/shell/custom.sh ]]; then
     source "$HOME"/.config/shell/custom.sh
