@@ -29,6 +29,7 @@ CARGO=(
 NPM=()
 GO=(
     'github.com/charmbracelet/gum@latest' # used by zsh and some scripts
+    'github.com/charmbracelet/glow@latest' # useful markdown cli renderer
 )
 PIP=()
 
