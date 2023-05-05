@@ -78,7 +78,12 @@ compinit -C
 _comp_options+=(globdots)
 
 # load all plugins
-source "$HOME"/.config/zsh/plugins.zsh
+source ~/.config/zsh/plugins/quick-sudo.zsh
+source ~/.config/zsh/plugins/job-switcher.zsh
+
+# fish like abbreviations
+# HAS TO BE LOADED BEFORE ALIASES
+source "$HOME"/.config/shell/plugins/sha-abbr/sha-abbr.zsh
 
 # load aliases
 source "$HOME"/.config/shell/aliases.sh
@@ -127,4 +132,9 @@ if [[ -f "$HOME"/.config/shell/custom.sh ]]; then
     source "$HOME"/.config/shell/custom.sh
 fi
 
+# syntax highlighting
+# HAS TO BE LOADED LAST!
+source ~/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# this script is executed not sourced
 "$HOME"/.config/shell/init.sh

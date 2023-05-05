@@ -3,18 +3,18 @@
 # fedora-toolbox.sh - setup for toolbox fedora container
 
 # tools i use all the time
-TOOLS=(neovim tmux zsh)
+TOOLS=( tmux zsh )
 
 # package managers
-PKGMAN=(cargo npm go)
+PKGMAN=( cargo npm go )
 
 # other misc packages i need for everything else to work
-MISC=(fzf shellcheck)
+MISC=( fzf shellcheck )
 
 DNF=("${TOOLS[@]}" "${PKGMAN[@]}" "${MISC[@]}")
-CARGO=(bkt)
+CARGO=( bkt bob-nvim )
 NPM=()
-GO=( gum )
+GO=( 'github.com/charmbracelet/gum@latest' )
 
 cat <<'EOF'
   ______            ____
@@ -38,17 +38,20 @@ echo "Installing packages using dnf"
 sudo dnf -y install "${DNF[@]}"
 
 if [[ "${#CARGO[@]}" -ne 0 ]]; then
+    echo
     echo "Installing cargo packages"
     cargo install "${CARGO[@]}"
 fi
 
 if [[ "${#NPM[@]}" -ne 0 ]]; then
+    echo
     echo "Installing npm packages"
 
     npm install -g "${NPM[@]}"
 fi
 
 if [[ "${#GO[@]}" -ne 0 ]]; then
+    echo
     echo "Installing golang packages"
 
     if [[ -z "$GOPATH" ]]; then
@@ -57,4 +60,8 @@ if [[ "${#GO[@]}" -ne 0 ]]; then
 
     go install "${GO[@]}"
 fi
+
+echo
+echo "Installing latest stable neovim"
+bob use stable
 

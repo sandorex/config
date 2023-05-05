@@ -4,6 +4,11 @@
 #
 # this script is sourced by both bash and zsh, beware of bashisms
 
+if [[ -z "$ZSH_VERSION" ]]; then
+    # dummy to use compdef only on zsh
+    compdef() { :; }
+fi
+
 # clear previous abbreviations just in case
 abbr-clear
 
