@@ -2,7 +2,7 @@
 #
 # jobs-switcher.zsh - allows quick job switching with ^Z
 #
-# fzf is required
+# gum is required
 
 # makes ctrl z run fg
 fg-switcher() {
@@ -15,7 +15,7 @@ fg-switcher() {
 
         zle redisplay
     elif [[ "$count" -gt 1 ]]; then
-        job_id=$(jobs | fzf | gawk 'match($0, /\[([0-9]+)\]/, g) { print "%" g[1] }')
+        job_id=$(jobs | gum choose | gawk 'match($0, /\[([0-9]+)\]/, g) { print "%" g[1] }')
         fg "$job_id"
 
         zle redisplay
