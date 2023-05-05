@@ -4,11 +4,16 @@
 
 export DOTFILES="$HOME/.dotfiles"
 
+export GOPATH="$HOME/.golang"
+
 PATH="$PATH:$HOME/.bin"
 PATH="$PATH:$HOME/.local/bin"
 PATH="$PATH:$HOME/.cargo/bin"
+PATH="$PATH:$GOPATH"
 PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
-PATH="/home/sandorex/.local/share/fnm:$PATH"
+
+# prepend fnm to use its symlinks first
+PATH="$HOME/.local/share/fnm:$PATH"
 if command -v fnm >/dev/null; then
     eval "$(fnm env)"
 fi

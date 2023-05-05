@@ -6,14 +6,15 @@
 TOOLS=(neovim tmux zsh)
 
 # package managers
-PKGMAN=(cargo npm)
+PKGMAN=(cargo npm go)
 
 # other misc packages i need for everything else to work
 MISC=(fzf shellcheck)
 
-DNF=(${TOOLS[@]} ${PKGMAN[@]} ${MISC[@]})
+DNF=("${TOOLS[@]}" "${PKGMAN[@]}" "${MISC[@]}")
 CARGO=(bkt)
 NPM=()
+GO=( gum )
 
 cat <<'EOF'
   ______            ____
@@ -47,14 +48,13 @@ if [[ "${#NPM[@]}" -ne 0 ]]; then
     npm install -g "${NPM[@]}"
 fi
 
-# TODO define the hostname somehow
-# seems this is defined inside the container
-#printf "$hostname.toolbox" > sudo tee /etc/hostname
+if [[ "${#GO[@]}" -ne 0 ]]; then
+    echo "Installing golang packages"
 
-# this is useless as toolbox always runs bash
-#if [[ ! "$SHELL" == *zsh ]]; then
-#    echo "Setting default shell to zsh"
-#    sudo chsh -s /usr/bin/zsh $USER
-#fi
+    if [[ -z "$GOPATH" ]]; then
+        echo "Skipped as \$GOPATH is not defined!"
+    fi
 
-# TODO optionally define zerotier and connect to same network defined on host
+    go install "${GO[@]}"
+fi
+
