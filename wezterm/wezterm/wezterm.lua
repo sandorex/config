@@ -33,4 +33,13 @@ config.keys = {
     { key = 'Escape', mods = 'SHIFT', action = act.SendString("\x1b[[") }
 }
 
+config.mouse_bindings = {
+    -- disable middle click paste
+    {
+        event = { Down = { streak = 1, button = 'Middle' } },
+        mods = 'NONE',
+        action = act.DisableDefaultAssignment,
+    },
+}
+
 return config
