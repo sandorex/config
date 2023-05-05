@@ -41,6 +41,9 @@ _abbr_try_expand() {
 
             # move cursor to the end
             CURSOR=$#EXPANDED
+
+            # support zsh-syntax-highlighting
+            zle redisplay
         fi
     fi
 }

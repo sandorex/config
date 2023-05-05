@@ -8,13 +8,13 @@
 fg-switcher() {
     emulate -LR zsh
 
-    # here string inserts a newline so wc can count it properly
-    local count=$(wc -l <<< "\n$(jobs)")
-    if [[ "$count" -eq 2 ]]; then
+    # wc -l counts very unreliably so i am using awk
+    local count=$(jobs | awk 'END { print NR }')
+    if [[ "$count" -eq 1 ]]; then
         fg
 
         zle redisplay
-    elif [[ "$count" -gt 2 ]]; then
+    elif [[ "$count" -gt 1 ]]; then
         job_id=$(jobs | fzf | gawk 'match($0, /\[([0-9]+)\]/, g) { print "%" g[1] }')
         fg "$job_id"
 

@@ -7,8 +7,8 @@
 get() {
     # checked with https://github.com/chef/os_release
     case "$1" in
-        fedora|silverblue)
-            printf ''
+        fedora)
+            printf '󰣛'
             ;;
         *ubuntu*)
             printf ''
@@ -16,7 +16,7 @@ get() {
         *debian*)
             printf ''
             ;;
-        *suse*|*opensuse*)
+        *suse*)
             printf ''
             ;;
         *arch*)
@@ -52,6 +52,6 @@ get() {
 if [ "$1" = "1" ] || [ "$1" = "" ]; then
     get "$ID"
 else
-    printf "[$ID]"
+    printf "[%s]" "$ID"
 fi
 

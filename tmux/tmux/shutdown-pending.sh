@@ -1,9 +1,9 @@
-#!/bin/sh
+#!/usr/bin/bash
 #
 # shutdown-pending.sh - shows icon if shutdown is pending, for use in tmux
 
 # the file does not exist unless shutdown is scheduled
-if [ -f /run/systemd/shutdown/scheduled ]; then
+if shutdown --show &>/dev/null; then
     # color it red
     printf "#[fg=red]"
 
