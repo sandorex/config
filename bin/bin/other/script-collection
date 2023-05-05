@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#
+# script-collection - allows grouping scripts without the all name clashing
+#
+# to use this symlink to it and put scripts in directory of same name with
+# underscore '_' prefix
+
+DIR=$(realpath --no-symlinks "$(dirname "${BASH_SOURCE[0]}")")
+FILENAME=$(basename "$0")
+SCRIPT=$1
+shift
+
+if [[ -z "$SCRIPT" ]] || [[ ! -f "$DIR/_$FILENAME/$SCRIPT" ]]; then
+    echo "Please provide one of valid script names:"
+    for i in "$DIR/_$FILENAME"/*; do
+        echo "   $(basename "$i")"
+    done
+    exit 1
+fi
+
+exec "$DIR/_$FILENAME/$SCRIPT" "$@"

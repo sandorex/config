@@ -1,8 +1,15 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # ffmpeg-split - script that splits input audio/video into parts (10m by default)
+#
 # usage: ffmpeg-split <input file> <output file> [<segment duration mm:ss>]
 # the segment defaults to 10 min
+
+# TODO add parse args and help..
+if [[ -z "$1" ]] || [[ -z "$2" ]]; then
+    echo "Please provide input file and output file format"
+    exit 1
+fi
 
 filename=$(basename -- "$2")
 extension="${filename##*.}"

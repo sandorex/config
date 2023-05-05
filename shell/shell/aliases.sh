@@ -13,21 +13,22 @@ fi
 abbr-clear
 
 abbr-add e "$EDITOR"
+
 abbr-add s 'sudo'
 abbr-add se 'sudo -e'
-abbr-add ts 'tmux-select'
-
-abbr-add '-' 'cd -'
 
 abbr-add g 'git'
+
+abbr-add ts 'tmux-select'
+abbr-add box 'toolbox'
+
+abbr-add '-' 'cd -'
 
 # -F adds character to symbolize type of file, directory is a slash
 # star for an executable.. etc
 alias ls='ls -F --color=auto'
-alias l='ls -F --color=auto'
-alias l.='ls -aF --color=auto'
-alias ll='ls -lF --color=auto'
-alias lll='ls -alF --color=auto'
+alias l='ls -aF --color=auto'
+alias ll='ls -alF --color=auto'
 alias diff='diff --report-identical-files --color=auto'
 alias grep='grep --color=auto'
 alias rcat='cat -A' # safely read escape sequences

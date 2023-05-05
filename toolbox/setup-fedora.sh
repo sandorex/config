@@ -2,19 +2,35 @@
 #
 # fedora-toolbox.sh - setup for toolbox fedora container
 
-# tools i use all the time
-TOOLS=( tmux zsh )
+DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
-# package managers
-PKGMAN=( cargo npm go )
+# base minimal packages
+DNF=(
+    # tools i use directly
+    tmux
+    zsh
+    qrencode # used for generating qr in console
 
-# other misc packages i need for everything else to work
-MISC=( fzf shellcheck )
+    # package managers
+    cargo
+    npm
+    go
+    python3-pip
 
-DNF=("${TOOLS[@]}" "${PKGMAN[@]}" "${MISC[@]}")
-CARGO=( bkt bob-nvim )
+    # nvim deps
+    fzf
+    shellcheck
+)
+
+CARGO=(
+    bkt # used by tmux
+    bob-nvim # provides neovim
+)
 NPM=()
-GO=( 'github.com/charmbracelet/gum@latest' )
+GO=(
+    'github.com/charmbracelet/gum@latest' # used by zsh and some scripts
+)
+PIP=()
 
 cat <<'EOF'
   ______            ____
@@ -33,6 +49,18 @@ if [[ ! "$container" == "oci" ]]; then
     echo "WARNING THIS SCRIPT IS MEANT FOR CONTAINER USE ONLY!"
     exit 1
 fi
+
+# load additional packages
+for i in "$@"; do
+    echo "Loading $i package"
+    source "$DIR/packages/$i"
+done
+echo
+
+echo "Installing rpmfusion"
+sudo dnf -y install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-"$(rpm -E %fedora)".noarch.rpm \
+                    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-"$(rpm -E %fedora)".noarch.rpm
+echo
 
 echo "Installing packages using dnf"
 sudo dnf -y install "${DNF[@]}"
@@ -59,6 +87,13 @@ if [[ "${#GO[@]}" -ne 0 ]]; then
     fi
 
     go install "${GO[@]}"
+fi
+
+if [[ "${#PIP[@]}" -ne 0 ]]; then
+    echo
+    echo "Installing pip packages"
+
+    python3 -m pip install --user "${PIP[@]}"
 fi
 
 echo

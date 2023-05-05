@@ -51,7 +51,13 @@ if [[ -e "$2" || -L "$2" ]]; then
     mv "$2" "${2:?}~"
 fi
 
+parent=$(dirname "$2")
+if [[ ! -e "$parent" ]]; then
+    mkdir -p "$parent"
+fi
+
 echo "Copying $1 to $2"
 
-cp "$1" "$2"
+# copy but preserves mode,ownership,timestamps
+cp -p "$1" "$2"
 

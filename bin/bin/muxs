@@ -1,9 +1,0 @@
-#!/bin/bash
-#
-# muxs - attach to mux session
-
-# TODO use whiptail
-select sel in $(tmux ls -F '#S'); do
-    break;
-done
-tmux attach -t "$sel"
