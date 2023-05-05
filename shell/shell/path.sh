@@ -9,7 +9,7 @@ export GOPATH="$HOME/.golang"
 PATH="$PATH:$HOME/.bin"
 PATH="$PATH:$HOME/.local/bin"
 PATH="$PATH:$HOME/.cargo/bin"
-PATH="$PATH:$GOPATH"
+PATH="$PATH:$GOPATH/bin"
 PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
 
 # prepend fnm to use its symlinks first
