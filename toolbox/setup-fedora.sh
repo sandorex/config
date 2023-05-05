@@ -19,9 +19,9 @@ cat <<'EOF'
   ______            ____
  /_  __/___  ____  / / /_  ____  _  __
   / / / __ \/ __ \/ / __ \/ __ \| |/_/
- / / / /_/ / /_/ / / /_/ / /_/ />  <  
-/_/  \____/\____/_/_.___/\____/_/|_|  
-                                      
+ / / / /_/ / /_/ / / /_/ / /_/ />  <
+/_/  \____/\____/_/_.___/\____/_/|_|
+
 
 Setting up toolbox
 This may take a while..
@@ -47,8 +47,14 @@ if [[ "${#NPM[@]}" -ne 0 ]]; then
     npm install -g "${NPM[@]}"
 fi
 
+# TODO define the hostname somehow
+# seems this is defined inside the container
+#printf "$hostname.toolbox" > sudo tee /etc/hostname
+
 # this is useless as toolbox always runs bash
 #if [[ ! "$SHELL" == *zsh ]]; then
 #    echo "Setting default shell to zsh"
 #    sudo chsh -s /usr/bin/zsh $USER
 #fi
+
+# TODO optionally define zerotier and connect to same network defined on host

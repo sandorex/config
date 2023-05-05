@@ -2,6 +2,8 @@
 #
 # path.sh - sets path for the shell (ran in non interactive shells too)
 
+export DOTFILES="$HOME/.dotfiles"
+
 PATH="$PATH:$HOME/.bin"
 PATH="$PATH:$HOME/.local/bin"
 PATH="$PATH:$HOME/.cargo/bin"

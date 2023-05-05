@@ -7,40 +7,9 @@
 DIR=.dotfiles
 
 # clone the repository
-git clone --recurse-submodules -j4 https://github.com/sandorex/config ~/"$DIR"
+git clone https://github.com/sandorex/config ~/"$DIR"
 
+# TODO this is hacky, maybe there is an argument to use git template?
+# this is going to break if there is any more git hooks
 # link pre commit script
 ln -s ../git/template/hooks/pre-commit ~/config/.git/hooks/pre-commit
-
-if ! command -v brew &>/dev/null; then
-    cat << 'EOF'
-
-Install homebrew using following command:
-    $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-EOF
-    cat << EOF
-To install packages run:
-    $ brew install $(grep -e '^[^#]' ~/config/bootstrap/brew.list | xargs -d '\n')
-
-EOF
-fi
-
-if ! command -v nix-env &>/dev/null; then
-    cat << 'EOF'
-
-Install nix using one of following commands:
-  Multi-user (recommended on everything except SELinux enforced systems)
-    $ sh <(curl -L https://nixos.org/nix/install) --daemon
-
-  Single-user
-    $ sh <(curl -L https://nixos.org/nix/install) --no-daemon
-
-EOF
-    cat << EOF
-To install packages run:
-    $ nix-env -iA $(grep -e '^[^#]' ~/config/bootstrap/nix.list | xargs -d '\n')"
-
-EOF
-fi
-

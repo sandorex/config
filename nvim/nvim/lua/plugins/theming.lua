@@ -2,7 +2,16 @@ return {
     {
         'EdenEast/nightfox.nvim',
         lazy = false,
-        config = function(plugin)
+        config = function()
+            require('nightfox').setup({
+                options = {
+                    styles = {
+                        -- by default comments are italicized.. ugh
+                        comments = "",
+                    }
+                }
+            })
+
             vim.cmd('colorscheme carbonfox')
         end,
     },
