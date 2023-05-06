@@ -1,21 +1,22 @@
 #!/usr/bin/env bash
 #
-# init.sh - for common non path stuff
+# init.sh - this basically runs apps does not have anything to do with shell
+#           initialization, this file should not be sourced!
 
 # start server
 if command -v tmux &>/dev/null; then
     tmux start-server
 fi
 
-# allows ^S usage, legacy stuff
-stty -ixon
 
 # automatically sets toolbox hostname
-if [[ "$(hostname)" == "toolbox" ]]; then
+if [[ "$container" == "oci" ]] && [[ ! -f "/.init" ]]; then
     echo "Setting up toolbox hostname.."
 
     source "$DOTFILES"/.shenv
 
     sudo hostname "$SH_HOSTNAME.toolbox"
     echo "$SH_HOSTNAME.toolbox" | sudo tee /etc/hostname >/dev/null
+    sudo touch /.init
 fi
+

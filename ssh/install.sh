@@ -4,16 +4,21 @@
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
-source ../config.sh
+export PATH="$PWD/../bin/bin:$PATH"
 
-if is-installed ssh; then
+if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
+    echo "ssh config already installed"
     exit
 fi
 
 HOST=$(hostname)
 mkdir -p "$HOME"/.ssh
 mkdir -p "$HOME/.ssh/_$HOST"
-ln -s "_$HOST" "$HOME/.ssh/_$HOST.toolbox"
 
-copy ./config "$HOME"/.ssh/config
+# TODO test this
+util link "_$HOST" "$HOME/.ssh/_$HOST.toolbox"
+
+util copy ./config "$HOME"/.ssh/config
+
+touch .installed
 

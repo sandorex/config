@@ -4,14 +4,17 @@
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
-. ../config.sh
+export PATH="$PWD/../bin/bin:$PATH"
 
-if is-installed zsh; then
+if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
+    echo "zsh config already installed"
     exit
 fi
 
 ../shell/install.sh
 
-link -a "$HOME"/.config/zsh ./zsh
-link -a "$HOME"/.zshrc ./zsh/init.zsh
+util link -a "$HOME"/.config/zsh ./zsh
+util link -a "$HOME"/.zshrc ./zsh/init.zsh
+
+touch .installed
 

@@ -9,9 +9,10 @@ fi
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
-. ../config.sh
+export PATH="$PWD/../bin/bin:$PATH"
 
-if is-installed mintty; then
+if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
+    echo "mintty/wsltty config already installed"
     exit
 fi
 
@@ -28,6 +29,7 @@ MINTTY_THEMES=%HOMEDRIVE%%HOMEPATH%\\.mintty\\themes
 wsltty_path=$(wslpath -u "$(cmd "$WSLTTY_THEMES")")
 mintty_path=$(wslpath -u "$(cmd "$MINTTY_THEMES")")
 
-cp ./nightfox-carbonfox "$wsltty_path"
-cp ./nightfox-carbonfox "$mintty_path"
+util copy ./nightfox-carbonfox "$wsltty_path"
+util copy ./nightfox-carbonfox "$mintty_path"
 
+touch .installed

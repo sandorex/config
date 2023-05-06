@@ -4,8 +4,12 @@
 
 export DOTFILES="$HOME/.dotfiles"
 
+# path to agnostic shell stuff
+export AGSHELLDIR="$HOME/.config/shell"
+
 export GOPATH="$HOME/.golang"
 
+PATH="$PATH:$HOME/.bin/polyfill"
 PATH="$PATH:$HOME/.bin"
 PATH="$PATH:$HOME/.local/bin"
 PATH="$PATH:$HOME/.cargo/bin"

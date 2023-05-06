@@ -2,16 +2,17 @@
 #
 # init.zsh - the actual initialization of zsh
 
-source "$HOME"/.config/shell/path.sh
+export SHELLDIR="$HOME/.config/zsh"
+
+source "$AGSHELLDIR/non-interactive.sh"
 
 # the rest is only if it's an interactive shell
 [[ -o interactive ]] || return
 
-# load bare console colors
-source "$HOME"/.config/shell/bare-terminal-theming.sh
-
 alias reload-shell='source ~/.zshrc; compinit'
 alias reload-zsh='source ~/.zshrc; compinit'
+
+source "$AGSHELLDIR/interactive-pre.sh"
 
 PROMPT_PREFIX=
 
@@ -78,15 +79,8 @@ compinit -C
 _comp_options+=(globdots)
 
 # load all plugins
-source ~/.config/zsh/plugins/quick-sudo.zsh
-source ~/.config/zsh/plugins/job-switcher.zsh
-
-# fish like abbreviations
-# HAS TO BE LOADED BEFORE ALIASES
-source "$HOME"/.config/shell/plugins/sha-abbr/sha-abbr.zsh
-
-# load aliases
-source "$HOME"/.config/shell/aliases.sh
+source "$SHELLDIR"/plugins/quick-sudo.zsh
+source "$SHELLDIR"/plugins/job-switcher.zsh
 
 ## KEYBINDINGS ##
 # ctr + left / right arrow keys
@@ -130,13 +124,12 @@ bindkey '^X^E' edit-command-line
 # run tmux-select
 bindkey -s '' 'tmux-select\n'
 
-if [[ -f "$HOME"/.config/shell/custom.sh ]]; then
-    source "$HOME"/.config/shell/custom.sh
-fi
+source "$AGSHELLDIR/interactive-post.sh"
 
 # syntax highlighting
 # HAS TO BE LOADED LAST!
-source ~/.config/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source "$SHELLDIR"/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-# this script is executed not sourced
-"$HOME"/.config/shell/init.sh
+# startup apps and stuff
+"$AGSHELLDIR"/init.sh
+

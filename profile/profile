@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# .profile - place to put env vars
+
+export DOTFILES="$HOME/.dotfiles"       # dotfiles path
+export AGSHELLDIR="$HOME/.config/shell" # agnostic shell stuff
+export RUSTUP_HOME="$HOME/.rustup"
+export GOPATH="$HOME/.golang"           # GOPATH defaults to $HOME/go ugh
+
+PATH="$PATH:$HOME/.bin/polyfill"        # fallback path for optional software
+PATH="$PATH:$HOME/.bin"
+PATH="$PATH:$HOME/.local/bin"
+PATH="$PATH:$HOME/.cargo/bin"
+PATH="$PATH:$GOPATH/bin"
+PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
+
+export PATH
+
+# nano is default, override in shell
+export EDITOR=nano
+export SUDO_EDITOR=nano
+
+# set ls colors
+eval "$(dircolors --sh "$AGSHELLDIR/gruvbox.dircolors")"
+
+# i copied this from somewhere idk how it looks TODO
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+

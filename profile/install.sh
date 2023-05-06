@@ -1,17 +1,16 @@
 #!/bin/bash
 #
-# install.sh - links inputrc config
+# install.sh - links .profile config
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 export PATH="$PWD/../bin/bin:$PATH"
 
 if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
-    echo "inputrc config already installed"
+    echo ".profile config already installed"
     exit
 fi
 
-util link -a "$HOME"/.inputrc ./inputrc
+util link -a "$HOME"/.profile ./profile
 
 touch .installed
-

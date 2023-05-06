@@ -2,7 +2,9 @@
 #
 # init.bash - init file for bash, either loaded from bashrc or ran directly
 
-source "$HOME"/.config/shell/path.sh
+export SHELLDIR="$HOME/.config/zsh"
+
+source "$AGSHELLDIR/non-interactive.sh"
 
 # If not running interactively, don't do anything
 case $- in
@@ -12,6 +14,8 @@ esac
 
 alias reload-shell='source ~/.bashrc'
 alias reload-bash='source ~/.bashrc'
+
+source "$AGSHELLDIR/interactive-pre.sh"
 
 # autocd
 shopt -s autocd
@@ -79,12 +83,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-source "$HOME"/.config/shell/aliases.sh
-
-if [[ -f "$HOME"/.config/shell/custom.sh ]]; then
-    source "$HOME"/.config/shell/custom.sh
-fi
+source "$AGSHELLDIR/interactive-post.sh"
 
 "$HOME"/.config/shell/init.sh

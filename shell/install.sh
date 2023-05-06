@@ -4,12 +4,15 @@
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
-. ../config.sh
+export PATH="$PWD/../bin/bin:$PATH"
 
-if is-installed shell; then
+if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
+    echo "agnostic shell config already installed"
     exit
 fi
 
 # link the shell dir
-link -a "$HOME"/.config/shell ./shell
+util link -a "$HOME"/.config/shell ./shell
+
+touch .installed
 

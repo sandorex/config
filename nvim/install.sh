@@ -4,11 +4,14 @@
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
-. ../config.sh
+export PATH="$PWD/../bin/bin:$PATH"
 
-if is-installed nvim; then
+if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
+    echo "nvim config already installed"
     exit
 fi
 
-link -a "$HOME"/.config/nvim ./nvim
+util link -a "$HOME"/.config/nvim ./nvim
+
+touch .installed
 

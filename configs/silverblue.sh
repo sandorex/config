@@ -22,10 +22,10 @@ dconf write /org/gnome/desktop/interface/gtk-enable-primary-paste false
 # font stuff
 dconf write /org/gnome/desktop/interface/font-hinting 'full'
 dconf write /org/gnome/desktop/interface/font-antialiasing 'rgba'
-dconf write /org/gnome/desktop/interface/font-name 'Noto Sans Semi-Bold 11'
-dconf write /org/gnome/desktop/interface/document-font-name 'Noto Sans Semi-Bold 11'
-dconf write /org/gnome/desktop/interface/monospace-font-name 'FiraCode Nerd Font Mono Medium 10'
-dconf write /org/gnome/desktop/wm/preferences/titlebar-font 'Noto Sans Bold 11'
+dconf write /org/gnome/desktop/interface/font-name 'Noto Sans Medium 11'
+dconf write /org/gnome/desktop/interface/document-font-name 'Noto Sans Medium 11'
+dconf write /org/gnome/desktop/interface/monospace-font-name 'FiraCode Nerd Font Mono Retina 10'
+dconf write /org/gnome/desktop/wm/preferences/titlebar-font 'Noto Sans Medium 11'
 
 dconf write /org/gnome/desktop/interface/color-scheme 'prefer-dark' # dark mode
 dconf write /org/gnome/mutter/dynamic-workspaces false # fixed num of workspaces

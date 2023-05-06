@@ -4,15 +4,17 @@
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
-. ../config.sh
+export PATH="$PWD/../bin/bin:$PATH"
 
-if is-installed bash; then
+if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
+    echo "Bash config already installed"
     exit
 fi
 
 ../inputrc/install.sh
 ../shell/install.sh
 
-link -a "$HOME"/.config/bash ./bash
-link -a "$HOME"/.bashrc "$HOME"/.config/bash/init.bash
+util link -a "$HOME"/.config/bash ./bash
+util link -a "$HOME"/.bashrc "$HOME"/.config/bash/init.bash
 
+touch .installed

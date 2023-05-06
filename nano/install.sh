@@ -6,7 +6,13 @@
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
-. ../config.sh
+export PATH="$PWD/../bin/bin:$PATH"
 
-link -a "$HOME"/.config/nano ./nano
+if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
+    echo "nano config already installed"
+    exit
+fi
 
+util link -a "$HOME"/.config/nano ./nano
+
+touch .installed
