@@ -17,6 +17,10 @@ DNF=(
     go
     python3-pip
 
+    # clipboard support for vim and tmux
+    xclip
+    wl-clipboard
+
     # nvim deps
     fzf
     shellcheck

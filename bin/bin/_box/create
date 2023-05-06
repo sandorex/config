@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#
+# box/create - wrapper around toolbox create
+
+POSITIONAL_ARGS=()
+PACKAGES=()
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        +*)
+            PACKAGES+=("${1:1}")
+            shift
+            ;;
+        -*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            # save positional arg
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+toolbox create "$1"
+
+# install everything
+toolbox run -- "$1" bash -c "'$DOTFILES/toolbox/setup-fedora.sh' ${PACKAGES[*]}"
+
