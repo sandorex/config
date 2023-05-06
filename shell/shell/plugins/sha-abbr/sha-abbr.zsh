@@ -90,7 +90,7 @@ bindkey ' ' _abbr-space-n-expand
 _abbr-enter-n-expand() {
     emulate -LR zsh
 
-    _abbr_try_expand || true
+    _abbr_try_expand
 
     zle redisplay
     zle accept-line
@@ -103,3 +103,4 @@ bindkey "^ " magic-space
 
 # do not expand in search
 bindkey -M isearch " " magic-space
+

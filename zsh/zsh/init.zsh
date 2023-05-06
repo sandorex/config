@@ -104,6 +104,8 @@ _first-tab() {
     else
         zle expand-or-complete
     fi
+
+    zle redisplay
 }
 zle -N _first-tab
 bindkey '^I' _first-tab
