@@ -7,6 +7,13 @@
 if [[ -z "$ZSH_VERSION" ]]; then
     # dummy to use compdef only on zsh
     compdef() { :; }
+
+    # i disabled abbreviation for bash currently until i fix them
+    abbr-clear() { :; }
+
+    abbr-add() {
+        alias -- "$1"="$2"
+    }
 fi
 
 # clear previous abbreviations just in case

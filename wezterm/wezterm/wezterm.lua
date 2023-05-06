@@ -28,6 +28,16 @@ config.hide_tab_bar_if_only_one_tab = true
 config.send_composed_key_when_left_alt_is_pressed = false
 config.send_composed_key_when_right_alt_is_pressed = false
 
+
+if wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
+    -- disable close confirmation, this should only be needed on flatpak as the
+    -- native version has skip_close_confirmation_for_processes_named
+    config.window_close_confirmation = 'NeverPrompt'
+
+    -- remove title bar
+    -- config.window_decorations = "RESIZE"
+end
+
 config.keys = {
     -- allows mapping escape shift
     { key = 'Escape', mods = 'SHIFT', action = act.SendString("\x1b[[") }

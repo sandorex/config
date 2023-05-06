@@ -81,10 +81,6 @@ fi
 
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# fish like abbreviations
-# HAS TO BE LOADED BEFORE ALIASES
-source "$HOME"/.config/shell/plugins/sha-abbr/sha-abbr.bash
-
 source "$HOME"/.config/shell/aliases.sh
 
 if [[ -f "$HOME"/.config/shell/custom.sh ]]; then

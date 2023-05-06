@@ -15,7 +15,9 @@ if [[ -z "$GIT_EMAIL" ]]; then
 fi
 
 # add tools and scripts to path
-export PATH="$ROOT"/bin/bin/util:$PATH
+if ! command -v util &>/dev/null; then
+    export PATH="$PATH:$ROOT/bin/bin"
+fi
 
 export STATE_DIR="$ROOT/state"
 is-installed() {
