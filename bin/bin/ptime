@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#
+# ptime - precise time command
+#
+# credit https://stackoverflow.com/a/63635704
+
+start="$(date +'%s.%N')"
+"$@"
+echo "$(date +"%s.%N - ${start}" | bc) ms" >&2
