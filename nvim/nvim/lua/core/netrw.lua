@@ -12,7 +12,9 @@ local global_options = {
     netrw_hide = 1,
 
     -- recursive copy
-    netrw_localcopydircmd = 'cp -r'
+    netrw_localcopydircmd = 'cp -r',
+
+    netrw_liststyle = 1,
 }
 
 for k, v in pairs(global_options) do

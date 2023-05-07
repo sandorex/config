@@ -21,6 +21,10 @@ abbr-add be 'box enter'
 
 abbr-add '-' 'cd -'
 
+if command -v bat &>/dev/null; then
+  alias cat='bat'
+fi
+
 alias ls='ls -F --color=auto'
 alias l='ls -aF --color=auto'
 alias ll='ls -alF --color=auto'
@@ -31,7 +35,7 @@ alias rcat='cat -A' # safely read escape sequences
 alias cal='cal -3'
 
 # termux aliases
-if command -v termux-setup-storage; then
+if command -v termux-setup-storage &>/dev/null; then
     alias reload-termux='termux-reload-settings'
 fi
 

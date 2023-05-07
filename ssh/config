@@ -1,7 +1,11 @@
-# for example user@github.com for computer host will go to
-# ~/.ssh/_computer/user@github.com or just @github.com as
-# fallback
+# ssh user@remote.com will try files in this order
+#   ~/.ssh/_host/@remote.com
+#   ~/.ssh/_host/user@remote.com
+#
+# NOTE you may get errors that something is missing sometimes
+# but that is normal as ssh complains even if it does find a key
+# using a fallback option
 Host *
-    IdentityFile %d/.ssh/_%l/%r@%h
     IdentityFile %d/.ssh/_%l/@%h
+    IdentityFile %d/.ssh/_%l/%r@%h
     IdentitiesOnly yes

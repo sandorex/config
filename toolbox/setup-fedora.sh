@@ -27,6 +27,7 @@ DNF=(
 )
 
 CARGO=(
+    bat # cat replacement
     bkt # used by tmux
     bob-nvim # provides neovim
 )

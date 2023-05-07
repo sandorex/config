@@ -31,7 +31,7 @@ vim.keymap.set("v", "<A-Up>", ":m '<-2<cr>gv=gv", { desc = 'Move lines up', sile
 vim.keymap.set("v", "<A-Down>", ":m '>+1<cr>gv=gv", { desc = 'move lines down', silent = true })
 
 -- explore
-vim.keymap.set('n', '<space>f', '<cmd>E<cr>', { desc = 'Open netrw in cwd', silent = true })
+vim.keymap.set('n', '<space>f', '<cmd>e %:p:h<cr>', { desc = 'Open netrw in cwd', silent = true })
 
 -- dont yank when pasting
 vim.keymap.set('v', 'p', '"_dP', { desc = 'Paste without yanking', silent = true })

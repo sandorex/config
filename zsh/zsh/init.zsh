@@ -20,7 +20,7 @@ fi
 
 # minimal prompt
 PROMPT=$PROMPT_PREFIX'%F{green}%% '
-RPROMPT='%(?..%B%F{red}[ %?%  ]%b)' # show exit code if not 0
+# RPROMPT='%(?..%B%F{red}[ %?%  ]%b)' # show exit code if not 0
 
 unset PROMPT_PREFIX
 

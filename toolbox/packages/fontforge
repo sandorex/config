@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+#
+# fontforge package
+
+DNF=( "${DNF[@]}"
+    # NOTE: also provide fontforge-python
+    fontforge
+)
+
