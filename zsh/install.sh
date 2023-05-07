@@ -12,6 +12,7 @@ if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
 fi
 
 ../shell/install.sh
+../profile/install.sh
 
 util link -a "$HOME"/.config/zsh ./zsh
 util link -a "$HOME"/.zshrc ./zsh/init.zsh

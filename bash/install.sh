@@ -11,8 +11,10 @@ if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
     exit
 fi
 
+# TODO move inputrc into this config alone?
 ../inputrc/install.sh
 ../shell/install.sh
+../profile/install.sh
 
 util link -a "$HOME"/.config/bash ./bash
 util link -a "$HOME"/.bashrc "$HOME"/.config/bash/init.bash
