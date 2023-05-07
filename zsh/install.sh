@@ -15,6 +15,7 @@ fi
 
 util link -a "$HOME"/.config/zsh ./zsh
 util link -a "$HOME"/.zshrc ./zsh/init.zsh
+util link .profile "$HOME"/.zshenv # so it loads .profile automatically
 
 touch .installed
 
