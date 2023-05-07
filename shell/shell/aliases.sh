@@ -4,18 +4,6 @@
 #
 # this script is sourced by both bash and zsh, beware of bashisms
 
-if [[ -z "$ZSH_VERSION" ]]; then
-    # dummy to use compdef only on zsh
-    compdef() { :; }
-
-    # i disabled abbreviation for bash currently until i fix them
-    abbr-clear() { :; }
-
-    abbr-add() {
-        alias -- "$1"="$2"
-    }
-fi
-
 # clear previous abbreviations just in case
 abbr-clear
 
@@ -33,8 +21,6 @@ abbr-add be 'box enter'
 
 abbr-add '-' 'cd -'
 
-# -F adds character to symbolize type of file, directory is a slash
-# star for an executable.. etc
 alias ls='ls -F --color=auto'
 alias l='ls -aF --color=auto'
 alias ll='ls -alF --color=auto'
@@ -44,6 +30,12 @@ alias rcat='cat -A' # safely read escape sequences
 
 alias cal='cal -3'
 
+# termux aliases
+if command -v termux-setup-storage; then
+    alias reload-termux='termux-reload-settings'
+fi
+
+# function aliases
 rcp() {
   # -a = -rlptgoD
   #   -r = recursive
@@ -61,9 +53,3 @@ rcp() {
     --filter=":- ~/.config/git/ignore" \
     "$@"
 }; compdef rcp=rsync
-
-# termux aliases
-if command -v termux-setup-storage; then
-    alias reload-termux='termux-reload-settings'
-fi
-

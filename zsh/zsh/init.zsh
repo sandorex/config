@@ -4,15 +4,13 @@
 
 export SHELLDIR="$HOME/.config/zsh"
 
-source "$AGSHELLDIR/non-interactive.sh"
+source "${AGSHELLDIR:-$HOME/.config/shell}/non-interactive.sh"
 
 # the rest is only if it's an interactive shell
 [[ -o interactive ]] || return
 
 alias reload-shell='source ~/.zshrc; compinit'
 alias reload-zsh='source ~/.zshrc; compinit'
-
-source "$AGSHELLDIR/interactive-pre.sh"
 
 PROMPT_PREFIX=
 

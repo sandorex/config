@@ -4,7 +4,7 @@
 
 export SHELLDIR="$HOME/.config/zsh"
 
-source "$AGSHELLDIR/non-interactive.sh"
+source "${AGSHELLDIR:-$HOME/.config/shell}/non-interactive.sh"
 
 # If not running interactively, don't do anything
 case $- in
@@ -14,8 +14,6 @@ esac
 
 alias reload-shell='source ~/.bashrc'
 alias reload-bash='source ~/.bashrc'
-
-source "$AGSHELLDIR/interactive-pre.sh"
 
 # autocd
 shopt -s autocd
@@ -82,7 +80,6 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-
 
 source "$AGSHELLDIR/interactive-post.sh"
 
