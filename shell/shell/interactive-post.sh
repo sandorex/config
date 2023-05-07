@@ -10,6 +10,9 @@ if [[ "$TERM" == "console" ]]; then
     source "$AGSHELLDIR/console-theming.sh"
 fi
 
+# fixes man pages not being able to be found
+export MANPATH="${MANPATH-$(manpath)}:$NPM_HOME/share/man"
+
 if [[ -z "$ZSH_VERSION" ]]; then
     # dummy to use compdef only on zsh
     compdef() { :; }

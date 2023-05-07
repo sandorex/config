@@ -31,7 +31,9 @@ CARGO=(
     bkt # used by tmux
     bob-nvim # provides neovim
 )
-NPM=()
+NPM=(
+    live-server
+)
 GO=(
     'github.com/charmbracelet/gum@latest' # used by zsh and some scripts
     'github.com/charmbracelet/glow@latest' # useful markdown cli renderer
@@ -76,6 +78,8 @@ if [[ "${#CARGO[@]}" -ne 0 ]]; then
     echo "Installing cargo packages"
     cargo install "${CARGO[@]}"
 fi
+
+npm config set prefix "$NPM_HOME"
 
 if [[ "${#NPM[@]}" -ne 0 ]]; then
     echo
