@@ -10,6 +10,7 @@ DNF=(
     tmux
     zsh
     qrencode # used for generating qr in console
+    hyperfine # benchmarking tool thingy
 
     # package managers
     cargo

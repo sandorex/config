@@ -28,6 +28,8 @@ config.hide_tab_bar_if_only_one_tab = true
 config.send_composed_key_when_left_alt_is_pressed = false
 config.send_composed_key_when_right_alt_is_pressed = false
 
+-- there is already enough garbage on the top
+config.tab_bar_at_bottom = true
 
 if wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
     -- disable close confirmation, this should only be needed on flatpak as the
