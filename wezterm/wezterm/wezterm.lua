@@ -32,10 +32,6 @@ config.send_composed_key_when_right_alt_is_pressed = false
 config.tab_bar_at_bottom = true
 
 if wezterm.target_triple == 'x86_64-unknown-linux-gnu' then
-    -- disable close confirmation, this should only be needed on flatpak as the
-    -- native version has skip_close_confirmation_for_processes_named
-    config.window_close_confirmation = 'NeverPrompt'
-
     -- remove title bar
     -- config.window_decorations = "RESIZE"
 end

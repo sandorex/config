@@ -12,17 +12,25 @@ source "${AGSHELLDIR:-$HOME/.config/shell}/non-interactive.sh"
 alias reload-shell='source ~/.zshrc; compinit'
 alias reload-zsh='source ~/.zshrc; compinit'
 
-PROMPT_PREFIX=
+# little help, as i always forget them
+# read more athttps://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
+#
+# '%(?.X.Y)' if last exit is 0 then X otherwise Y, it does not have to be '.'
+# it can be anything as long as it's the same closing paren needs to be escaped
+# as '%)' if used inside
+#
+# %f resets color to default
 
+# - underline if any jobs running
+PROMPT='%(?.%F{green}.%F{red})%(1j.%U.)%%%(2L.%F{magenta}%L.)%u%f '
+
+# shows exit code if last command exited with non-zero
+RPROMPT='%(?..%F{red}[ %?%  ]%f)' # show exit code if not 0
+
+# prepend container indicator
 if [[ "$container" = "oci" ]]; then
-    PROMPT_PREFIX='%F{4}󰡖 '
+    PROMPT="%F{4}󰡖 $PROMPT"
 fi
-
-# minimal prompt
-PROMPT=$PROMPT_PREFIX'%F{green}%% '
-# RPROMPT='%(?..%B%F{red}[ %?%  ]%b)' # show exit code if not 0
-
-unset PROMPT_PREFIX
 
 chpwd() {
     # list files on dir change
