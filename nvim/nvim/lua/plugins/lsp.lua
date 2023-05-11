@@ -47,7 +47,7 @@ return {
             'L3MON4D3/LuaSnip',
             'saadparwaiz1/cmp_luasnip',
         },
-        config = function(_)
+        config = function()
             -- has to be loaded before lspconfig
             require('neodev').setup {}
 
