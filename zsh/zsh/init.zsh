@@ -21,8 +21,10 @@ alias reload-zsh='source ~/.zshrc; compinit'
 #
 # %f resets color to default
 
-# - underline if any jobs running
-PROMPT='%(?.%F{green}.%F{red})%(1j.%U.)%%%(2L.%F{magenta}%L.)%u%f '
+# ? - last exit code
+# L - SHLVL
+# j - background jobs
+PROMPT='%(?.%F{green}.%F{red})%(1j.%U.)%%%u%(2L.%F{magenta}%L.)%f '
 
 # shows exit code if last command exited with non-zero
 RPROMPT='%(?..%F{red}[ %?%  ]%f)' # show exit code if not 0
