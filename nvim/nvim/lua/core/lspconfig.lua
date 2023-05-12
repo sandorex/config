@@ -45,6 +45,7 @@ M.configs.pylsp = {
                 pycodestyle = {
                     ignore = {
                         'E302', -- expected 2 blank lines..
+                        'E402', -- module import not at top..
                     },
                 },
             },

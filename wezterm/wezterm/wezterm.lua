@@ -49,7 +49,9 @@ end
 -- i plan to emulate tmux syntax so i do not need the bindings
 config.disable_default_key_bindings = true
 
-local leader = '`'
+-- NOTE: this is not SHIFT + , but the key < left of Z!
+-- as alternative 'RightAlt' is the next candidate
+local leader = '<'
 
 -- keybindings shameless stolen from https://github.com/wez/wezterm/discussions/2329
 config.leader = { key=leader, mods="NONE", timeout_milliseconds=500 }
@@ -65,7 +67,7 @@ config.keys = {
     {key = "f", mods = "CMD", action = act.SendString("\x1bf")},
 
     -- Window management
-    {key = "Space", mods="LEADER", action=act{SendString=leader}},
+    -- {key = "Space", mods="LEADER", action=act{SendString=leader}},
     {key="-",  mods="LEADER", action=act{SplitVertical={domain="CurrentPaneDomain"}} },
     {key="\\", mods="LEADER", action=act.SplitHorizontal{domain="CurrentPaneDomain"}},
     {key="z" , mods="LEADER", action="TogglePaneZoomState" },
@@ -81,11 +83,8 @@ config.keys = {
     {key="UpArrow", mods="LEADER", action=act{AdjustPaneSize={"Up", 5}}},
     {key="RightArrow", mods="LEADER", action=act{AdjustPaneSize={"Right", 5}}},
 
-    -- NOTE: these are unusable as LEADER LEADER cannot be mappend and SPACE is
-    -- the send-prefix key
-    --
-    -- {key="`", mods="LEADER", action=act.ActivateLastTab},
-    -- {key=" ", mods="LEADER", action=act.ActivateTabRelative(1)},
+    {key="`", mods="LEADER", action=act.ActivateLastTab},
+    {key=" ", mods="LEADER", action=act.ActivateTabRelative(1)},
     {key="1", mods="LEADER", action=act{ActivateTab=0}},
     {key="2", mods="LEADER", action=act{ActivateTab=1}},
     {key="3", mods="LEADER", action=act{ActivateTab=2}},
@@ -202,11 +201,6 @@ config.key_tables = {
         {key="u", mods="CTRL", action=act.CopyMode("ClearPattern")},
     },
 }
-
--- config.keys = {
---     -- allows mapping escape shift
---     { key = 'Escape', mods = 'SHIFT', action = act.SendString("\x1b[[") }
--- }
 
 config.mouse_bindings = {
     -- disable middle click paste
