@@ -1,6 +1,9 @@
 #!/bin/sh
 #
 # .profile - place to put env vars
+#
+# THIS SHOULD NOT RUN ON START OF EACH SHELL
+# SYMLINK IT TO .zprofile
 
 export DOTFILES="$HOME/.dotfiles"       # dotfiles path
 export AGSHELLDIR="$HOME/.config/shell" # agnostic shell stuff
@@ -22,9 +25,8 @@ export PATH
 export EDITOR=nano
 export SUDO_EDITOR=nano
 
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
 # set ls colors
 eval "$(dircolors --sh "$AGSHELLDIR/gruvbox.dircolors")"
-
-# i copied this from somewhere idk how it looks TODO
-export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 

@@ -1,114 +1,170 @@
 -- wezterm configuration
-
 local wezterm = require('wezterm')
 local act = wezterm.action
 
--- is the current desktop a window manager
-local WM = false
-
--- detect a tiling window manager
--- NOTE: to add a new one just check what 'XDG_CURRENT_DESKTOP' env var is
-local CUR_DE = os.getenv('XDG_CURRENT_DESKTOP')
-if CUR_DE == 'qtile' then
-    WM = true
+local config = {}
+if wezterm.config_builder then
+    -- makes nicer error messages for config errors
+    config = wezterm.config_builder()
 end
 
-local config = {}
+--- GLOBALS ---
+local windows = wezterm.target_triple == 'x86_64-pc-windows-msvc'
+local linux = wezterm.target_triple == 'x86_64-unknown-linux-gnu'
 
--- makes nicer error messages for config errors
-if wezterm.config_builder then
-    config = wezterm.config_builder()
+local TILING = false
+
+-- detect a tiling window manager
+local CUR_DE = os.getenv('XDG_CURRENT_DESKTOP')
+if CUR_DE == 'qtile' then
+    TILING = true
 end
 
 config.check_for_updates = true
 
-config.color_scheme = 'carbonfox'
-config.font = wezterm.font 'FiraCode Nerd Font'
-config.font_size = 16
+-- NOTE: no login shells!
+if linux then
+    local shell = os.getenv('SHELL')
+    if os.getenv('container') ~= nil then
+        -- running in a flatpak so SHELL is /bin/sh
+        shell = '/usr/bin/zsh'
+    end
 
-if wezterm.target_triple == 'x86_64-pc-windows-msvc' then
-    -- firacode is named differently on windows for some reason..
-    config.font = wezterm.font 'FiraCode NFM'
+    -- toolbox wrapper script
+    config.default_prog = { 'box', 'enter' }
+
+    config.launch_menu = {
+        {
+            label = 'Shell',
+            args = { shell },
+        },
+        {
+            label = 'Toolbox',
+
+            -- custom toolbox wrapper
+            args = { 'box', 'enter' },
+        }
+    }
+else
+    -- TODO:
+    -- default_domain = "WSL:Ubuntu"
 end
+
+--- THEMING ---
+config.color_scheme = 'carbonfox'
+config.font = wezterm.font_with_fallback({
+    'FiraCode Nerd Font',
+    'FiraCode NFM', -- on windows it's named different
+    'Hack',
+    'Noto Sans Mono',
+})
+config.font_size = 16
 
 -- makes the tabbar look more like TUI
 config.use_fancy_tab_bar = false;
-
-config.hide_mouse_cursor_when_typing = false
 config.hide_tab_bar_if_only_one_tab = true
+
+--- BEHAVIOUR ---
+config.hide_mouse_cursor_when_typing = false
 
 -- makes alt act as regular alt
 config.send_composed_key_when_left_alt_is_pressed = false
 config.send_composed_key_when_right_alt_is_pressed = false
 
+--- ENVIRONMENTAL ADAPTATION ---
 -- remove title bar in a tiling window managers
-if WM then
-    config.window_decorations = "RESIZE"
-end
+if TILING then config.window_decorations = "RESIZE" end
+
+-- wezterm.on('user-var-changed', function(window, pane, name, value)
+--     if name == 'TMUX' then
+--         if value == '1' then
+--             if window:active_key_table() == 'mux' then
+--                 window:perform_action(act.PopKeyTable, pane)
+--             end
+--         else
+--             window:perform_action (act.ActivateKeyTable { name = 'mux' }, pane)
+--         end
+--     end
+--     -- wezterm.log_info('var', name, value)
+-- end)
 
 -- i plan to emulate tmux syntax so i do not need the bindings
-config.disable_default_key_bindings = true
+-- config.disable_default_key_bindings = true
 
--- NOTE: this is not SHIFT + , but the key < left of Z!
+--- KEYBINDINGS ---
+
+-- NOTE: this is not 'SHIFT + ,' but the key < left of Z!
 -- as alternative 'RightAlt' is the next candidate
-local leader = '<'
-
--- keybindings shameless stolen from https://github.com/wez/wezterm/discussions/2329
-config.leader = { key=leader, mods="NONE", timeout_milliseconds=500 }
+config.leader = { key = '<', mods = "NONE" }
 config.keys = {
-    {key = "LeftArrow" , mods = "OPT", action = act.SendString("\x1bb")},
-    {key = "RightArrow", mods = "OPT", action = act.SendString("\x1bf")},
-
-    -- The physical CMD key on OSX is the Alt key on Win/*nix, so map the common Alt-combo commands.
-    {key = ".", mods = "CMD", action = act.SendString("\x1b.")},
-    {key = "p", mods = "CMD", action = act.SendString("\x1bp")},
-    {key = "n", mods = "CMD", action = act.SendString("\x1bn")},
-    {key = "b", mods = "CMD", action = act.SendString("\x1bb")},
-    {key = "f", mods = "CMD", action = act.SendString("\x1bf")},
-
-    -- Window management
-    -- {key = "Space", mods="LEADER", action=act{SendString=leader}},
-    {key="-",  mods="LEADER", action=act{SplitVertical={domain="CurrentPaneDomain"}} },
-    {key="\\", mods="LEADER", action=act.SplitHorizontal{domain="CurrentPaneDomain"}},
-    {key="z" , mods="LEADER", action="TogglePaneZoomState" },
-    {key="c" , mods="LEADER", action=act{SpawnTab="CurrentPaneDomain"}},
-
-    {key="LeftArrow", mods="LEADER", action=act.ActivatePaneDirection("Left")},
-    {key="DownArrow", mods="LEADER", action=act.ActivatePaneDirection("Down")},
-    {key="UpArrow", mods="LEADER", action=act.ActivatePaneDirection("Up")},
-    {key="RightArrow", mods="LEADER", action=act.ActivatePaneDirection("Right")},
-
-    {key="LeftArrow", mods="LEADER", action=act{AdjustPaneSize={"Left", 5}}},
-    {key="DownArrow", mods="LEADER", action=act{AdjustPaneSize={"Down", 5}}},
-    {key="UpArrow", mods="LEADER", action=act{AdjustPaneSize={"Up", 5}}},
-    {key="RightArrow", mods="LEADER", action=act{AdjustPaneSize={"Right", 5}}},
-
-    {key="`", mods="LEADER", action=act.ActivateLastTab},
-    {key=" ", mods="LEADER", action=act.ActivateTabRelative(1)},
-    {key="1", mods="LEADER", action=act{ActivateTab=0}},
-    {key="2", mods="LEADER", action=act{ActivateTab=1}},
-    {key="3", mods="LEADER", action=act{ActivateTab=2}},
-    {key="4", mods="LEADER", action=act{ActivateTab=3}},
-    {key="5", mods="LEADER", action=act{ActivateTab=4}},
-    {key="6", mods="LEADER", action=act{ActivateTab=5}},
-    {key="7", mods="LEADER", action=act{ActivateTab=6}},
-    {key="8", mods="LEADER", action=act{ActivateTab=7}},
-    {key="9", mods="LEADER", action=act{ActivateTab=8}},
-    {key="x", mods="LEADER", action=act{CloseCurrentPane={confirm=true}}},
-
-    -- Activate Copy Mode
-    {key="[", mods="LEADER", action=act.ActivateCopyMode},
-    -- Paste from Copy Mode
-    {key="]", mods="LEADER", action=act.PasteFrom("PrimarySelection")},
-
     -- allow to map keybinings to SHIFT + ESCAPE
     { key = 'Escape', mods = 'SHIFT', action = act.SendString("\x1b[[") },
 
     -- show debug overlay
-    { key = 'L', mods = 'LEADER|SHIFT', action = wezterm.action.ShowDebugOverlay },
+    -- { key = 'D', mods = 'SHIFT|ALT', action = wezterm.action.ShowDebugOverlay },
+
+    -- {
+    --     key = 'P',
+    --     mods = 'CTRL|SHIFT',
+    --     action = wezterm.action.ActivateCommandPalette,
+    -- },
+
+    { key = 'l', mods = 'LEADER', action = act.ShowLauncher },
+
 }
 
 config.key_tables = {
+    -- TODO only add these if not tmux
+    mux = {
+        { key = "LeftArrow" , mods = "ALT", action = act.ActivateTabRelative(1) },
+        { key = "RightArrow", mods = "ALT", action = act.ActivateTabRelative(1) },
+    },
+
+    vim = {
+
+        -- The physical CMD key on OSX is the Alt key on Win/*nix, so map the common Alt-combo commands.
+        {key = ".", mods = "CMD", action = act.SendString("\x1b.")},
+        {key = "p", mods = "CMD", action = act.SendString("\x1bp")},
+        {key = "n", mods = "CMD", action = act.SendString("\x1bn")},
+        {key = "b", mods = "CMD", action = act.SendString("\x1bb")},
+        {key = "f", mods = "CMD", action = act.SendString("\x1bf")},
+
+        -- Window management
+        -- {key = "Space", mods="LEADER", action=act{SendString=leader}},
+        {key="-",  mods="LEADER", action=act{SplitVertical={domain="CurrentPaneDomain"}} },
+        {key="\\", mods="LEADER", action=act.SplitHorizontal{domain="CurrentPaneDomain"}},
+        {key="z" , mods="LEADER", action="TogglePaneZoomState" },
+        {key="c" , mods="LEADER", action=act{SpawnTab="CurrentPaneDomain"}},
+
+        {key="LeftArrow", mods="LEADER", action=act.ActivatePaneDirection("Left")},
+        {key="DownArrow", mods="LEADER", action=act.ActivatePaneDirection("Down")},
+        {key="UpArrow", mods="LEADER", action=act.ActivatePaneDirection("Up")},
+        {key="RightArrow", mods="LEADER", action=act.ActivatePaneDirection("Right")},
+
+        {key="LeftArrow", mods="LEADER", action=act{AdjustPaneSize={"Left", 5}}},
+        {key="DownArrow", mods="LEADER", action=act{AdjustPaneSize={"Down", 5}}},
+        {key="UpArrow", mods="LEADER", action=act{AdjustPaneSize={"Up", 5}}},
+        {key="RightArrow", mods="LEADER", action=act{AdjustPaneSize={"Right", 5}}},
+
+        {key="`", mods="LEADER", action=act.ActivateLastTab},
+        {key=" ", mods="LEADER", action=act.ActivateTabRelative(1)},
+        {key="1", mods="LEADER", action=act{ActivateTab=0}},
+        {key="2", mods="LEADER", action=act{ActivateTab=1}},
+        {key="3", mods="LEADER", action=act{ActivateTab=2}},
+        {key="4", mods="LEADER", action=act{ActivateTab=3}},
+        {key="5", mods="LEADER", action=act{ActivateTab=4}},
+        {key="6", mods="LEADER", action=act{ActivateTab=5}},
+        {key="7", mods="LEADER", action=act{ActivateTab=6}},
+        {key="8", mods="LEADER", action=act{ActivateTab=7}},
+        {key="9", mods="LEADER", action=act{ActivateTab=8}},
+        {key="x", mods="LEADER", action=act{CloseCurrentPane={confirm=true}}},
+
+        -- Activate Copy Mode
+        {key="[", mods="LEADER", action=act.ActivateCopyMode},
+        -- Paste from Copy Mode
+        {key="]", mods="LEADER", action=act.PasteFrom("PrimarySelection")},
+    },
+
     copy_mode = {
         {key="c", mods="CTRL", action=act.CopyMode("Close")},
         {key="g", mods="CTRL", action=act.CopyMode("Close")},

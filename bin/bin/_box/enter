@@ -29,5 +29,5 @@ if [[ -n "$1" ]]; then
     arg=(--container "$1")
 fi
 
-toolbox run "${arg[@]}" "${ENTRYPOINT:-/usr/bin/zsh}"
+toolbox run "${arg[@]}" "${ENTRYPOINT:-/usr/bin/zsh}" --login
 

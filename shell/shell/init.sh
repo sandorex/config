@@ -10,8 +10,6 @@ fi
 
 # automatically sets toolbox hostname
 if [[ "$(hostname)" == "toolbox" ]]; then
-    echo "Setting up toolbox hostname.."
-
     source "$DOTFILES"/.shenv
 
     sudo hostname "$SH_HOSTNAME.toolbox"

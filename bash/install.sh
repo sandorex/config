@@ -19,4 +19,8 @@ fi
 util link -a "$HOME"/.config/bash ./bash
 util link -a "$HOME"/.bashrc "$HOME"/.config/bash/init.bash
 
+# TODO use 'util remove'
+[ -f "$HOME/.bash_profile" ] && echo "Please remove ~/.bash_profile"
+
 touch .installed
+
