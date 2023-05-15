@@ -77,9 +77,6 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' completer _complete _ignored _files
 
-# time commands that take longer than 10 second system/cpu time
-REPORTTIME=10
-
 # zsh renamer thingy
 autoload -U zmv
 
