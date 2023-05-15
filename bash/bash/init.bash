@@ -12,6 +12,8 @@ case $- in
       *) return;;
 esac
 
+source "$AGSHELLDIR/interactive-pre.sh"
+
 alias reload-shell='source ~/.bashrc'
 alias reload-bash='source ~/.bashrc'
 
@@ -60,17 +62,12 @@ __prompt_cmd() {
     echo -en "\033]0;$(pwd)\a"
 }
 
-PS_PREFIX=''
-
-# for use inside containers
-if [[ "$container" == "oci" ]]; then
-    PS_PREFIX="\[$(tput setaf 4)\]󰡖 \[$(tput sgr0)\]"
-fi
-
 PROMPT_COMMAND="__prompt_cmd ; $PROMPT_COMMAND"
-PS1=$PS_PREFIX'\[$(tput setaf 2)\]$\[$(tput sgr0)\] '
+PS1='\[$(tput setaf 2)\]$\[$(tput sgr0)\] '
 
-unset PS_PREFIX
+if [[ -n "$IN_CONTAINER" ]]; then
+    PS1="\[$(tput setaf 4)\]󰡖 \[$(tput sgr0)\]$PS1"
+fi
 
 # enable bash completion
 if ! shopt -oq posix; then

@@ -3,11 +3,6 @@
 # init.sh - this basically runs apps does not have anything to do with shell
 #           initialization, this file should not be sourced!
 
-# start server
-if command -v tmux &>/dev/null; then
-    tmux start-server
-fi
-
 # automatically sets toolbox hostname
 if [[ "$(hostname)" == "toolbox" ]]; then
     source "$DOTFILES"/.shenv

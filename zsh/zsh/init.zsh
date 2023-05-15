@@ -9,30 +9,22 @@ source "${AGSHELLDIR:-$HOME/.config/shell}/non-interactive.sh"
 # the rest is only if it's an interactive shell
 [[ -o interactive ]] || return
 
+source "$AGSHELLDIR/interactive-pre.sh"
+
 alias reload-shell='source ~/.zshrc; compinit'
 alias reload-zsh='source ~/.zshrc; compinit'
 
-# little help, as i always forget them
-# read more athttps://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
-#
-# '%(?.X.Y)' if last exit is 0 then X otherwise Y, it does not have to be '.'
-# it can be anything as long as it's the same closing paren needs to be escaped
-# as '%)' if used inside
-#
-# %f resets color to default
+# set default color for the container prompt
+# allows for distinct color for each container / environment
+if [[ -z "$PROMPT_COLOR" ]] && [[ -n "$IN_CONTAINER" ]]; then
+    PROMPT_COLOR='4' # bluish color
+fi
 
-# ? - last exit code
-# L - SHLVL
-# j - background jobs
-PROMPT='%(?.%F{green}.%F{red})%(1j.%U.)%%%u%(2L.%F{magenta}%L.)%f '
+# prompt expansion https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
+PROMPT="%F{${PROMPT_COLOR:-green}}%(1j.%B.)%%%b%f "
 
 # shows exit code if last command exited with non-zero
-RPROMPT='%(?..%F{red}[ %?%  ]%f)' # show exit code if not 0
-
-# prepend container indicator
-if [[ "$container" = "oci" ]]; then
-    PROMPT="%F{4}󰡖 $PROMPT"
-fi
+RPROMPT='%(?..%F{red}[ %?%  ]%f )'
 
 chpwd() {
     # list files on dir change

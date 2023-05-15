@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+#
+# wezterm - runs wezterm flatpak
+
+flatpak run org.wezfurlong.wezterm "$@"
+

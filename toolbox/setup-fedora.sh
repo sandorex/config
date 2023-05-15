@@ -40,6 +40,15 @@ GO=(
     'github.com/charmbracelet/glow@latest' # useful markdown cli renderer
 )
 PIP=()
+HOST_EXEC=(
+    # these executables will be available inside the distrobox container
+    # allow managing the silverblue inside the container
+    rpm-ostree
+    # ostree # this is a rootless container so cant run many ostree commands
+
+    flatpak
+    podman
+)
 
 cat <<'EOF'
   ______            ____
@@ -111,3 +120,11 @@ echo
 echo "Installing latest stable neovim"
 bob use stable
 
+if command -v distrobox-host-exec &>/dev/null && [[ "${#HOST_EXEC[@]}" -ne 0 ]]; then
+    echo
+    echo "Making distrobox-host-exec symlinks"
+
+    for i in "${HOST_EXEC[@]}"; do
+        sudo ln -sf /usr/bin/distrobox-host-exec /usr/local/bin/"$i"
+    done
+fi
