@@ -17,8 +17,6 @@ PATH="$PATH:$HOME/.cargo/bin"
 PATH="$PATH:$GOPATH/bin"
 PATH="$PATH:$NPM_HOME/bin"
 PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
-
-
 PATH="$PATH:$HOME/.bin/polyfill"        # fallback path for optional software
 
 export PATH

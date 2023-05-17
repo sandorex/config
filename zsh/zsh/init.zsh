@@ -16,7 +16,7 @@ alias reload-zsh='source ~/.zshrc; compinit'
 
 # set default color for the container prompt
 # allows for distinct color for each container / environment
-if [[ -z "$PROMPT_COLOR" ]] && [[ -n "$IN_CONTAINER" ]]; then
+if [[ -z "$PROMPT_COLOR" ]] && [[ "$container" = "oci" ]]; then
     PROMPT_COLOR='4' # bluish color
 fi
 
@@ -69,6 +69,7 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' completer _complete _ignored _files
 
+# for some reason these were not in fpath already so no completions were used
 fpath=( /usr/share/zsh/site-functions/ "${fpath[@]}" )
 
 # zsh renamer thingy
