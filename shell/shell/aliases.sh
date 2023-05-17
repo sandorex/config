@@ -15,9 +15,8 @@ abbr-add se 'sudo -e'
 abbr-add g 'git'
 
 abbr-add ts 'tmux-select'
-abbr-add tb 'toolbox'
-abbr-add b 'box'
-abbr-add be 'box enter'
+abbr-add btb 'toolbox'
+abbr-add bdb 'distrobox'
 
 abbr-add '-' 'cd -'
 
