@@ -1,6 +1,5 @@
 -- wezterm configuration
 local wezterm = require('wezterm')
-local act = wezterm.action
 
 local config = {}
 if wezterm.config_builder then
@@ -60,12 +59,25 @@ config.font = wezterm.font_with_fallback({
 })
 config.font_size = 16
 
+config.colors = {
+    tab_bar = {
+        -- highlight the focused tab
+        active_tab = {
+            fg_color = '#FFFFFF',
+            bg_color = '#444444',
+        },
+    },
+}
+
 -- makes the tabbar look more like TUI
 config.use_fancy_tab_bar = false;
 config.hide_tab_bar_if_only_one_tab = true
 
 --- BEHAVIOUR ---
 config.hide_mouse_cursor_when_typing = false
+
+-- remove all link parsing
+config.hyperlink_rules = {}
 
 -- makes alt act as regular alt
 config.send_composed_key_when_left_alt_is_pressed = false
@@ -75,29 +87,8 @@ config.send_composed_key_when_right_alt_is_pressed = false
 -- remove title bar in a tiling window managers
 if TILING then config.window_decorations = "RESIZE" end
 
+--- EXTRA FILES ---
 -- merge keybindings onto the config
 require('keybindings').apply(config)
-
--- wezterm.on('user-var-changed', function(window, pane, name, value)
---     if name == 'TMUX' then
---         local overrides = window:get_config_overrides() or {}
---         if value == '1' then
---             overrides.keys = {}
---             -- table.move
---             if window:active_key_table() == 'mux' then
---                 window:perform_action(act.PopKeyTable, pane)
---             end
---         else
---             window:perform_action (act.ActivateKeyTable { name = 'mux' }, pane)
---         end
---     end
---     -- wezterm.log_info('var', name, value)
--- end)
-
--- i plan to emulate tmux syntax so i do not need the bindings
--- config.disable_default_key_bindings = true
-
---- KEYBINDINGS ---
-
 
 return config
