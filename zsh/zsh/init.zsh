@@ -136,6 +136,9 @@ bindkey -s '' 'tmux-select\n'
 
 source "$AGSHELLDIR/interactive-post.sh"
 
+# zsh compdef for scripts # TODO MOVE ELSEWHERE
+compdef cgit=git
+
 # syntax highlighting
 # HAS TO BE LOADED LAST!
 source "$SHELLDIR"/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

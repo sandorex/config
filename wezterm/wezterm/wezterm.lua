@@ -9,7 +9,6 @@ end
 
 --- GLOBALS ---
 local windows = wezterm.target_triple == 'x86_64-pc-windows-msvc'
-local linux = wezterm.target_triple == 'x86_64-unknown-linux-gnu'
 
 local TILING = false
 
@@ -22,31 +21,39 @@ end
 config.check_for_updates = true
 
 -- NOTE: no login shells!
-if linux then
+if windows then
+    -- TODO:
+    -- default_domain = "WSL:Ubuntu"
+else
+    -- detect user shell
     local shell = os.getenv('SHELL')
     if os.getenv('container') ~= nil then
-        -- running in a flatpak so SHELL is /bin/sh
+        -- shell var in flatpak is always /bin/sh so default to zsh
         shell = '/usr/bin/zsh'
     end
 
-    -- toolbox wrapper script
-    config.default_prog = { 'box', 'enter' }
-
     config.launch_menu = {
         {
-            label = 'Shell',
-            args = { shell },
+            label = 'Daily Container',
+            args = { 'distrobox', 'enter', 'daily' },
         },
         {
-            label = 'Toolbox',
-
-            -- custom toolbox wrapper
-            args = { 'box', 'enter' },
-        }
+            label = 'Choose a Container',
+            args = { 'echo', 'TODO' },
+            -- args = { 'box', 'choose' }, -- TODO
+        },
+        {
+            label = 'Toolbox Default',
+            args = { 'toolbox-enter-wrapper' },
+        },
+        {
+            label = 'System Shell',
+            args = { shell },
+        },
     }
-else
-    -- TODO:
-    -- default_domain = "WSL:Ubuntu"
+
+    -- default to first menu item
+    config.default_prog = config.launch_menu[1].args
 end
 
 --- THEMING ---

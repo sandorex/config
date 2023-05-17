@@ -4,6 +4,9 @@
 
 DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
+# to set everything up properly
+source "$DIR/../profile/profile"
+
 # base minimal packages
 DNF=(
     # tools i use directly
@@ -104,9 +107,9 @@ if [[ "${#GO[@]}" -ne 0 ]]; then
 
     if [[ -z "$GOPATH" ]]; then
         echo "Skipped as \$GOPATH is not defined!"
+    else
+        go install "${GO[@]}"
     fi
-
-    go install "${GO[@]}"
 fi
 
 if [[ "${#PIP[@]}" -ne 0 ]]; then

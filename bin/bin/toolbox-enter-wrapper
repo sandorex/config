@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#
+# toolbox-enter-wrapper - wrapper to call the shell properly in toolbox
+
+# either use the argument or the SHELL env var
+# always run login shell so that it initializes properly for my config
+exec toolbox run "${1:-${SHELL:?}}" --login
