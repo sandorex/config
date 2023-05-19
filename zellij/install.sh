@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# install.sh - links .bin directory
+# install.sh - links zellij config
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
@@ -12,7 +12,7 @@ if [[ -f "$HOME/.dotfiles-state/$CONFIG" ]] && [[ -z "$REINSTALL" ]]; then
     exit
 fi
 
-util link -a "$HOME"/.bin ./bin
+util link -a "$HOME"/.config/zellij ./zellij
 
 mkdir -p "$HOME/.dotfiles-state"
 touch "$HOME/.dotfiles-state/$CONFIG"

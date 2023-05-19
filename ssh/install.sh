@@ -6,8 +6,9 @@ cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 export PATH="$PWD/../bin/bin:$PATH"
 
-if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
-    echo "ssh config already installed"
+CONFIG="$(basename "$(realpath "$(dirname "${BASH_SOURCE[0]}")")")"
+if [[ -f "$HOME/.dotfiles-state/$CONFIG" ]] && [[ -z "$REINSTALL" ]]; then
+    echo "$CONFIG config already installed"
     exit
 fi
 
@@ -15,10 +16,9 @@ HOST=$(hostname)
 mkdir -p "$HOME"/.ssh
 mkdir -p "$HOME/.ssh/_$HOST"
 
-# TODO test this
-util link "_$HOST" "$HOME/.ssh/_$HOST.toolbox"
-
+util link "_$HOST" "$HOME/.ssh/_$HOST.toolbox" # allows using ssh keys in containers
 util copy ./config "$HOME"/.ssh/config
 
-touch .installed
+mkdir -p "$HOME/.dotfiles-state"
+touch "$HOME/.dotfiles-state/$CONFIG"
 

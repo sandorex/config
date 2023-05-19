@@ -14,6 +14,7 @@ DNF=(
     zsh
     qrencode # used for generating qr in console
     hyperfine # benchmarking tool thingy
+    ripgrep # regex searching thingy
 
     # package managers
     cargo

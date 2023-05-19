@@ -69,8 +69,14 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' completer _complete _ignored _files
 
-# for some reason these were not in fpath already so no completions were used
-fpath=( /usr/share/zsh/site-functions/ "${fpath[@]}" )
+fpath=(
+    # for some reason these were not in fpath already so no completions were used
+    /usr/share/zsh/site-functions/
+
+    "$HOME/.config/zsh/completions"
+
+    "${fpath[@]}"
+)
 
 # zsh renamer thingy
 autoload -U zmv
@@ -131,8 +137,8 @@ autoload -z edit-command-line
 zle -N edit-command-line
 bindkey '^X^E' edit-command-line
 
-# run tmux-select
-bindkey -s '' 'tmux-select\n'
+# run mux-select
+bindkey -s '' 'mux-select\n'
 
 source "$AGSHELLDIR/interactive-post.sh"
 

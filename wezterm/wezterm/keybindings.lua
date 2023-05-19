@@ -22,7 +22,7 @@ function M.apply(config)
         { key = 'Escape', mods = 'SHIFT', action = act.SendString("\x1b[[") },
 
         -- show debug overlay
-        -- { key = 'D', mods = 'SHIFT|ALT', action = wezterm.action.ShowDebugOverlay },
+        { key = 'D', mods = 'SHIFT|ALT', action = wezterm.action.ShowDebugOverlay },
 
         -- {
         --     key = 'P',

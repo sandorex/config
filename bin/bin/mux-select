@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#
+# mux-select - select a session in multiplexer
+
+SESSIONS="$(zellij list-sessions)"
+NUM="$(echo "$SESSIONS" | wc -l)"
+
+if [[ "$NUM" -ge 2 ]]; then
+    zellij attach "$(echo "$SESSIONS" | gum choose --header="Choose zellij session")"
+else
+    zellij attach -c
+fi
+

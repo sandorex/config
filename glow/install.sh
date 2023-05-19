@@ -6,12 +6,14 @@ cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 export PATH="$PWD/../bin/bin:$PATH"
 
-if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
-    echo "glow config already installed"
+CONFIG="$(basename "$(realpath "$(dirname "${BASH_SOURCE[0]}")")")"
+if [[ -f "$HOME/.dotfiles-state/$CONFIG" ]] && [[ -z "$REINSTALL" ]]; then
+    echo "$CONFIG config already installed"
     exit
 fi
 
 link -a "$HOME"/.config/glow ./glow
 
-touch .installed
+mkdir -p "$HOME/.dotfiles-state"
+touch "$HOME/.dotfiles-state/$CONFIG"
 

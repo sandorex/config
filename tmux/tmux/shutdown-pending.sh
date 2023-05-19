@@ -2,6 +2,7 @@
 #
 # shutdown-pending.sh - shows icon if shutdown is pending, for use in tmux
 
+# TODO its not working properly sometimes it says schedulled for null
 # the file does not exist unless shutdown is scheduled
 if shutdown --show &>/dev/null; then
     # color it red

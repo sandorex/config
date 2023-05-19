@@ -43,17 +43,24 @@ dconf write /org/gnome/desktop/peripherals/mouse/accel-profile 'default' # enabl
 dconf write /org/gnome/desktop/peripherals/mouse/speed -0.81611570247933884 # mouse speed
 
 echo
+FLATPAKS=(
+    'org.wezfurlong.wezterm' # terminal
+
+    # media
+    'com.stremio.Stremio'
+    'fr.handbrake.ghb' # transcoding thingy
+
+    # misc
+    'com.github.finefindus.eyedropper' # color pallete
+)
+log "Installing flatpaks"
+flatpak install -y "${FLATPAKS[@]}"
+
+echo
 log "Installing dotfiles modules"
 
 # Modules
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
-
-source config.sh
-
-# so i dont have to manually clean the state
-if [[ -n "$REINSTALL" ]]; then
-    rm "$STATE_DIR"/*
-fi
 
 # scripts
 ./bin/install.sh

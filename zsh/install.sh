@@ -6,8 +6,9 @@ cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 export PATH="$PWD/../bin/bin:$PATH"
 
-if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
-    echo "zsh config already installed"
+CONFIG="$(basename "$(realpath "$(dirname "${BASH_SOURCE[0]}")")")"
+if [[ -f "$HOME/.dotfiles-state/$CONFIG" ]] && [[ -z "$REINSTALL" ]]; then
+    echo "$CONFIG config already installed"
     exit
 fi
 
@@ -16,11 +17,12 @@ fi
 
 util link -a "$HOME"/.config/zsh ./zsh
 util link -a "$HOME"/.zshrc ./zsh/init.zsh
-util link .profile "$HOME"/.zprofile # it wont load .profile unless .zshrc is missing
+util link .profile "$HOME"/.zprofile
 
 # TODO write 'util remove' and 'util restore' and use it to backup these
 [ -f "$HOME/.zshenv" ] && echo "Please remove ~/.zshenv"
 [ -f "$HOME/.zlogin" ] && echo "Please remove ~/.zlogin"
 
-touch .installed
+mkdir -p "$HOME/.dotfiles-state"
+touch "$HOME/.dotfiles-state/$CONFIG"
 

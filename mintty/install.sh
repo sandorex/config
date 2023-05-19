@@ -11,8 +11,9 @@ cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 export PATH="$PWD/../bin/bin:$PATH"
 
-if [[ -f .installed ]] && [[ -z "$REINSTALL" ]]; then
-    echo "mintty/wsltty config already installed"
+CONFIG="$(basename "$(realpath "$(dirname "${BASH_SOURCE[0]}")")")"
+if [[ -f "$HOME/.dotfiles-state/$CONFIG" ]] && [[ -z "$REINSTALL" ]]; then
+    echo "$CONFIG config already installed"
     exit
 fi
 
@@ -32,4 +33,6 @@ mintty_path=$(wslpath -u "$(cmd "$MINTTY_THEMES")")
 util copy ./nightfox-carbonfox "$wsltty_path"
 util copy ./nightfox-carbonfox "$mintty_path"
 
-touch .installed
+mkdir -p "$HOME/.dotfiles-state"
+touch "$HOME/.dotfiles-state/$CONFIG"
+
