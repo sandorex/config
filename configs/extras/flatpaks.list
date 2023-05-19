@@ -1,0 +1,24 @@
+# this file contains names of flatpaks
+# all lines beginning with # should be ignored
+
+# the browsers
+org.mozilla.firefox
+com.brave.Browser
+
+com.discordapp.Discord
+
+# main terminal
+org.wezfurlong.wezterm
+
+com.stremio.Stremio
+com.obsproject.Studio
+org.kde.krita
+
+# video transcoding
+fr.handbrake.ghb
+
+# misc
+com.github.finefindus.eyedropper
+com.github.alexkdeveloper.desktop-files-creator
+org.gnome.Extensions
+
