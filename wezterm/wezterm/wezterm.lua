@@ -20,7 +20,8 @@ end
 
 config.check_for_updates = true
 
--- NOTE: no login shells!
+-- NOTE: do not use login shells as they make it load profile each time and
+-- when there is no need to do that, except in containers
 if windows then
     -- TODO:
     -- default_domain = "WSL:Ubuntu"
@@ -36,11 +37,6 @@ else
         {
             label = 'Daily Container',
             args = { 'distrobox', 'enter', 'daily' },
-        },
-        {
-            label = 'Choose a Container',
-            args = { 'echo', 'TODO' },
-            -- args = { 'box', 'choose' }, -- TODO
         },
         {
             label = 'Toolbox Default',

@@ -1,15 +1,17 @@
 snippet shebang-bash
 	#!/usr/bin/env bash
 
-snippet shebang
+snippet shebang-sh
 	#!/bin/sh
 
 snippet CDDIR
-	cd "$(dirname "${BASH_SOURCE[0]}")" || exit
+	cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 snippet DIR
-	# add --no-symlinks (not that portable outside linux)
 	DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
+
+snippet grep-parse-listfile
+	grep -E -v '(^\s*#)|(^\s*$)' ${0:${VISUAL}}
 
 snippet isroot
 	if [ "$(id -u)" -ne 0 ]; then
@@ -28,7 +30,7 @@ snippet parseargs
 				EXAMPLE=\$1
 				shift 2
 				;;
-			--*|-*)
+			-*)
 				echo "Unknown option \$1"
 				exit 1
 				;;
