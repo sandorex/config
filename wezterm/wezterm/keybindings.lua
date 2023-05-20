@@ -40,8 +40,8 @@ function M.apply(config)
 
         { key = "x", mods = "LEADER", action = act.CloseCurrentPane { confirm = true } },
 
-        { key = "LeftArrow" , mods = "ALT", action = act.ActivateTabRelative(-1) },
-        { key = "RightArrow", mods = "ALT", action = act.ActivateTabRelative(1) },
+        { key = "LeftArrow" , mods = "LEADER", action = act.ActivateTabRelative(-1) },
+        { key = "RightArrow", mods = "LEADER", action = act.ActivateTabRelative(1) },
     }
 
     config.key_tables = {
