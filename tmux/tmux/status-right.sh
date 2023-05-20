@@ -7,7 +7,7 @@ icons_noutf=( '[SSH]' '[WSL]' '[C]' )
 
 # $1 enables utf8 output
 if [[ -z "$1" ]]; then
-    icons=(${icons_noutf[@]})
+    icons=( "${icons_noutf[@]}" )
 fi
 
 if [[ -n "$SSH_CONNECTION" ]]; then
