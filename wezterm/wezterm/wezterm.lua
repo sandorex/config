@@ -64,6 +64,9 @@ config.font_size = 16
 
 config.colors = {
     tab_bar = {
+        -- blends the tab bar in with the rest of the background
+        background = '#161616',
+
         -- highlight the focused tab
         active_tab = {
             fg_color = '#FFFFFF',
