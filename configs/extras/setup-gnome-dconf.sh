@@ -10,7 +10,7 @@ dconf write /org/gnome/mutter/center-new-windows true
 dconf write /org/gnome/desktop/input-sources/xkb-options ['caps:hyper'] # caps is hyper
 dconf write /org/gnome/desktop/interface/gtk-enable-primary-paste false
 
-dconf write /org/gnome/desktop/wm/preferences/focus-mode 'sloppy' # focus on hover
+# dconf write /org/gnome/desktop/wm/preferences/focus-mode 'sloppy' # focus on hover
 
 # font stuff
 dconf write /org/gnome/desktop/interface/font-hinting 'full'
