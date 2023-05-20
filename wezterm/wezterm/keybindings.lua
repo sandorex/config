@@ -40,7 +40,7 @@ function M.apply(config)
 
         { key = "x", mods = "LEADER", action = act.CloseCurrentPane { confirm = true } },
 
-        { key = "LeftArrow" , mods = "ALT", action = act.ActivateTabRelative(1) },
+        { key = "LeftArrow" , mods = "ALT", action = act.ActivateTabRelative(-1) },
         { key = "RightArrow", mods = "ALT", action = act.ActivateTabRelative(1) },
     }
 
