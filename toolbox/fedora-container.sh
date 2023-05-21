@@ -10,6 +10,7 @@ source "$DIR/../profile/profile"
 # base minimal packages
 DNF=(
     # tools i use directly
+    file
     tmux
     zsh
     qrencode # used for generating qr in console

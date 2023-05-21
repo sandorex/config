@@ -21,7 +21,11 @@ abbr-add bdb 'distrobox'
 abbr-add '-' 'cd -'
 
 if command -v bat &>/dev/null; then
-  alias cat='bat'
+    alias cat='bat'
+fi
+
+if command -v distrobox-host-exec &>/dev/null; then
+    abbr-add 'h' 'distrobox-host-exec'
 fi
 
 alias ls='ls -F --color=auto'
