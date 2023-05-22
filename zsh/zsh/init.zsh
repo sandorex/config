@@ -121,8 +121,14 @@ _first-tab() {
 zle -N _first-tab
 bindkey '^I' _first-tab
 
-# tmux messes it up so im redefining it here
+# keybinding for isearch
 bindkey '^R' history-incremental-search-backward
+
+# better search mode
+bindkey -M isearch '^[[A' history-incremental-search-backward
+bindkey -M isearch '^[[B' history-incremental-search-forward
+bindkey -M isearch '^[' send-break
+bindkey -M isearch '^?' backward-delete-word
 
 # delete and ctrl delete
 bindkey '^[[3~' delete-char
@@ -131,7 +137,7 @@ bindkey '^[[3;5~' delete-word
 # ctrl backspace
 bindkey '^H' backward-delete-word
 
-stty -ixon # enables ^Q and ^S
+# push current buffer into stack which pops back up after execution of anything
 bindkey '^Q' push-input
 
 autoload -z edit-command-line
