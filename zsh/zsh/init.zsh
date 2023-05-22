@@ -150,6 +150,9 @@ compdef cgit=git
 # HAS TO BE LOADED LAST!
 source "$SHELLDIR"/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
+# remove duplicates from path just in case
+typeset -U path
+
 # startup apps and stuff
 "$AGSHELLDIR"/init.sh
 
