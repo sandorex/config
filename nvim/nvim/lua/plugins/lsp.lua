@@ -27,7 +27,11 @@ local function on_attach()
     -- default to true
     set_floating_diagnostics(true)
 
+    -- toggles
     vim.keymap.set({ 'n' }, '<F2>f', function() set_floating_diagnostics(nil) end, { desc = 'Toggle between floating and inline diagnostics', buffer = true, silent = true })
+
+    -- other
+    vim.keymap.set({ 'n', 'v' }, '<F3>f', vim.lsp.buf.format, { desc = 'Format selection or whole buffer' })
 end
 
 return {

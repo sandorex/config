@@ -1,7 +1,3 @@
--- NOTE has to be defined in every file for some reason..
-vim.g.mapleader = ' '
-vim.g.localmapleader = ' '
-
 return {
     {
         'stevearc/resession.nvim',

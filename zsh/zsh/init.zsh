@@ -59,6 +59,7 @@ setopt always_to_end    # move cursor to the end of completed word
 setopt auto_list        # list on first tab if ambiguous completion
 setopt auto_menu
 setopt auto_param_slash # if param is a dir add a trailing slash
+setopt interactive_comments
 
 # zstyle ':completion:*' file-sort name
 # zstyle ':completion:*' menu select=long
