@@ -10,9 +10,10 @@ log() {
     echo "$(tput setaf 4)$1$(tput sgr0)"
 }
 
-log "Setting up gnome using dconf"
+log "Nuking systemd-oomd.service, may require superuser permission"
+./extras/fedora-disable-oomd.sh
 
-# setup gnome
+log "Setting up gnome using dconf"
 ./extras/setup-gnome-dconf.sh
 
 echo
