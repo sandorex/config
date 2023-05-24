@@ -19,6 +19,10 @@ PATH="$PATH:$NPM_HOME/bin"
 PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
 PATH="$PATH:$HOME/.bin/polyfill"        # fallback path for optional software
 
+if command -v fnm >/dev/null && [ -z "$FNM_DIR" ]; then
+    eval "$(fnm env)"
+fi
+
 export PATH
 
 # nano is default, override in shell

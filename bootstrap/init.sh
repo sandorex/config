@@ -4,7 +4,7 @@
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit
 
-if [[ "$container" == "oci" ]] && [[ ! "$FORCE" == "1" ]]; then
+if [[ -n "$container" ]] && [[ ! "$FORCE" == "1" ]]; then
     cat <<EOF
 This script is not meant to be ran in a container
 To override this use 'FORCE=1 $0'

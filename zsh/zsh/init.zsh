@@ -16,7 +16,7 @@ alias reload-zsh='source ~/.zshrc; compinit'
 
 # set default color for the container prompt
 # allows for distinct color for each container / environment
-if [[ -z "$PROMPT_COLOR" ]] && [[ "$container" = "oci" ]]; then
+if [[ -z "$PROMPT_COLOR" ]] && [[ -n "$container" ]]; then
     PROMPT_COLOR='4' # bluish color
 fi
 

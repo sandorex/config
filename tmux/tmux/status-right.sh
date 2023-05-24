@@ -18,7 +18,7 @@ if [[ -n "$WSL_DISTRO_NAME" ]]; then
     printf " %s" "${icons[1]}"
 fi
 
-if [[ "$container" == "oci" ]]; then
+if [[ -n "$container" ]]; then
     printf " %s" "${icons[2]}"
 fi
 
