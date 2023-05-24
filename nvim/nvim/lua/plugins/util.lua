@@ -25,7 +25,18 @@ return {
             vim.api.nvim_create_autocmd('VimEnter', {
                 callback = function()
                     if vim.fn.argc(-1) == 0 then
-                        resession.load(vim.fn.getcwd(), { dir = 'dirsession', silence_errors = true })
+                        local session_name = vim.fn.getcwd()
+                        local session_dir = 'dirsession'
+
+                        -- delete the session after loading so its not started twice
+                        local function on_load()
+                            resession.delete(session_name, { dir = session_dir })
+
+                            resession.remove_hook('post_load', on_load)
+                        end
+
+                        resession.add_hook('post_load', on_load)
+                        resession.load(session_name, { dir = session_dir, silence_errors = true })
                     end
                 end
             })
@@ -55,8 +66,8 @@ return {
 
     {
         'folke/which-key.nvim',
-        lazy = false, -- load on start
-        config = true,
+        event = 'VeryLazy',
+        opts = {},
     },
 }
 

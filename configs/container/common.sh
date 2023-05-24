@@ -25,6 +25,9 @@ DNF=(
     # nvim deps
     fzf
     shellcheck
+
+    # other
+    unzip
 )
 
 UBUNTU_APT=(
@@ -50,6 +53,9 @@ UBUNTU_APT=(
     # nvim deps
     fzf
     shellcheck
+
+    # other
+    unzip
 )
 
 CARGO=(

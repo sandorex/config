@@ -35,6 +35,15 @@ for i in "$@"; do
 done
 echo
 
+# this should really speed up dnf
+cat <<'EOF' | sudo tee -a /etc/dnf/dnf.conf
+
+# added by fedora-toolbox.sh setup script
+max_parallel_downloads=10
+defaultyes=True
+fastestmirror=True
+EOF
+
 echo "Installing rpmfusion"
 sudo dnf -y install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-"$(rpm -E %fedora)".noarch.rpm \
                     https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-"$(rpm -E %fedora)".noarch.rpm
