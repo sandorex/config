@@ -8,7 +8,7 @@ CONTAINER_NAME=${1:-ubuntu}
 CONTAINER_HOSTNAME="$(hostname).toolbox"
 IMAGE='ubuntu'
 IMAGE_VERSION=latest
-ENV=( 'PROMPT_COLOR=202' 'WEZTERM_PREFIX="    "' )
+ENV=( 'PROMPT_COLOR=202' 'WEZTERM_PREFIX=' )
 
 if [[ -n "$container" ]]; then
     echo "Running distrobox inside a container is not recommended"

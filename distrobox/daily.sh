@@ -8,7 +8,7 @@ CONTAINER_NAME=${1:-daily}
 CONTAINER_HOSTNAME="$(hostname).toolbox"
 IMAGE='registry.fedoraproject.org/fedora-toolbox'
 IMAGE_VERSION=38
-ENV=( 'PROMPT_COLOR=5' 'WEZTERM_PREFIX=    ' )
+ENV=( 'PROMPT_COLOR=5' 'WEZTERM_PREFIX=' )
 
 if [[ -n "$container" ]]; then
     echo "Running distrobox inside a container is not recommended"

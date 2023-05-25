@@ -8,27 +8,19 @@ if wezterm.config_builder then
 end
 
 --- GLOBALS ---
-local windows = wezterm.target_triple == 'x86_64-pc-windows-msvc'
-
-local TILING = false
-
--- detect a tiling window manager
-local CUR_DE = os.getenv('XDG_CURRENT_DESKTOP')
-if CUR_DE == 'qtile' then
-    TILING = true
-end
+local WINDOWS = wezterm.target_triple == 'x86_64-pc-windows-msvc'
+local FLATPAK = os.getenv('container') == 'flatpak'
 
 config.check_for_updates = true
 
 -- NOTE: do not use login shells as they make it load profile each time and
 -- when there is no need to do that, except in containers
-if windows then
+if WINDOWS then
     -- TODO:
     -- default_domain = "WSL:Ubuntu"
 else
-    -- detect user shell
     local shell = os.getenv('SHELL')
-    if os.getenv('container') ~= nil then
+    if FLATPAK or not shell then
         -- shell var in flatpak is always /bin/sh so default to zsh
         shell = '/usr/bin/zsh'
     end
@@ -89,8 +81,26 @@ config.hyperlink_rules = {}
 config.send_composed_key_when_left_alt_is_pressed = false
 config.send_composed_key_when_right_alt_is_pressed = false
 
--- remove title bar in a tiling window managers
-if TILING then config.window_decorations = "RESIZE" end
+wezterm.on('update-right-status', function(window, pane)
+    local user_vars = pane:get_user_vars()
+
+    local icon = user_vars.window_prefix
+    if not icon or icon == '' then
+        -- fallback for the icon,
+        icon = ''
+    end
+
+    window:set_left_status(wezterm.format {
+        { Background = { Color = '#333333' } },
+        { Text = ' ' .. wezterm.pad_right(icon, 3) },
+    })
+
+    -- Make it italic and underlined
+    window:set_right_status(wezterm.format {
+        { Background = { Color = '#333333' } },
+        { Text = ' ' .. wezterm.strftime('%Y-%m-%d %H:%M') },
+    })
+end)
 
 wezterm.on('format-tab-title', function (tab, tabs, panes, config, hover)
     return {
