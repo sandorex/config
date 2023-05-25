@@ -8,10 +8,11 @@ if [[ "${#CARGO[@]}" -ne 0 ]]; then
     cargo install "${CARGO[@]}"
 fi
 
-# TODO
-eval "$(fnm env)"
+# setup fnm if not already setup
+[[ -z "$FNM_DIR" ]] && eval "$(fnm env)"
 fnm use --install-if-missing lts-latest
 
+# custom home for npm packages
 npm config set prefix "$NPM_HOME"
 
 if [[ "${#NPM[@]}" -ne 0 ]]; then
@@ -39,7 +40,7 @@ if [[ "${#PIP[@]}" -ne 0 ]]; then
     python3 -m pip install --user "${PIP[@]}"
 fi
 
-if command -v distrobox-host-exec &>/dev/null && [[ "${#HOST_EXEC[@]}" -ne 0 ]]; then
+if [[ -n "$DISTROBOX_ENTER_PATH" ]] && [[ "${#HOST_EXEC[@]}" -ne 0 ]]; then
     echo
     echo "Making distrobox-host-exec symlinks"
 
