@@ -11,3 +11,5 @@ if [[ "$(hostname)" == "toolbox" ]]; then
     echo "$SH_HOSTNAME.toolbox" | sudo tee /etc/hostname >/dev/null
 fi
 
+wezterm-set-user-var window_prefix "${WEZTERM_PREFIX:-    }"
+

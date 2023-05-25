@@ -14,12 +14,6 @@ abbr-add se 'sudo -e'
 
 abbr-add g 'git'
 
-abbr-add ts 'tmux-select'
-abbr-add btb 'toolbox'
-abbr-add bdb 'distrobox'
-
-abbr-add '-' 'cd -'
-
 if command -v bat &>/dev/null; then
     alias cat='bat'
 fi
@@ -27,6 +21,20 @@ fi
 if command -v distrobox-host-exec &>/dev/null; then
     abbr-add 'h' 'distrobox-host-exec'
 fi
+
+_smart_dot() {
+    if [ "$#" -eq 0 ]; then
+        ls -F --color=auto
+    else
+        \. "$@"
+    fi
+}
+
+alias -- '-'='cd -'
+alias -- '.'='_smart_dot'
+alias -- '..'='cd ..'
+alias -- '...'='cd ../..'
+alias -- '....'='cd ../../..'
 
 alias ls='ls -F --color=auto'
 alias l='ls -aF --color=auto'

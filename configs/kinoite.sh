@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# silverblue.sh - silverblue setup
+# kinoite.sh - kinoite setup
 
 set -e
 
@@ -12,8 +12,13 @@ source ./extras/fedora-ostree-common.sh
 # run common stuff
 common-pre
 
-log "Setting up gnome using dconf"
-./extras/setup-gnome-dconf.sh
+log 'Setting up KDE Plasma TODO'
+
+# baloo sucks
+log 'Disabling Baloo indexer permanently'
+balooctl suspend
+balooctl disable
+balooctl purge # deletes index database
 
 common-post
 

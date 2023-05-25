@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# wezterm-set-user-var - sets wezterm user var, does not affect other terminals
+#
+# this would usually be defined as a function but this makes it possible to use
+# in any shell without code duplication
+
+# taken from wezterm shell integration
+# https://github.com/wez/wezterm/blob/main/assets/shell-integration/wezterm.sh#L397
+if hash base64 2>/dev/null && [ -n "$WEZTERM_PANE" ]; then
+    if [[ -z "${TMUX}" ]] ; then
+        printf "\033]1337;SetUserVar=%s=%s\007" "$1" "$(echo -n "$2" | base64)"
+    else
+        # <https://github.com/tmux/tmux/wiki/FAQ#what-is-the-passthrough-escape-sequence-and-how-do-i-use-it>
+        # Note that you ALSO need to add "set -g allow-passthrough on" to your tmux.conf
+        printf "\033Ptmux;\033\033]1337;SetUserVar=%s=%s\007\033\\" "$1" "$(echo -n "$2" | base64)"
+    fi
+fi

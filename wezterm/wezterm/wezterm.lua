@@ -89,9 +89,14 @@ config.hyperlink_rules = {}
 config.send_composed_key_when_left_alt_is_pressed = false
 config.send_composed_key_when_right_alt_is_pressed = false
 
---- ENVIRONMENTAL ADAPTATION ---
 -- remove title bar in a tiling window managers
 if TILING then config.window_decorations = "RESIZE" end
+
+wezterm.on('format-tab-title', function (tab, tabs, panes, config, hover)
+    return {
+        { Text = ' ' .. tab.tab_index + 1 .. ' ' },
+    }
+end)
 
 --- EXTRA FILES ---
 -- merge keybindings onto the config

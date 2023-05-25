@@ -65,6 +65,7 @@ CARGO=(
     bkt         # caching utility
     bob-nvim    # provides neovim
     fnm         # provides npm/node
+    just        # task runner like 'make'
 )
 
 NPM=(
