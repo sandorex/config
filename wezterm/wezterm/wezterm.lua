@@ -26,12 +26,14 @@ else
     end
 
     config.launch_menu = {
+        -- TAKE CARE NOT TO CHANGE LABELS AS IT IS USED TO START SPECIFIC
+        -- SHELL FROM DESKTOP
         {
-            label = 'Daily Container',
+            label = 'Daily',
             args = { 'distrobox', 'enter', 'daily' },
         },
         {
-            label = 'Toolbox Default',
+            label = 'Toolbox',
             args = { 'toolbox-enter-wrapper' },
         },
         {
@@ -44,6 +46,39 @@ else
     config.default_prog = config.launch_menu[1].args
 end
 
+-- add menu subcommand `wezterm start menu <index|label>`
+wezterm.on('gui-startup', function(cmd_obj)
+    if cmd_obj then
+        local args = cmd_obj.args
+
+        local command = args[1]
+        if command == 'menu' then
+            local arg = args[2]
+            local index = tonumber(arg)
+
+            if index ~= nil then
+                -- try to spawn the launch menu with the specific index
+                wezterm.mux.spawn_window(config.launch_menu[index] or {})
+                return
+            else
+                -- the argument is not a number so try to match it with a label
+                for _, menu_item in ipairs(config.launch_menu) do
+                    if arg and string.lower(menu_item.label) == string.lower(arg) then
+                        wezterm.mux.spawn_window(menu_item)
+                        return
+                    end
+                end
+
+                -- no matches found, spawn the default
+                wezterm.mux.spawn_window({})
+            end
+        end
+    end
+
+    -- fallback to default way it works so i dont break anything
+    wezterm.mux.spawn_window(cmd_obj or {})
+end)
+
 --- THEMING ---
 config.color_scheme = 'carbonfox'
 config.font = wezterm.font_with_fallback({
@@ -54,22 +89,37 @@ config.font = wezterm.font_with_fallback({
 })
 config.font_size = 16
 
+config.window_padding = {
+    left = '6px',
+    right = '6px',
+    top = '2px',
+    bottom = 0,
+}
+
 config.colors = {
     tab_bar = {
-        -- blends the tab bar in with the rest of the background
-        background = '#161616',
+        background = '#333333',
 
-        -- highlight the focused tab
         active_tab = {
-            fg_color = '#FFFFFF',
+            fg_color = '#ffffff',
             bg_color = '#444444',
+        },
+
+        new_tab = {
+            bg_color = '#333333',
+            fg_color = '#ffffff',
+        },
+
+        new_tab_hover = {
+            bg_color = '#555555',
+            fg_color = '#ffffff',
         },
     },
 }
 
 -- makes the tabbar look more like TUI
 config.use_fancy_tab_bar = false;
-config.hide_tab_bar_if_only_one_tab = true
+-- config.hide_tab_bar_if_only_one_tab = true -- you can drag using the tab bar
 
 --- BEHAVIOUR ---
 config.hide_mouse_cursor_when_typing = false
@@ -80,6 +130,8 @@ config.hyperlink_rules = {}
 -- makes alt act as regular alt
 config.send_composed_key_when_left_alt_is_pressed = false
 config.send_composed_key_when_right_alt_is_pressed = false
+
+config.window_decorations = 'RESIZE'
 
 wezterm.on('update-right-status', function(window, pane)
     local user_vars = pane:get_user_vars()
@@ -95,16 +147,27 @@ wezterm.on('update-right-status', function(window, pane)
         { Text = ' ' .. wezterm.pad_right(icon, 3) },
     })
 
-    -- Make it italic and underlined
+    local title = wezterm.truncate_right(pane:get_title(), 50)
+    local date = ' ' .. wezterm.strftime('%H:%M %d-%m-%Y') .. ' '
+
+    -- figure out a way to center it
     window:set_right_status(wezterm.format {
+        { Background = { Color = '#555555' } },
+        { Text = ' ' .. title .. ' ' },
         { Background = { Color = '#333333' } },
-        { Text = ' ' .. wezterm.strftime('%Y-%m-%d %H:%M') },
+        { Text = date },
     })
 end)
 
 wezterm.on('format-tab-title', function (tab, tabs, panes, config, hover)
+    -- i do not like how i can basically hide tabs if i zoom in
+    local is_zoomed = ''
+    if tab.active_pane.is_zoomed then
+        is_zoomed = 'z'
+    end
+
     return {
-        { Text = ' ' .. tab.tab_index + 1 .. ' ' },
+        { Text = ' ' .. tab.tab_index + 1 .. is_zoomed .. ' ' },
     }
 end)
 

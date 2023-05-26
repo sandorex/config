@@ -40,11 +40,11 @@ if [[ "${#PIP[@]}" -ne 0 ]]; then
     python3 -m pip install --user "${PIP[@]}"
 fi
 
-if [[ -n "$DISTROBOX_ENTER_PATH" ]] && [[ "${#HOST_EXEC[@]}" -ne 0 ]]; then
+if [[ -n "$DISTROBOX_ENTER_PATH" ]] && [[ "${#DISTROBOX_HOST_EXEC[@]}" -ne 0 ]]; then
     echo
     echo "Making distrobox-host-exec symlinks"
 
-    for i in "${HOST_EXEC[@]}"; do
+    for i in "${DISTROBOX_HOST_EXEC[@]}"; do
         sudo ln -sf /usr/bin/distrobox-host-exec /usr/local/bin/"$i"
     done
 fi

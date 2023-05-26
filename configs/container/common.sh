@@ -94,15 +94,9 @@ DISTROBOX_HOST_EXEC=(
 
     flatpak
     podman
+
+    # TODO find a way to detect if the host has rpm-ostree from the container
+    rpm-ostree
+    # i did not add ostree as many commands require root
 )
-
-# detect if the host has rpm-ostree
-if command -v rpm-ostree &>/dev/null; then
-    DISTROBOX_HOST_EXEC=(
-        "${DISTROBOX_HOST_EXEC[@]}"
-
-        rpm-ostree
-        # i did not add ostree as many commands require root
-    )
-fi
 
