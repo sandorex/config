@@ -153,16 +153,16 @@ config.window_decorations = 'INTEGRATED_BUTTONS | RESIZE'
 
 -- TODO remove window frame when fullscreen
 -- TODO change frame color depending on the user var
--- config.window_frame = {
---     border_left_width = '3px',
---     border_right_width = '3px',
---     border_bottom_height = '3px',
---     border_top_height = '3px',
---     border_left_color = 'purple',
---     border_right_color = 'purple',
---     border_bottom_color = 'purple',
---     border_top_color = 'purple',
--- }
+config.window_frame = {
+    border_left_width = '3px',
+    border_right_width = '3px',
+    border_bottom_height = '3px',
+    border_top_height = '3px',
+    border_left_color = 'gray',
+    border_right_color = 'gray',
+    border_bottom_color = 'gray',
+    border_top_color = 'gray',
+}
 
 wezterm.on('update-right-status', function(window, pane)
     local user_vars = pane:get_user_vars()
