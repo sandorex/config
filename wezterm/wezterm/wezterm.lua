@@ -48,35 +48,39 @@ end
 
 -- add menu subcommand `wezterm start menu <index|label>`
 wezterm.on('gui-startup', function(cmd_obj)
-    if cmd_obj then
+    local tab = nil
+    local pane = nil
+    local window = nil
+
+    if cmd_obj and cmd_obj.args then
         local args = cmd_obj.args
 
         local command = args[1]
-        if command == 'menu' then
+        if command == 'menu' and args[2] then
             local arg = args[2]
             local index = tonumber(arg)
 
             if index ~= nil then
                 -- try to spawn the launch menu with the specific index
-                wezterm.mux.spawn_window(config.launch_menu[index] or {})
-                return
+                tab, pane, window = wezterm.mux.spawn_window(config.launch_menu[index] or {})
             else
                 -- the argument is not a number so try to match it with a label
                 for _, menu_item in ipairs(config.launch_menu) do
                     if arg and string.lower(menu_item.label) == string.lower(arg) then
-                        wezterm.mux.spawn_window(menu_item)
-                        return
+                        tab, pane, window = wezterm.mux.spawn_window(menu_item)
                     end
                 end
 
                 -- no matches found, spawn the default
-                wezterm.mux.spawn_window({})
+                tab, pane, window = wezterm.mux.spawn_window({})
             end
         end
     end
 
     -- fallback to default way it works so i dont break anything
-    wezterm.mux.spawn_window(cmd_obj or {})
+    if window == nil then
+        tab, pane, window = wezterm.mux.spawn_window(cmd_obj or {})
+    end
 end)
 
 --- THEMING ---
@@ -117,6 +121,20 @@ config.colors = {
     },
 }
 
+local window_min = ' 󰖰 '
+local window_max = ' 󰖯 '
+local window_close = ' 󰅖 '
+config.tab_bar_style = {
+    window_hide = window_min,
+    window_hide_hover = window_min,
+    window_maximize = window_max,
+    window_maximize_hover = window_max,
+    window_close = window_close,
+    window_close_hover = window_close,
+}
+
+config.tab_max_width = 100
+
 -- makes the tabbar look more like TUI
 config.use_fancy_tab_bar = false;
 -- config.hide_tab_bar_if_only_one_tab = true -- you can drag using the tab bar
@@ -131,7 +149,20 @@ config.hyperlink_rules = {}
 config.send_composed_key_when_left_alt_is_pressed = false
 config.send_composed_key_when_right_alt_is_pressed = false
 
-config.window_decorations = 'RESIZE'
+config.window_decorations = 'INTEGRATED_BUTTONS | RESIZE'
+
+-- TODO remove window frame when fullscreen
+-- TODO change frame color depending on the user var
+-- config.window_frame = {
+--     border_left_width = '3px',
+--     border_right_width = '3px',
+--     border_bottom_height = '3px',
+--     border_top_height = '3px',
+--     border_left_color = 'purple',
+--     border_right_color = 'purple',
+--     border_bottom_color = 'purple',
+--     border_top_color = 'purple',
+-- }
 
 wezterm.on('update-right-status', function(window, pane)
     local user_vars = pane:get_user_vars()
@@ -147,7 +178,7 @@ wezterm.on('update-right-status', function(window, pane)
         { Text = ' ' .. wezterm.pad_right(icon, 3) },
     })
 
-    local title = wezterm.truncate_right(pane:get_title(), 50)
+    local title = pane:get_title()
     local date = ' ' .. wezterm.strftime('%H:%M %d-%m-%Y') .. ' '
 
     -- figure out a way to center it
@@ -159,7 +190,7 @@ wezterm.on('update-right-status', function(window, pane)
     })
 end)
 
-wezterm.on('format-tab-title', function (tab, tabs, panes, config, hover)
+wezterm.on('format-tab-title', function (tab, _, _, _, _)
     -- i do not like how i can basically hide tabs if i zoom in
     local is_zoomed = ''
     if tab.active_pane.is_zoomed then

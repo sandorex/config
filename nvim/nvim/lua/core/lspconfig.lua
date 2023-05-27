@@ -47,6 +47,7 @@ M.configs.pylsp = {
                         'E302', -- expected 2 blank lines..
                         'E402', -- module import not at top..
                         'W391', -- empty line on end of file
+                        'E261', -- 2 spaces before inline comment..
                     },
                 },
             },
