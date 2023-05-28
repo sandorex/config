@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+#
+# monb - monitor brightness utility
+
+list_monitors() { ddcutil detect | awk ' /^Display [0-9]+/ { printf $2 " " }'; }
+
+send() {
+    local display=$1
+    shift
+
+    echo "Sending to display $display"
+    ddcutil --display "$display" setvcp 10 "$@"
+}
+
+MONITOR=$2
+
+case "$1" in
+    # set literal value
+    [0-9]|[1-9][0-9]|100)
+        if [[ -n "$MONITOR" ]]; then
+            send "$MONITOR" "$1"
+        else
+            for d in $(list_monitors); do
+                send "$d" "$1"
+            done
+        fi
+        ;;
+    # set relative value +10 / -10
+    [+-][1-9]|[+-][1-9][0-9])
+        # this is pretty unreadable but its pretty much to reduce amount of code
+        if [[ -n "$MONITOR" ]]; then
+            send "$MONITOR" "${1:0:1}" "${1:1}"
+        else
+            for d in $(list_monitors); do
+                send "$d" "${1:0:1}" "${1:1}"
+            done
+        fi
+        ;;
+    l|list)
+        ddcutil detect
+        ;;
+    ## PRESETS ##
+    day)
+        "$0" 30
+        ;;
+    night)
+        "$0" 15
+        ;;
+    *)
+        echo "Getting display brightness"
+
+        # print brightness for each display
+        for d in $(list_monitors); do
+            echo -n "$d: "
+            ddcutil --display "$d" getvcp 10
+        done
+        ;;
+esac
+
