@@ -18,6 +18,16 @@ if command -v bat &>/dev/null; then
     alias cat='bat'
 fi
 
+if command -v exa &>/dev/null; then
+    alias ls='exa -F'
+    alias l='exa -aF'
+    alias ll='exa -alF'
+else
+    alias ls='ls -F --color=auto'
+    alias l='ls -aF --color=auto'
+    alias ll='ls -alF --color=auto'
+fi
+
 if command -v distrobox-host-exec &>/dev/null; then
     abbr-add 'h' 'distrobox-host-exec'
 fi
@@ -36,9 +46,6 @@ alias -- '..'='cd ..'
 alias -- '...'='cd ../..'
 alias -- '....'='cd ../../..'
 
-alias ls='ls -F --color=auto'
-alias l='ls -aF --color=auto'
-alias ll='ls -alF --color=auto'
 alias diff='diff --report-identical-files --color=auto'
 alias grep='grep --color=auto'
 alias rcat='cat -A' # safely read escape sequences

@@ -62,6 +62,7 @@ CARGO=(
     "${CARGO[@]}"
 
     bat         # cat replacement
+    exa         # ls replacement
     bkt         # caching utility
     bob-nvim    # provides neovim
     fnm         # provides npm/node
@@ -94,6 +95,7 @@ DISTROBOX_HOST_EXEC=(
 
     flatpak
     podman
+    ddcutil # allows changing brightness from within the container
 
     # TODO find a way to detect if the host has rpm-ostree from the container
     rpm-ostree
