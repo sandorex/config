@@ -7,3 +7,6 @@
 [submodule "zsh/zsh/plugins/fast-syntax-highlighting"]
 	path = zsh/zsh/plugins/fast-syntax-highlighting
 	url = https://github.com/zdharma-continuum/fast-syntax-highlighting.git
+[submodule "configs/extras/kde-plasma-config-util"]
+	path = configs/extras/kde-plasma-config-util
+	url = https://github.com/sandorex/kde-plasma-config-util.git
