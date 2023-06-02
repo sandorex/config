@@ -1,5 +1,6 @@
 -- wezterm configuration
 local wezterm = require('wezterm')
+local act = wezterm.action
 
 local config = {}
 if wezterm.config_builder then
@@ -17,12 +18,9 @@ end
 -- NOTE: do not use login shells as they make it load profile each time and
 -- when there is no need to do that, except in containers
 config.launch_menu = {
-    --- DO NOT CHANGE THE LABELS ---
+    --- DO NOT CHANGE THE LABELS & DO NOT REORDER ---
     {
         label = 'Daily',
-        -- it wont start distrobox properly for some reason, it probably
-        -- has something to do with it being a flatpak and running using
-        -- flatpak-spawn..
         args = { 'distrobox', 'enter', 'daily' },
     },
     {
@@ -38,8 +36,25 @@ config.launch_menu = {
 -- default thing that runs when wezterm is started with 'wezterm start'
 -- default to first item aka daily container
 local DEFAULT_LAUNCH = config.launch_menu[1]
+local SHELL_LAUNCH = config.launch_menu[3]
 
--- add menu subcommand `wezterm start menu <index|label>`
+-- override + button so it uses DEFAULT_LAUNCH instead of default_prog
+wezterm.on('new-tab-button-click', function(window, pane, button, default_action)
+    if button == 'Left' then
+        -- spawn the default launch_menu item
+        window:perform_action(act.SpawnCommandInNewTab(DEFAULT_LAUNCH), pane)
+    elseif button == 'Middle' then
+        -- spawn system shell on middle click
+        window:perform_action(act.SpawnCommandInNewTab(SHELL_LAUNCH), pane)
+    elseif button == 'Right' then
+        -- show launcher
+        window:perform_action(act.ShowLauncher, pane)
+    end
+
+    -- prevent default action
+    return false
+end)
+
 -- adds menu subcommand `wezterm start menu <index|label>` and launches
 -- DEFAULT_LAUNCH by default to avoid config.default_prog
 wezterm.on('gui-startup', function(cmd_obj)
