@@ -2,9 +2,12 @@
 #
 # setup-kde.sh - sets up kde automagically
 #
-# very experimental!
+# very experimental! does not work properly yet!
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
+
+# plasma version as integer
+PLASMA_VERSION=$(plasmashell --version | awk '{ gsub(/\./, ""); print $2 }')
 
 F_PLASMASHELLRC="$HOME/.config/plasmashellrc"
 F_APPLETSRC="$HOME/.config/plasma-org.kde.plasma.desktop-appletsrc"
@@ -68,11 +71,8 @@ kpcu-read() {
 # set dark mode
 plasma-apply-colorscheme BreezeDark
 
-# install cursor theme from git
-TMPDIR="$(mktemp -d)"
-pushd "$TMPDIR"
 git clone https://github.com/sandorex/Layan-cursors.git cursors
-cd cursors
+pushd cursors
 ./install.sh &>/dev/null
 popd
 
@@ -107,6 +107,7 @@ fi
 
 for i in "${applets[@]}"; do
     plugin=$(kpcu-read 'Containments' "$panel" 'General' Plugin)
+    echo "Plugin '$plugin'"
     case "$plugin" in
         org.kde.plasma.kickoff|org.kde.plasma.kickerdash)
             # replace the launcher with kicker
@@ -125,7 +126,7 @@ for i in "${applets[@]}"; do
             kpcu-write 'Containments' "$panel" 'Applets' "$i" 'Configuration' 'Appearance' use24hFormat 2
             ;;
         *)
-            echo "Cannot configure plugin '$plugin', skipping.."
+            echo "Cannot configure plugin, skipping.."
             continue
             ;;
     esac
@@ -138,8 +139,12 @@ kpcu-write 'ActionPlugins' '0' 'RightButton;NoModifier' 'org.kde.contextmenu'
 FILE="$F_PLASMASHELLRC"
 kpcu-write 'PlasmaViews' "Panel $panel" 'Defaults' thickness 32
 kpcu-write 'PlasmaViews' "Panel $panel" alignment 1
-kpcu-write 'PlasmaViews' "Panel $panel" floating 1
 kpcu-write 'PlasmaViews' "Panel $panel" panelOpacity 1
+
+# floating panels are supported in 5.20.0 and later
+if [[ "$PLASMA_VERSION" -ge 5250 ]]; then
+    kpcu-write 'PlasmaViews' "Panel $panel" floating 1
+fi
 
 ### DEVICES ###
 FILE="$F_KCMINPUTRC"
