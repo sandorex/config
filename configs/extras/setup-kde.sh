@@ -13,11 +13,13 @@ F_KSCREENLOCKRC="$HOME/.config/kscreenlockerrc"
 F_SYSTEMSETTINGSRC="$HOME/.config/systemsettingsrc"
 
 kpcu-write() {
-    ARGS=( "$@" )
-    KEY="${ARGS[-2]}"
-    VALUE="${ARGS[-1]}"
-    ARGS=( "${ARGS[@]:0:$(( ${#ARGS[@]} - 2 ))}" )
-    ARGS=( "${ARGS[@]/#/--group }" )
+    RAW_ARGS=( "$@" )
+    KEY="${RAW_ARGS[-1]}"
+    KEY="${RAW_ARGS[-2]}"
+
+    for i in "${RAW_ARGS[@]:0:$(( ${#RAW_ARGS[@]} - 2 ))}"; do
+        ARGS+=( --group "$i" )
+    done
 
     if [[ -n "$FILE" ]]; then
         ARGS=( '--file' "$FILE" "${ARGS[@]}" )
@@ -33,10 +35,12 @@ kpcu-write() {
 }
 
 kpcu-del() {
-    ARGS=( "$@" )
-    KEY="${ARGS[-1]}"
-    ARGS=( "${ARGS[@]:0:$(( ${#ARGS[@]} - 1 ))}" )
-    ARGS=( "${ARGS[@]/#/--group }" )
+    RAW_ARGS=( "$@" )
+    KEY="${RAW_ARGS[-1]}"
+
+    for i in "${RAW_ARGS[@]:0:$(( ${#RAW_ARGS[@]} - 1 ))}"; do
+        ARGS+=( --group "$i" )
+    done
 
     if [[ -n "$FILE" ]]; then
         ARGS=( '--file' "$FILE" "${ARGS[@]}" )
@@ -46,10 +50,12 @@ kpcu-del() {
 }
 
 kpcu-read() {
-    ARGS=( "$@" )
-    KEY="${ARGS[-1]}"
-    ARGS=( "${ARGS[@]:0:$(( ${#ARGS[@]} - 1 ))}" )
-    ARGS=( "${ARGS[@]/#/--group }" )
+    RAW_ARGS=( "$@" )
+    KEY="${RAW_ARGS[-1]}"
+
+    for i in "${RAW_ARGS[@]:0:$(( ${#RAW_ARGS[@]} - 1 ))}"; do
+        ARGS+=( --group "$i" )
+    done
 
     if [[ -n "$FILE" ]]; then
         ARGS=( '--file' "$FILE" "${ARGS[@]}" )
@@ -63,7 +69,7 @@ kpcu-read() {
 plasma-apply-colorscheme BreezeDark
 
 # install cursor theme from git
-TMPDIR="$(mktemp)"
+TMPDIR="$(mktemp -d)"
 pushd "$TMPDIR"
 git clone https://github.com/sandorex/Layan-cursors.git cursors
 cd cursors
