@@ -146,6 +146,10 @@ if [[ "$PLASMA_VERSION" -ge 5250 ]]; then
     kpcu-write 'PlasmaViews' "Panel $panel" floating 1
 fi
 
+# changes the ugly default task switcher (alt+tab)
+FILE="$HOME/.config/kwinrc"
+kpcu-write 'TabBox' LayoutName 'informative'
+
 ### DEVICES ###
 FILE="$F_KCMINPUTRC"
 # TODO i do not know if these values change between systems, hopefully not
