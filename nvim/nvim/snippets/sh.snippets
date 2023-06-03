@@ -10,8 +10,22 @@ snippet CDDIR
 snippet DIR
 	DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
 
+snippet shellcheck
+	# shellcheck disable=SC
+
 snippet grep-parse-listfile
 	grep -E -v '(^\s*#)|(^\s*$)' ${0:${VISUAL}}
+
+snippet rerun-sudo-bash
+	# non posix compliant!
+	if [[ $EUID -ne 0 ]]; then
+		exec sudo "$SHELL" "$0" "$@"
+	fi
+
+snippet rerun-sudo-sh
+	if [ "$(id -u)" -ne 0 ]; then
+		exec sudo "$SHELL" "$0" "$@"
+	fi
 
 snippet isroot
 	if [ "$(id -u)" -ne 0 ]; then

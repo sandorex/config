@@ -26,10 +26,16 @@ PROMPT="%F{${PROMPT_COLOR:-green}}%(1j.%B.)%%%b%f "
 # shows exit code if last command exited with non-zero
 RPROMPT='%(?..%F{red}[ %?%  ]%f )'
 
-chpwd() {
-    # list files on dir change
-    ls --color=auto -F
-}
+# list files on dir change but use lsd if available
+if command -v lsd &>/dev/null; then
+    chpwd() {
+        lsd -F
+    }
+else
+    chpwd() {
+        ls --color=auto -F
+    }
+fi
 
 precmd() {
     # update the title

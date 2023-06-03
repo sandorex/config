@@ -7,6 +7,7 @@ DNF=(
 
     # tools i use directly
     file
+    lsd
     tmux
     zsh
     qrencode # used for generating qr in console
@@ -35,6 +36,7 @@ UBUNTU_APT=(
 
     # tools i use directly
     file
+    lsd
     tmux
     zsh
     qrencode # used for generating qr in console
@@ -62,7 +64,6 @@ CARGO=(
     "${CARGO[@]}"
 
     bat         # cat replacement
-    exa         # ls replacement
     bkt         # caching utility
     bob-nvim    # provides neovim
     fnm         # provides npm/node

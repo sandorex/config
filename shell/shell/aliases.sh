@@ -18,10 +18,10 @@ if command -v bat &>/dev/null; then
     alias cat='bat'
 fi
 
-if command -v exa &>/dev/null; then
-    alias ls='exa -F'
-    alias l='exa -aF'
-    alias ll='exa -alF'
+if command -v lsd &>/dev/null; then
+    alias ls='lsd -F'
+    alias l='lsd -aF'
+    alias ll='lsd -alF'
 else
     alias ls='ls -F --color=auto'
     alias l='ls -aF --color=auto'
