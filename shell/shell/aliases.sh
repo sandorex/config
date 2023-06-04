@@ -57,6 +57,14 @@ if command -v termux-setup-storage &>/dev/null; then
     alias reload-termux='termux-reload-settings'
 fi
 
+# quick monitor brightness control
+_plus() { monb +"$1"; }
+alias -- '+'='_plus'
+_minus() { monb -"$1"; }
+alias -- '-'='_minus'
+alias 'day'='monb day'
+alias 'night'='monb night'
+
 # function aliases
 rcp() {
   # -a = -rlptgoD

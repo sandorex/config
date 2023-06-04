@@ -8,6 +8,7 @@ DNF=(
     # tools i use directly
     file
     lsd
+    htop
     tmux
     zsh
     qrencode # used for generating qr in console
@@ -37,6 +38,7 @@ UBUNTU_APT=(
     # tools i use directly
     file
     lsd
+    htop
     tmux
     zsh
     qrencode # used for generating qr in console
