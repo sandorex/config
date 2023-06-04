@@ -2,50 +2,35 @@
 local wezterm = require('wezterm')
 local act = wezterm.action
 
+local globals = require('globals')
+
 local config = {}
 if wezterm.config_builder then
     -- makes nicer error messages for config errors
     config = wezterm.config_builder()
 end
 
-local FLATPAK = os.getenv('container') == 'flatpak'
-local shell = os.getenv('SHELL')
-if FLATPAK or not shell then
-    -- shell var in flatpak is always /bin/sh so default to zsh
-    shell = '/usr/bin/zsh'
-end
+config.check_for_updates = false
 
 -- NOTE: do not use login shells as they make it load profile each time and
 -- when there is no need to do that, except in containers
 config.launch_menu = {
-    --- DO NOT CHANGE THE LABELS & DO NOT REORDER ---
-    {
-        label = 'Daily',
-        args = { 'distrobox', 'enter', 'daily' },
-    },
+    globals.MENU_DEFAULT,
     {
         label = 'Toolbox',
         args = { 'toolbox-enter-wrapper' },
     },
-    {
-        label = 'System Shell',
-        args = { shell },
-    },
+    globals.MENU_SYSTEM_SHELL,
 }
 
--- default thing that runs when wezterm is started with 'wezterm start'
--- default to first item aka daily container
-local DEFAULT_LAUNCH = config.launch_menu[1]
-local SHELL_LAUNCH = config.launch_menu[3]
-
--- override + button so it uses DEFAULT_LAUNCH instead of default_prog
-wezterm.on('new-tab-button-click', function(window, pane, button, default_action)
+-- override + button so it uses globals.MENU_DEFAULT instead of default_prog
+wezterm.on('new-tab-button-click', function(window, pane, button, _)
     if button == 'Left' then
         -- spawn the default launch_menu item
-        window:perform_action(act.SpawnCommandInNewTab(DEFAULT_LAUNCH), pane)
+        window:perform_action(act.SpawnCommandInNewTab(globals.MENU_DEFAULT), pane)
     elseif button == 'Middle' then
         -- spawn system shell on middle click
-        window:perform_action(act.SpawnCommandInNewTab(SHELL_LAUNCH), pane)
+        window:perform_action(act.SpawnCommandInNewTab(globals.MENU_SYSTEM_SHELL), pane)
     elseif button == 'Right' then
         -- show launcher
         window:perform_action(act.ShowLauncher, pane)
@@ -55,8 +40,9 @@ wezterm.on('new-tab-button-click', function(window, pane, button, default_action
     return false
 end)
 
+-- TODO FIXME: when opening a second terminal window it opens the shell for some reason
 -- adds menu subcommand `wezterm start menu <index|label>` and launches
--- DEFAULT_LAUNCH by default to avoid config.default_prog
+-- globals.MENU_DEFAULT by default to avoid config.default_prog
 wezterm.on('gui-startup', function(cmd_obj)
     -- 'wezterm start' does not cound as a command or argument so it is nil
     if cmd_obj and cmd_obj.args then
@@ -69,7 +55,7 @@ wezterm.on('gui-startup', function(cmd_obj)
 
             if index ~= nil then
                 -- try to spawn the launch menu with the specific index
-                wezterm.mux.spawn_window(config.launch_menu[index] or DEFAULT_LAUNCH)
+                wezterm.mux.spawn_window(config.launch_menu[index] or globals.MENU_DEFAULT)
                 return
             else
                 -- the argument is not a number so try to match it with a label
@@ -81,7 +67,7 @@ wezterm.on('gui-startup', function(cmd_obj)
                 end
 
                 -- no matches found, spawn the default
-                wezterm.mux.spawn_window(DEFAULT_LAUNCH)
+                wezterm.mux.spawn_window(globals.MENU_DEFAULT)
                 return
             end
         end
@@ -93,17 +79,11 @@ wezterm.on('gui-startup', function(cmd_obj)
 
     -- override config.default_prog as its broken in flatpak and does not run
     -- the program properly but inside its own sandboxed container...
-    wezterm.mux.spawn_window(DEFAULT_LAUNCH)
+    wezterm.mux.spawn_window(globals.MENU_DEFAULT)
 end)
 
 -- NOTE: buggy on wayland, causes flickering
 config.hide_mouse_cursor_when_typing = false
-
-config.check_for_updates = false
-
--- makes alt act as regular alt
-config.send_composed_key_when_left_alt_is_pressed = false
-config.send_composed_key_when_right_alt_is_pressed = false
 
 --- EXTRA FILES ---
 -- merge keybindings onto the config

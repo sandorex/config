@@ -4,14 +4,15 @@ local act = wezterm.action
 local M = {}
 
 function M.apply(config)
-    -- config.debug_key_events = true
+    -- makes alt act as regular alt
+    config.send_composed_key_when_left_alt_is_pressed = false
+    config.send_composed_key_when_right_alt_is_pressed = false
 
     -- this is ISO PIPE key not 'SHIFT + COMMA'!
-    -- if this does not work for some reason use RightAlt or CapsLock remapped
     config.leader = { key = '<', mods = "NONE" }
 
     config.mouse_bindings = {
-        -- disable middle click paste
+        -- disable middle click paste and selects command output in shell (using wezterm escape sequences)
         {
             event = { Down = { streak = 1, button = 'Middle' } },
             mods = 'NONE',

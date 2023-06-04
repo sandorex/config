@@ -1,4 +1,5 @@
 local wezterm = require('wezterm')
+local globals = require('globals')
 
 local M = {}
 
@@ -47,6 +48,7 @@ function M.apply(config)
         'FiraCode NFM', -- on windows it's named different
         'Hack',
         'Noto Sans Mono',
+        'Noto Sans',
     })
     config.font_size = 16
 
@@ -81,8 +83,15 @@ function M.apply(config)
     local window_min = ' 󰖰 '
     local window_max = ' 󰖯 '
     local window_close = ' 󰅖 '
+
+    -- the resize border bugs out on kde plasma, and plasma adds its own anyway
+    if globals.IS_KDE then
+        config.window_decorations = 'INTEGRATED_BUTTONS'
+    else
+        config.window_decorations = 'INTEGRATED_BUTTONS | RESIZE'
+    end
+
     config.integrated_title_buttons = { 'Maximize', 'Close' }
-    config.window_decorations = 'INTEGRATED_BUTTONS | RESIZE'
     config.tab_bar_style = {
         window_hide = window_min,
         window_hide_hover = window_min,
