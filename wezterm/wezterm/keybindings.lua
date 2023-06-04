@@ -15,7 +15,7 @@ function M.apply(config)
         {
             event = { Down = { streak = 1, button = 'Middle' } },
             mods = 'NONE',
-            action = act.DisableDefaultAssignment,
+            action = wezterm.action.SelectTextAtMouseCursor 'SemanticZone',
         },
     }
 

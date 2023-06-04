@@ -38,10 +38,17 @@ else
 fi
 
 precmd() {
+    # wezterm semantic zone
+    printf "\033]133;P;k=i\007"
+
     # update the title
-    # this used to be in chpwd but leaving another application would leave old
-    # title
-    echo -en "\033]0;$(pwd)\a"
+    printf "\033]0;%s\007" "$(pwd)"
+}
+
+preexec() {
+    # wezterm semantic zone so you can easily select command output
+    printf "\033]133;B\007"
+    printf "\033]133;C;\007"
 }
 
 ## OPTIONS ##
