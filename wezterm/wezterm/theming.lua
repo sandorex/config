@@ -6,14 +6,20 @@ local M = {}
 wezterm.on('update-right-status', function(window, pane)
     local user_vars = pane:get_user_vars()
 
-    local icon = user_vars.window_prefix
+    local icon = user_vars.tab_icon
     if not icon or icon == '' then
         -- fallback for the icon,
         icon = ''
     end
 
+    local icon_color = user_vars.tab_color
+    if not icon_color or icon_color == '' then
+        icon_color = 'white'
+    end
+
     window:set_left_status(wezterm.format {
         { Background = { Color = '#333333' } },
+        { Foreground = { Color = icon_color } },
         { Text = ' ' .. wezterm.pad_right(icon, 3) },
     })
 
