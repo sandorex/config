@@ -12,9 +12,17 @@ fi
 [[ -z "$FNM_DIR" ]] && eval "$(fnm env)"
 fnm use --install-if-missing lts-latest
 
-# custom home for npm packages
+# install yarn via corepack
+corepack enable
+corepack prepare yarn@stable --activate
+
+# disable telemetry
+yarn config set --home enableTelemetry 0
+
+# custom home for npm
 npm config set prefix "$NPM_HOME"
 
+# yarn does not seem to support packages so install using npm
 if [[ "${#NPM[@]}" -ne 0 ]]; then
     echo
     echo "Installing npm packages"
