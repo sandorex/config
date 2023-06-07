@@ -5,11 +5,18 @@
 import os
 import sys
 import subprocess
+import argparse
+import re
+
 from http.server import HTTPServer, BaseHTTPRequestHandler
 
-# TODO list all valid kickstart files and flags
+parser = argparse.ArgumentParser(description="Runs a HTTP server to host kickstart file with optional templating")
+parser.add_argument('-p', '--port', type=int, help='Port for the HTTP server', default=8000)
+parser.add_argument('-a', '--addr', help='Address for the HTTP server (defaults to 0.0.0.0)', default='0.0.0.0')
 
-PORT = 8000
+parser.add_argument('--default', help='Default path to redirect to if no path is used (aka root /)')
+
+ARGS = parser.parse_args()
 
 class MyHandler(BaseHTTPRequestHandler):
     def resp_invalid_path(self):
@@ -21,8 +28,18 @@ class MyHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.end_headers()
 
+    def redirect(self, path):
+        self.send_response(301)
+        self.send_header('Location', path)
+        self.end_headers()
+
     def do_GET(self):
-        if self.path == '/':
+        if self.path == '/' or not self.path:
+            if ARGS.default:
+                # redirect to default
+                self.redirect(ARGS.default)
+                return
+
             self.resp_invalid_path()
             return
 
@@ -60,8 +77,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
         # im lazy to make script each time i want a different hostname
         if HOSTNAME:
-            print(f"Replacing hostname with '{HOSTNAME}'")
-            data = data.replace('@HOSTNAME@', HOSTNAME)
+            data = re.sub(r'--hostname="(.*)"', f'"{HOSTNAME}"', data)
 
         # run script for each flag
         for flag in flags:
@@ -74,7 +90,8 @@ class MyHandler(BaseHTTPRequestHandler):
         self.wfile.write(bytes(data, 'utf-8'))
 
 try:
-    httpd = HTTPServer(('localhost', PORT), MyHandler)
+    print(f'Starting HTTP server at {ARGS.ip}:{ARGS.port}')
+    httpd = HTTPServer((ARGS.ip, ARGS.port), MyHandler)
     httpd.serve_forever()
 except KeyboardInterrupt:
     print('Quitting..')
