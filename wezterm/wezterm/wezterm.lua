@@ -23,6 +23,20 @@ config.launch_menu = {
     globals.MENU_SYSTEM_SHELL,
 }
 
+-- default hyperlink rules
+config.hyperlink_rules = wezterm.default_hyperlink_rules()
+
+-- match github links like sandorex/config
+table.insert(config.hyperlink_rules, {
+    regex = [[["]?([\w\d]{1}[-\w\d]+)(/){1}([-\w\d\.]+)["]?]],
+    format = 'https://www.github.com/$1/$3',
+})
+
+table.insert(config.hyperlink_rules, {
+    regex = [[(SC\d+)]],
+    format = 'https://www.shellcheck.net/wiki/$1',
+})
+
 -- override + button so it uses globals.MENU_DEFAULT instead of default_prog
 wezterm.on('new-tab-button-click', function(window, pane, button, _)
     if button == 'Left' then

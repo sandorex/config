@@ -45,7 +45,6 @@ function M.apply(config)
     config.color_scheme = 'carbonfox'
     config.font = wezterm.font_with_fallback({
         'FiraCode Nerd Font',
-        'FiraCode NFM', -- on windows it's named different
         'Hack',
         'Noto Sans Mono',
         'Noto Sans',
@@ -103,9 +102,6 @@ function M.apply(config)
 
     -- makes the tabbar look more like TUI
     config.use_fancy_tab_bar = false;
-
-    -- remove all link parsing, i hate it
-    config.hyperlink_rules = {}
 
     -- TODO change frame color depending on the user var
     config.window_frame = {

@@ -14,14 +14,20 @@ source "$AGSHELLDIR/interactive-pre.sh"
 alias reload-shell='source ~/.zshrc; compinit'
 alias reload-zsh='source ~/.zshrc; compinit'
 
-# set default color for the container prompt
+# set default color for the prompt
 # allows for distinct color for each container / environment
-if [[ -z "$PROMPT_COLOR" ]] && [[ -n "$container" ]]; then
-    PROMPT_COLOR='4' # bluish color
+if [[ -z "$PROMPT_COLOR" ]]; then
+    # make container default to gray
+    if [[ -n "$container" ]]; then
+        PROMPT_COLOR='gray'
+    else
+        # otherwise green as this is most likely the main system
+        PROMPT_COLOR='green'
+    fi
 fi
 
 # prompt expansion https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
-PROMPT="%F{${PROMPT_COLOR:-green}}%(1j.%B.)%%%b%f "
+PROMPT="%F{$PROMPT_COLOR}%(1j.%B.)%%%b%f "
 
 # shows exit code if last command exited with non-zero
 RPROMPT='%(?..%F{red}[ %?%  ]%f )'

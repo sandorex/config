@@ -18,6 +18,18 @@ function M.apply(config)
             mods = 'NONE',
             action = wezterm.action.SelectTextAtMouseCursor 'SemanticZone',
         },
+        -- make left click only select text not open links
+        {
+            event = { Up = { streak = 1, button = "Left" } },
+            mods = "NONE",
+            action = wezterm.action { CompleteSelection = "PrimarySelection" }
+        },
+        -- and make CTRL-Click open links
+        {
+            event = { Up = { streak = 1, button = "Left" } },
+            mods = "CTRL",
+            action = "OpenLinkAtMouseCursor"
+        }
     }
 
     config.keys = {
@@ -34,11 +46,10 @@ function M.apply(config)
         -- },
 
         { key = 'l',          mods = 'LEADER',       action = act.ShowLauncher },
-
         { key = "x",          mods = "LEADER",       action = act.CloseCurrentPane { confirm = true } },
         { key = "LeftArrow",  mods = "LEADER|ALT",   action = act.ActivateTabRelative(-1) },
         { key = "RightArrow", mods = "LEADER|ALT",   action = act.ActivateTabRelative(1) },
-        { key = "<", mods = "LEADER",   action = act.ActivateTabRelative(1) },
+        { key = "<",          mods = "LEADER",       action = act.ActivateTabRelative(1) },
 
         -- window management
         { key = "UpArrow",    mods = "LEADER",       action = act.ActivatePaneDirection("Up") },
