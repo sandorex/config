@@ -30,6 +30,6 @@ quick-sudo-e() {
 zle -N quick-sudo
 bindkey '\e\e' quick-sudo
 
-# NOTE: i changed shift escape to '^[[[' (raw \x1b[[)
+# NOTE: i changed shift escape to '^[[[' (raw \x1b[[) in the terminal
 zle -N quick-sudo-e
 bindkey '^[[[^[[[' quick-sudo-e

@@ -46,5 +46,16 @@ autoload -z edit-command-line
 zle -N edit-command-line
 bindkey '^X^E' edit-command-line
 
-# run mux-select
-bindkey -s '' 'mux-select\n'
+_mux-select() {
+    emulate -LR zsh
+
+    # only run on empty buffer
+    if [[ $#BUFFER == 0 ]]; then
+        BUFFER="mux-select"
+        zle accept-line
+        zle redisplay
+    fi
+}
+zle -N _mux-select
+bindkey '^S' _mux-select
+
