@@ -90,8 +90,8 @@ class MyHandler(BaseHTTPRequestHandler):
         self.wfile.write(bytes(data, 'utf-8'))
 
 try:
-    print(f'Starting HTTP server at {ARGS.ip}:{ARGS.port}')
-    httpd = HTTPServer((ARGS.ip, ARGS.port), MyHandler)
+    print(f'Starting HTTP server at {ARGS.addr}:{ARGS.port}')
+    httpd = HTTPServer((ARGS.addr, ARGS.port), MyHandler)
     httpd.serve_forever()
 except KeyboardInterrupt:
     print('Quitting..')
