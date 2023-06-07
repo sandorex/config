@@ -77,7 +77,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
         # im lazy to make script each time i want a different hostname
         if HOSTNAME:
-            data = re.sub(r'--hostname="(.*)"', f'"{HOSTNAME}"', data)
+            data = re.sub(r'--hostname=".*"', f'--hostname="{HOSTNAME}"', data)
 
         # run script for each flag
         for flag in flags:
