@@ -26,12 +26,6 @@ config.launch_menu = {
 -- default hyperlink rules
 config.hyperlink_rules = wezterm.default_hyperlink_rules()
 
--- match github links like sandorex/config
-table.insert(config.hyperlink_rules, {
-    regex = [[["]?([\w\d]{1}[-\w\d]+)(/){1}([-\w\d\.]+)["]?]],
-    format = 'https://www.github.com/$1/$3',
-})
-
 table.insert(config.hyperlink_rules, {
     regex = [[(SC\d+)]],
     format = 'https://www.shellcheck.net/wiki/$1',
