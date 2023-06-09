@@ -6,5 +6,7 @@
 [[ -f "$AGSHELLDIR/distrobox/${CONTAINER_ID}.sh" ]] && source "$AGSHELLDIR/distrobox/${CONTAINER_ID}.sh"
 
 # source system only file
-[[ -z "$CONTAINER_ID" ]] && source "$AGSHELLDIR/system.sh"
+if [[ -z "$CONTAINER_ID" ]] && [[ -z "$container" ]]; then
+    source "$AGSHELLDIR/system.sh"
+fi
 

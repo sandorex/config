@@ -13,16 +13,6 @@ fi
 if [[ -z "$ZSH_VERSION" ]]; then
     # dummy to use compdef only on zsh
     compdef() { :; }
-
-    # i disabled abbreviation for bash currently until i fix them
-    abbr-clear() { :; }
-
-    abbr-add() {
-        # shellcheck disable=SC2139
-        alias -- "$1"="$2"
-    }
-else
-    source "$AGSHELLDIR"/plugins/sha-abbr/sha-abbr.zsh
 fi
 
 source "$AGSHELLDIR"/aliases.sh

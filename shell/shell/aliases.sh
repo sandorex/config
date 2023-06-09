@@ -4,15 +4,13 @@
 #
 # this script is sourced by both bash and zsh, beware of bashisms
 
-# clear previous abbreviations just in case
-abbr-clear
+alias e="$EDITOR"
+alias se="sudo -e"
+alias edit="$EDITOR"
+alias s='sudo'
 
-abbr-add e "$EDITOR"
-
-abbr-add s 'sudo'
-abbr-add se 'sudo -e'
-
-abbr-add g 'git'
+alias g='git'
+alias cg='cgit'
 
 if command -v bat &>/dev/null; then
     alias cat='bat'
@@ -29,7 +27,7 @@ else
 fi
 
 if command -v distrobox-host-exec &>/dev/null; then
-    abbr-add 'h' 'distrobox-host-exec'
+    alias h='distrobox-host-exec'
 fi
 
 _smart_dot() {
