@@ -16,7 +16,7 @@ end
 -- default that overrides config.default_prog
 M.MENU_DEFAULT = {
     label = 'Daily',
-    args = { 'distrobox', 'enter', 'daily' },
+    args = { 'distrobox-enter-wrapper', 'daily' },
 }
 
 -- runs system shell, overrides so no unecessary login shells

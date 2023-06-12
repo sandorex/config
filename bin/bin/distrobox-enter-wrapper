@@ -1,6 +1,9 @@
 #!/usr/bin/env sh
 #
 # distrobox-enter-wrapper - wrapper around distrobox-enter
+#
+# this scripts solves the problem where process keeps running in background
+# even after distrobox-enter script dies, probably does not work on docker
 
 if [ -z "$1" ]; then
     echo "Please provide container name"
@@ -14,27 +17,24 @@ mkdir -p "$PIDFILE_DIR"
 touch "$PIDFILE"
 
 nohup sh <<EOF >/dev/null 2>&1 &
-echo "background process monitoring started, waiting for $$"
-
 # wait for the main script to end
 while ps -p $$ >/dev/null; do
     sleep 1s
 done
 
+# get pid from the file
 PID="\$(cat "$PIDFILE")"
 rm -f "$PIDFILE"
 
+# conmon already dead, quit
 if ! ps -p "\$PID" >/dev/null; then
-    echo "conmon is already dead"
     exit 0
 fi
 
-echo "process ended but conmon is alive, killing conmon (\$PID)"
-
+# kill conmon
 kill -1 "\$PID"
 
-echo "done, quitting"
-
+# quit
 exit 0
 EOF
 
