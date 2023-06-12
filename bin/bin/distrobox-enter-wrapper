@@ -1,0 +1,42 @@
+#!/usr/bin/env sh
+#
+# distrobox-enter-wrapper - wrapper around distrobox-enter
+
+if [ -z "$1" ]; then
+    echo "Please provide container name"
+    exit 1
+fi
+
+PIDFILE_DIR="$HOME/.local/state/distrobox"
+PIDFILE="$PIDFILE_DIR/$$"
+
+mkdir -p "$PIDFILE_DIR"
+touch "$PIDFILE"
+
+nohup sh <<EOF >/dev/null 2>&1 &
+echo "background process monitoring started, waiting for $$"
+
+# wait for the main script to end
+while ps -p $$ >/dev/null; do
+    sleep 1s
+done
+
+PID="\$(cat "$PIDFILE")"
+rm -f "$PIDFILE"
+
+if ! ps -p "\$PID" >/dev/null; then
+    echo "conmon is already dead"
+    exit 0
+fi
+
+echo "process ended but conmon is alive, killing conmon (\$PID)"
+
+kill -1 "\$PID"
+
+echo "done, quitting"
+
+exit 0
+EOF
+
+distrobox enter "$1" -- sh -c "echo \$PPID > $PIDFILE; exec ${2:-$SHELL}"
+
