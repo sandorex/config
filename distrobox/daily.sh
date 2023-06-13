@@ -33,35 +33,31 @@ set -- "${POSITIONAL_ARGS[@]}"
 
 CONTAINER_NAME=${1:-daily}
 CONTAINER_HOME="${2:-$HOME/.box/$CONTAINER_NAME}"
-CONTAINER_HOSTNAME="$(hostname).toolbox"
+CONTAINER_HOSTNAME="$(hostname)-box"
 IMAGE='registry.fedoraproject.org/fedora-toolbox'
 IMAGE_VERSION=38
-ENV=( 'PROMPT_COLOR=5' 'WEZTERM_PREFIX=' )
 
 if [[ -n "$container" ]]; then
     echo "Running distrobox inside a container is not recommended"
     exit 1
 fi
 
-# bash magic to properly format env vars
-ENV=( "${ENV[@]/#/\'-e }" )
-ENV=( "${ENV[@]/%/\'}" )
-
 ARGS=()
 if [[ -n "$SEPARATE_HOME" ]]; then
     ARGS+=( --home "$CONTAINER_HOME" )
 fi
+
+# TODO run config script then commit image with date as version
 
 # shellcheck disable=SC2145
 # this does not run the setup script, that has to be done manually
 distrobox create --image "$IMAGE:$IMAGE_VERSION" \
                  --name "$CONTAINER_NAME" \
                  "${ARGS[@]}" \
-                 --additional-flags "${ENV[*]}" \
                  --pre-init-hooks "hostname \"$CONTAINER_HOSTNAME\""
 
 if [[ -n "$RUN_CONFIG" ]]; then
-    echo "Running config script, this will take a way"
+    echo "Running config script, this will take a while.."
     echo
 
     distrobox enter --name "$CONTAINER_NAME" -- ./configs/fedora-toolbox.sh

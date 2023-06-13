@@ -1,9 +1,9 @@
 local wezterm = require('wezterm')
-local globals = require('globals')
 
 local M = {}
 
 wezterm.on('update-right-status', function(window, pane)
+    local cols = pane:get_dimensions().cols
     local user_vars = pane:get_user_vars()
 
     local icon = user_vars.tab_icon
@@ -13,7 +13,7 @@ wezterm.on('update-right-status', function(window, pane)
     end
 
     local icon_color = user_vars.tab_color
-    if not icon_color or icon_color == '' then
+    if not icon_color then
         icon_color = 'white'
     end
 
@@ -26,17 +26,28 @@ wezterm.on('update-right-status', function(window, pane)
     local title = pane:get_title()
     local date = ' ' .. wezterm.strftime('%H:%M %d-%m-%Y') .. ' '
 
-    -- figure out a way to center it
+    -- generate padding to center title by adding half of width (cols), half
+    -- of title length, length of date string and integrated buttons width
+    --
+    -- the 1 at the end is cause of extra space after date to separate it from
+    -- buttons
+    --
+    -- if there are any theming in date or title use `wezterm.column.width`
+    local padding = wezterm.pad_right('', (cols / 2) - (string.len(title) / 2) - string.len(date) - 3*3 - 1)
+
     window:set_right_status(wezterm.format {
-        { Background = { Color = '#555555' } },
         { Text = ' ' .. title .. ' ' },
         { Background = { Color = '#333333' } },
+        { Text = padding },
+        { Background = { Color = '#444444' } },
         { Text = date },
+        { Background = { Color = '#333333' } },
+        { Text = ' ' },
     })
 end)
 
 wezterm.on('format-tab-title', function (tab, _, _, _, _)
-    -- i do not like how i can basically hide tabs if i zoom in
+    -- i could forget i've zoomed in and forget about a pane in a tab
     local is_zoomed = ''
     if tab.active_pane.is_zoomed then
         is_zoomed = 'z'
@@ -52,7 +63,6 @@ function M.apply(config)
     config.font = wezterm.font_with_fallback({
         'FiraCode Nerd Font',
         'Hack',
-        'Noto Sans Mono',
         'Noto Sans',
     })
     config.font_size = 16
@@ -89,14 +99,8 @@ function M.apply(config)
     local window_max = ' 󰖯 '
     local window_close = ' 󰅖 '
 
-    -- the resize border bugs out on kde plasma, and plasma adds its own anyway
-    if globals.IS_KDE then
-        config.window_decorations = 'INTEGRATED_BUTTONS'
-    else
-        config.window_decorations = 'INTEGRATED_BUTTONS | RESIZE'
-    end
-
-    config.integrated_title_buttons = { 'Maximize', 'Close' }
+    config.window_decorations = 'INTEGRATED_BUTTONS | RESIZE'
+    config.integrated_title_buttons = { 'Hide', 'Maximize', 'Close' }
     config.tab_bar_style = {
         window_hide = window_min,
         window_hide_hover = window_min,
@@ -109,16 +113,14 @@ function M.apply(config)
     -- makes the tabbar look more like TUI
     config.use_fancy_tab_bar = false;
 
-    -- TODO change frame color depending on the user var
     config.window_frame = {
-        border_left_width = '3px',
-        border_right_width = '3px',
-        border_bottom_height = '3px',
-        border_top_height = '3px',
-        border_left_color = 'gray',
-        border_right_color = 'gray',
-        border_bottom_color = 'gray',
-        border_top_color = 'gray',
+        border_left_width = '4px',
+        border_right_width = '4px',
+        border_bottom_height = '4px',
+        border_left_color = config.colors.tab_bar.background,
+        border_right_color = config.colors.tab_bar.background,
+        border_bottom_color = config.colors.tab_bar.background,
+        border_top_color = config.colors.tab_bar.background,
     }
 end
 

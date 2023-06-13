@@ -19,7 +19,7 @@ touch "$PIDFILE"
 nohup sh <<EOF >/dev/null 2>&1 &
 # wait for the main script to end
 while ps -p $$ >/dev/null; do
-    sleep 1s
+    sleep 4s
 done
 
 # get pid from the file
