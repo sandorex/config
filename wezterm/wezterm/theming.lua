@@ -1,5 +1,10 @@
 local wezterm = require('wezterm')
 
+local COLORS = {}
+COLORS.TEXT = '#FFFFFF'
+COLORS.BG = '#4A4A4A'
+COLORS.BG_DIM = '#333333'
+
 local M = {}
 
 wezterm.on('update-right-status', function(window, pane)
@@ -18,9 +23,9 @@ wezterm.on('update-right-status', function(window, pane)
     end
 
     window:set_left_status(wezterm.format {
-        { Background = { Color = '#333333' } },
-        { Foreground = { Color = icon_color } },
-        { Text = ' ' .. wezterm.pad_right(icon, 3) },
+        { Background = { Color = icon_color } },
+        { Foreground = { Color = COLORS.BG } },
+        { Text = '  ' .. wezterm.pad_right(icon, 2) .. ' '  },
     })
 
     local title = pane:get_title()
@@ -33,16 +38,19 @@ wezterm.on('update-right-status', function(window, pane)
     -- buttons
     --
     -- if there are any theming in date or title use `wezterm.column.width`
-    local padding = wezterm.pad_right('', (cols / 2) - (string.len(title) / 2) - string.len(date) - 3*3 - 1)
+    local padding = wezterm.pad_right('', (cols / 2) - (string.len(title) / 2) - string.len(date) - 3*3 - 3)
 
     window:set_right_status(wezterm.format {
         { Text = ' ' .. title .. ' ' },
-        { Background = { Color = '#333333' } },
-        { Text = padding },
-        { Background = { Color = '#444444' } },
+        { Foreground = { Color = COLORS.TEXT } },
+        { Background = { Color = COLORS.BG } },
+        { Text = padding .. '' },
+        { Foreground = { Color = COLORS.BG } },
+        { Background = { Color = COLORS.TEXT } },
         { Text = date },
-        { Background = { Color = '#333333' } },
-        { Text = ' ' },
+        { Foreground = { Color = COLORS.TEXT } },
+        { Background = { Color = COLORS.BG } },
+        { Text = ' ' },
     })
 end)
 
@@ -53,9 +61,8 @@ wezterm.on('format-tab-title', function (tab, _, _, _, _)
         is_zoomed = 'z'
     end
 
-    return {
-        { Text = ' ' .. tab.tab_index + 1 .. is_zoomed .. ' ' },
-    }
+    -- colors are set in config.colors.tab_bar
+    return ' ' .. tab.tab_index + 1 .. is_zoomed .. ' '
 end)
 
 function M.apply(config)
@@ -76,21 +83,32 @@ function M.apply(config)
 
     config.colors = {
         tab_bar = {
-            background = '#333333',
+            background = COLORS.BG,
 
             active_tab = {
-                fg_color = '#ffffff',
-                bg_color = '#444444',
+                fg_color = COLORS.BG,
+                bg_color = COLORS.TEXT,
             },
 
+            inactive_tab = {
+                fg_color = COLORS.TEXT,
+                bg_color = COLORS.BG_DIM,
+            },
+
+            inactive_tab_hover = {
+                fg_color = COLORS.BG,
+                bg_color = COLORS.TEXT,
+            },
+
+            -- these are for new tab button and integrated buttons
             new_tab = {
-                bg_color = '#333333',
-                fg_color = '#ffffff',
+                bg_color = COLORS.BG,
+                fg_color = COLORS.TEXT,
             },
 
             new_tab_hover = {
-                bg_color = '#555555',
-                fg_color = '#ffffff',
+                bg_color = COLORS.TEXT,
+                fg_color = COLORS.BG,
             },
         },
     }
@@ -117,10 +135,10 @@ function M.apply(config)
         border_left_width = '4px',
         border_right_width = '4px',
         border_bottom_height = '4px',
-        border_left_color = config.colors.tab_bar.background,
-        border_right_color = config.colors.tab_bar.background,
-        border_bottom_color = config.colors.tab_bar.background,
-        border_top_color = config.colors.tab_bar.background,
+        border_left_color = COLORS.BG,
+        border_right_color = COLORS.BG,
+        border_bottom_color = COLORS.BG,
+        border_top_color = COLORS.BG,
     }
 end
 
