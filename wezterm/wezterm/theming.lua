@@ -41,7 +41,7 @@ wezterm.on('update-right-status', function(window, pane)
     local padding = wezterm.pad_right('', (cols / 2) - (string.len(title) / 2) - string.len(date) - 3*3 - 3)
 
     window:set_right_status(wezterm.format {
-        { Text = ' ' .. title .. ' ' },
+        { Text = title },
         { Foreground = { Color = COLORS.TEXT } },
         { Background = { Color = COLORS.BG } },
         { Text = padding .. '' },
