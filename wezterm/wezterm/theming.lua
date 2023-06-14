@@ -1,4 +1,5 @@
 local wezterm = require('wezterm')
+local g = require('globals')
 
 local COLORS = {}
 COLORS.TEXT = '#FFFFFF'
@@ -13,20 +14,17 @@ local CELL_WIDTH = 13.15
 
 local M = {}
 
+wezterm.on('window-resized', function(window, _)
+    -- TODO make this a custom event and call it on startup too
+    g.set_window_global(window, 'cols', math.floor(window:get_dimensions().pixel_width / CELL_WIDTH))
+end)
+
 wezterm.on('update-right-status', function(window, pane)
-    local cols = math.floor(window:get_dimensions().pixel_width / CELL_WIDTH)
+    local cols = g.get_window_global(window, 'cols') or 0
     local user_vars = pane:get_user_vars()
 
-    local icon = user_vars.tab_icon
-    if not icon or icon == '' then
-        -- fallback for the icon,
-        icon = ''
-    end
-
-    local icon_color = user_vars.tab_color
-    if not icon_color then
-        icon_color = 'white'
-    end
+    local icon = user_vars.tab_icon or ''
+    local icon_color = user_vars.tab_color or 'white'
 
     window:set_left_status(wezterm.format {
         { Background = { Color = icon_color } },
@@ -39,16 +37,12 @@ wezterm.on('update-right-status', function(window, pane)
     local title = pane:get_title()
     local date = ' ' .. wezterm.strftime('%H:%M %d-%m-%Y') .. ' '
 
-    -- generate padding to center title by adding half of width (cols), half
-    -- of title length, length of date string and integrated buttons width
-    --
-    -- the 1 at the end is cause of extra space after date to separate it from
-    -- buttons
+    -- calculate the padding to center title, takes into account date length
+    -- integrated buttons and additional padding
     --
     -- if there are any theming in date or title use `wezterm.column.width`
-    local padding = nil
-    local success = pcall(function ()
-        padding = wezterm.pad_right('', (cols / 2) - (string.len(title) / 2) - string.len(date) - 3*3 - 3)
+    local success, padding = pcall(function ()
+        return wezterm.pad_right('', (cols / 2) - (string.len(title) / 2) - string.len(date) - 3*3 - 3)
     end)
     if not success then
         -- window is too small for the padding

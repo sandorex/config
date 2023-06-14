@@ -18,6 +18,10 @@ config.window_close_confirmation = 'NeverPrompt'
 config.launch_menu = {
     globals.MENU_DEFAULT,
     {
+        label = 'Ubuntu (distrobox)',
+        args = { 'distrobox-enter-wrapper', 'ubuntu' },
+    },
+    {
         label = 'Toolbox',
         args = { 'toolbox-enter-wrapper' },
     },
@@ -42,7 +46,7 @@ wezterm.on('new-tab-button-click', function(window, pane, button, _)
         window:perform_action(act.SpawnCommandInNewTab(globals.MENU_SYSTEM_SHELL), pane)
     elseif button == 'Right' then
         -- show launcher
-        window:perform_action(act.ShowLauncher, pane)
+        window:perform_action(act.ShowLauncherArgs { flags = 'LAUNCH_MENU_ITEMS' }, pane)
     end
 
     -- prevent default action
