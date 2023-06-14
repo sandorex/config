@@ -5,10 +5,16 @@ COLORS.TEXT = '#FFFFFF'
 COLORS.BG = '#4A4A4A'
 COLORS.BG_DIM = '#333333'
 
+-- to get this number use this formula
+-- screen_width / CELL_WIDTH = cols
+-- where screen_width is monitor resolution width
+-- and cols is terminal cells (use `tput cols`)
+local CELL_WIDTH = 13.15
+
 local M = {}
 
 wezterm.on('update-right-status', function(window, pane)
-    local cols = pane:get_dimensions().cols
+    local cols = math.floor(window:get_dimensions().pixel_width / CELL_WIDTH)
     local user_vars = pane:get_user_vars()
 
     local icon = user_vars.tab_icon
@@ -26,6 +32,8 @@ wezterm.on('update-right-status', function(window, pane)
         { Background = { Color = icon_color } },
         { Foreground = { Color = COLORS.BG } },
         { Text = '  ' .. wezterm.pad_right(icon, 2) .. ' '  },
+        { Background = { Color = COLORS.BG } },
+        { Text = ' ' },
     })
 
     local title = pane:get_title()
@@ -38,7 +46,14 @@ wezterm.on('update-right-status', function(window, pane)
     -- buttons
     --
     -- if there are any theming in date or title use `wezterm.column.width`
-    local padding = wezterm.pad_right('', (cols / 2) - (string.len(title) / 2) - string.len(date) - 3*3 - 3)
+    local padding = nil
+    local success = pcall(function ()
+        padding = wezterm.pad_right('', (cols / 2) - (string.len(title) / 2) - string.len(date) - 3*3 - 3)
+    end)
+    if not success then
+        -- window is too small for the padding
+        padding = ''
+    end
 
     window:set_right_status(wezterm.format {
         { Text = title },
@@ -56,13 +71,13 @@ end)
 
 wezterm.on('format-tab-title', function (tab, _, _, _, _)
     -- i could forget i've zoomed in and forget about a pane in a tab
-    local is_zoomed = ''
+    local is_zoomed = ' '
     if tab.active_pane.is_zoomed then
         is_zoomed = 'z'
     end
 
     -- colors are set in config.colors.tab_bar
-    return ' ' .. tab.tab_index + 1 .. is_zoomed .. ' '
+    return '  ' .. tab.tab_index + 1 .. is_zoomed .. ' '
 end)
 
 function M.apply(config)
@@ -112,6 +127,8 @@ function M.apply(config)
             },
         },
     }
+
+    config.inactive_pane_hsb = { saturation = 1.0, brightness = 0.5 }
 
     local window_min = ' 󰖰 '
     local window_max = ' 󰖯 '

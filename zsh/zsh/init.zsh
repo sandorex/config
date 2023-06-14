@@ -44,18 +44,22 @@ else
 fi
 
 precmd() {
+    # TODO make this into a plugin
     # wezterm semantic zone
-    printf "\033]133;P;k=i\007"
+    [[ -n "$WEZTERM_PANE" ]] && printf "\033]133;P;k=i\007"
 
     # update the title
     printf "\033]0;%s\007" "$(pwd)"
 }
 
-preexec() {
-    # wezterm semantic zone so you can easily select command output
-    printf "\033]133;B\007"
-    printf "\033]133;C;\007"
-}
+# TODO add this into a plugin so it can be loaded only if using wezterm
+if [[ -n "$WEZTERM_PANE" ]]; then
+    preexec() {
+        # wezterm semantic zone so you can easily select command output
+        printf "\033]133;B\007"
+        printf "\033]133;C;\007"
+    }
+fi
 
 ## OPTIONS ##
 HISTFILE=~/.zhistory

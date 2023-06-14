@@ -11,6 +11,7 @@ if wezterm.config_builder then
 end
 
 config.check_for_updates = false
+config.window_close_confirmation = 'NeverPrompt'
 
 -- NOTE: do not use login shells as they make it load profile each time and
 -- when there is no need to do that, except in containers

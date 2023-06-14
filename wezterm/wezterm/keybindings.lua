@@ -45,7 +45,7 @@ function M.apply(config)
         --     action = wezterm.action.ActivateCommandPalette,
         -- },
 
-        { key = 'l',          mods = 'LEADER',       action = act.ShowLauncher },
+        { key = 'l',          mods = 'LEADER',       action = act.ShowLauncherArgs({ title = 'New Tab', flags = "LAUNCH_MENU_ITEMS" }) },
         { key = "x",          mods = "LEADER",       action = act.CloseCurrentPane { confirm = true } },
         { key = "LeftArrow",  mods = "LEADER|ALT",   action = act.ActivateTabRelative(-1) },
         { key = "RightArrow", mods = "LEADER|ALT",   action = act.ActivateTabRelative(1) },
