@@ -1,0 +1,31 @@
+# Preserve as much metadata as possible
+--write-description
+--write-info-json
+--no-clean-infojson
+--write-comments
+--write-all-thumbnails
+--sub-langs all
+--write-subs
+
+# - Avoid default preference of VP9 (codec:vp9.2) over higher bitrate alternatives
+# - Prefer AV1 over alternatives
+# - Prefer opus audio on Youtube by prioritizing audio sample rate
+--format-sort lang,quality,res,fps,codec:av1,asr,size,br,proto,ext,hasaud,source,id
+
+# Keep most metadata in separate files aside from the chapters since video
+# players can't read those from the info json
+--embed-chapters
+--sponsorblock-mark all
+
+# Parallel downloads
+--concurrent-fragments 4
+
+# Use Windows' filename restrictions to preserve compatibility with SMB shares
+--windows-filenames
+
+# Store each video in a subdirectory
+--output '%(uploader|.)s/%(title)s [%(id)s]/%(title)s [%(id)s].%(ext)s'
+
+# Put multiple streams in the same container
+#--video-multistreams
+#--audio-multistreams
