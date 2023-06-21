@@ -12,7 +12,7 @@ M.IS_KDE = M.DESKTOP == 'KDE'
 M.SHELL = os.getenv('SHELL')
 if M.FLATPAK or not M.SHELL then
     -- shell var in flatpak is always /bin/sh so default to zsh
-    M.shell = '/usr/bin/zsh'
+    M.SHELL = '/usr/bin/zsh'
 end
 
 -- default that overrides config.default_prog
@@ -24,7 +24,7 @@ M.MENU_DEFAULT = {
 -- runs system shell, overrides so no unecessary login shells
 M.MENU_SYSTEM_SHELL = {
     label = 'System Shell',
-    args = { M.shell },
+    args = { M.SHELL },
 }
 
 function M.set_window_global(window, key, value)

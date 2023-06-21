@@ -28,8 +28,8 @@ local options = {
     writebackup = false,
 
     -- scrolls when cursor gets too close to bounds of the screen
-    scrolloff = 5,
-    sidescrolloff = 6,
+    scrolloff = 3,
+    sidescrolloff = 3,
 
     number = true,
     signcolumn = 'yes',

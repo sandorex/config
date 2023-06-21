@@ -56,12 +56,9 @@ if command -v termux-setup-storage &>/dev/null; then
 fi
 
 # quick monitor brightness control
-_plus() { monb +"$1"; }
-alias -- '+'='_plus'
-_minus() { monb -"$1"; }
-alias -- '-'='_minus'
-alias 'day'='monb day'
-alias 'night'='monb night'
+alias m='monb'
+alias day='monb day'
+alias night='monb night'
 
 # function aliases
 rcp() {

@@ -15,8 +15,10 @@ local CELL_WIDTH = 13.15
 local M = {}
 
 wezterm.on('window-resized', function(window, _)
+    local window_dimensions = window:get_dimensions()
+
     -- TODO make this a custom event and call it on startup too
-    g.set_window_global(window, 'cols', math.floor(window:get_dimensions().pixel_width / CELL_WIDTH))
+    g.set_window_global(window, 'cols', math.floor(window_dimensions.pixel_width / CELL_WIDTH))
 end)
 
 wezterm.on('update-right-status', function(window, pane)
@@ -34,7 +36,7 @@ wezterm.on('update-right-status', function(window, pane)
         { Text = ' ' },
     })
 
-    local title = pane:get_title()
+    local title = pane:get_title() .. ' '
     local date = ' ' .. wezterm.strftime('%H:%M %d-%m-%Y') .. ' '
 
     -- calculate the padding to center title, takes into account date length
