@@ -1,28 +1,13 @@
 local wezterm = require('wezterm')
-local g = require('globals')
 
 local COLORS = {}
 COLORS.TEXT = '#FFFFFF'
 COLORS.BG = '#4A4A4A'
 COLORS.BG_DIM = '#333333'
 
--- to get this number use this formula
--- screen_width / CELL_WIDTH = cols
--- where screen_width is monitor resolution width
--- and cols is terminal cells (use `tput cols`)
-local CELL_WIDTH = 13.15
-
 local M = {}
 
-wezterm.on('window-resized', function(window, _)
-    local window_dimensions = window:get_dimensions()
-
-    -- TODO make this a custom event and call it on startup too
-    g.set_window_global(window, 'cols', math.floor(window_dimensions.pixel_width / CELL_WIDTH))
-end)
-
 wezterm.on('update-right-status', function(window, pane)
-    local cols = g.get_window_global(window, 'cols') or 0
     local user_vars = pane:get_user_vars()
 
     local icon = user_vars.tab_icon or ''
@@ -36,32 +21,10 @@ wezterm.on('update-right-status', function(window, pane)
         { Text = ' ' },
     })
 
-    local title = pane:get_title() .. ' '
-    local date = ' ' .. wezterm.strftime('%H:%M %d-%m-%Y') .. ' '
-
-    -- calculate the padding to center title, takes into account date length
-    -- integrated buttons and additional padding
-    --
-    -- if there are any theming in date or title use `wezterm.column.width`
-    local success, padding = pcall(function ()
-        return wezterm.pad_right('', (cols / 2) - (string.len(title) / 2) - string.len(date) - 3*3 - 3)
-    end)
-    if not success then
-        -- window is too small for the padding
-        padding = ''
-    end
-
     window:set_right_status(wezterm.format {
-        { Text = title },
-        { Foreground = { Color = COLORS.TEXT } },
-        { Background = { Color = COLORS.BG } },
-        { Text = padding .. '' },
         { Foreground = { Color = COLORS.BG } },
         { Background = { Color = COLORS.TEXT } },
-        { Text = date },
-        { Foreground = { Color = COLORS.TEXT } },
-        { Background = { Color = COLORS.BG } },
-        { Text = ' ' },
+        { Text = ' ' .. wezterm.strftime('%H:%M %d-%m-%Y') .. ' ' },
     })
 end)
 
@@ -112,9 +75,10 @@ function M.apply(config)
             },
 
             -- these are for new tab button and integrated buttons
+            -- 06/07/23: i removed the hover so its colored properly
             new_tab = {
-                bg_color = COLORS.BG,
-                fg_color = COLORS.TEXT,
+                bg_color = COLORS.TEXT,
+                fg_color = COLORS.BG,
             },
 
             new_tab_hover = {
@@ -139,6 +103,9 @@ function M.apply(config)
         window_maximize_hover = window_max,
         window_close = window_close,
         window_close_hover = window_close,
+        -- block character to separate it from tabs
+        new_tab = '█ + ',
+        new_tab_hover = '█ + ',
     }
 
     -- makes the tabbar look more like TUI

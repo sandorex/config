@@ -9,7 +9,7 @@ function M.dump(o)
             if type(k) ~= 'number' then
                 k = '"' .. k .. '"'
             end
-            s = s .. '[' .. k .. '] = ' .. dump(v) .. ','
+            s = s .. '[' .. k .. '] = ' .. M.dump(v) .. ','
         end
         return s .. '} '
     else
@@ -23,7 +23,7 @@ function M.merge_table(a, b)
     end
     for k, v in pairs(b) do
         if a[k] ~= nil then
-            error(string.format("Duplicate keys detected:\nkey=%q, exist value=%q", dump(k), dump(a[k])))
+            error(string.format("Duplicate keys detected:\nkey=%q, exist value=%q", M.dump(k), M.dump(a[k])))
             return
         end
         a[k] = v

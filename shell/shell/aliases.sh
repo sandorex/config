@@ -4,13 +4,14 @@
 #
 # this script is sourced by both bash and zsh, beware of bashisms
 
-alias e="$EDITOR"
+
+alias e="$EDITOR"; compdef e="$EDITOR"
 alias se="sudo -e"
-alias edit="$EDITOR"
+alias edit="$EDITOR"; compdef e="$EDITOR"
 alias s='sudo'
 
-alias g='git'
-alias cg='cgit'
+alias g='git'; compdef g="git"
+alias cg='cgit'; compdef cg="git"
 
 if command -v bat &>/dev/null; then
     alias cat='bat'

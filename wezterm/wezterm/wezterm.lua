@@ -3,6 +3,7 @@ local wezterm = require('wezterm')
 local act = wezterm.action
 
 local globals = require('globals')
+local util = require('util')
 
 local config = {}
 if wezterm.config_builder then
@@ -39,8 +40,8 @@ table.insert(config.hyperlink_rules, {
 -- override + button so it uses globals.MENU_DEFAULT instead of default_prog
 wezterm.on('new-tab-button-click', function(window, pane, button, _)
     if button == 'Left' then
-        -- spawn the default launch_menu item
-        window:perform_action(act.SpawnCommandInNewTab(globals.MENU_DEFAULT), pane)
+        -- show launcher
+        window:perform_action(act.ShowLauncherArgs { flags = 'LAUNCH_MENU_ITEMS' }, pane)
     elseif button == 'Middle' then
         -- spawn system shell on middle click
         window:perform_action(act.SpawnCommandInNewTab(globals.MENU_SYSTEM_SHELL), pane)
@@ -53,49 +54,58 @@ wezterm.on('new-tab-button-click', function(window, pane, button, _)
     return false
 end)
 
--- TODO FIXME: when opening a second terminal window it opens the shell for some reason
--- adds menu subcommand `wezterm start menu <index|label>` and launches
--- globals.MENU_DEFAULT by default to avoid config.default_prog
 wezterm.on('gui-startup', function(cmd_obj)
-    -- 'wezterm start' does not cound as a command or argument so it is nil
-    if cmd_obj and cmd_obj.args then
-        local args = cmd_obj.args
+    local args = cmd_obj.args
+    -- for debugging uncomment this
+    -- wezterm.log_info('start args: ' .. util.dump(args))
 
-        local command = args[1]
-        if command == 'menu' and args[2] then
-            local arg = args[2]
-            local index = tonumber(arg)
-
-            if index ~= nil then
-                -- try to spawn the launch menu with the specific index
-                wezterm.mux.spawn_window(config.launch_menu[index] or globals.MENU_DEFAULT)
-                return
-            else
-                -- the argument is not a number so try to match it with a label
-                for _, menu_item in ipairs(config.launch_menu) do
-                    if arg and string.lower(menu_item.label) == string.lower(arg) then
-                        wezterm.mux.spawn_window(menu_item)
-                        return
-                    end
-                end
-
-                -- no matches found, spawn the default
-                wezterm.mux.spawn_window(globals.MENU_DEFAULT)
-                return
-            end
-        end
-
-        -- any non menu arguments passed
-        wezterm.mux.spawn_window(cmd_obj)
+    -- override the default prog as its broken in flatpak
+    if args == nil then
+        wezterm.mux.spawn_window(globals.MENU_DEFAULT)
         return
     end
 
-    -- override config.default_prog as its broken in flatpak and does not run
-    -- the program properly but inside its own sandboxed container...
-    wezterm.mux.spawn_window(globals.MENU_DEFAULT)
+    -- all custom commands need to be prefixed by @
+    if args[1] ~= '@' then
+        -- if no windows are spawned then wezterm will do it
+        return
+    end
+
+    -- custom commands --
+    -- wezterm start -- @ launch_menu <index|label> - runs launch_menu item by index or label
+    if args[2] == 'launch_menu' and args[3] then
+        local arg = args[3]
+        local index = tonumber(arg)
+
+        -- the arg is a number so use it as an index
+        if index ~= nil then
+            local menu_item = config.launch_menu[index]
+            if menu_item == nil then
+                wezterm.log_error('menu item not found by index ' .. arg)
+            end
+
+            -- try to spawn the launch menu with the specific index or default
+            wezterm.mux.spawn_window(menu_item or globals.MENU_DEFAULT)
+            return
+        else
+            -- the argument is not a number so try to match it with a label
+            for _, menu_item in ipairs(config.launch_menu) do
+                if arg and string.lower(menu_item.label) == string.lower(arg) then
+                    wezterm.mux.spawn_window(menu_item)
+                    return
+                end
+            end
+
+            wezterm.log_error('menu item not found by label "' .. arg .. '"')
+
+            -- spawn the default
+            wezterm.mux.spawn_window(globals.MENU_DEFAULT)
+            return
+        end
+    end
 end)
 
--- NOTE: buggy on wayland, causes flickering
+-- NOTE: buggy on wayland kde plasma, causes flickering
 config.hide_mouse_cursor_when_typing = false
 
 --- EXTRA FILES ---
