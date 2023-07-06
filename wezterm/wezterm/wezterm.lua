@@ -11,11 +11,12 @@ if wezterm.config_builder then
     config = wezterm.config_builder()
 end
 
-config.check_for_updates = false
-config.window_close_confirmation = 'NeverPrompt'
+config.check_for_updates = true
+-- config.window_close_confirmation = 'NeverPrompt'
 
 -- NOTE: do not use login shells as they make it load profile each time and
 -- when there is no need to do that, except in containers
+config.default_prog = globals.MENU_DEFAULT.args
 config.launch_menu = {
     globals.MENU_DEFAULT,
     {
@@ -55,12 +56,19 @@ wezterm.on('new-tab-button-click', function(window, pane, button, _)
 end)
 
 wezterm.on('gui-startup', function(cmd_obj)
-    local args = cmd_obj.args
+    -- if wezterm has no subcommand then cmd_obj is nil
+    if not cmd_obj then
+        wezterm.log_info('cmd_obj is nil')
+        wezterm.mux.spawn_window(globals.MENU_DEFAULT)
+        return
+    end
+
+    local args = cmd_obj.args or {}
     -- for debugging uncomment this
     -- wezterm.log_info('start args: ' .. util.dump(args))
 
     -- override the default prog as its broken in flatpak
-    if args == nil then
+    if args == nil or next(args) == nil then
         wezterm.mux.spawn_window(globals.MENU_DEFAULT)
         return
     end
@@ -107,6 +115,9 @@ end)
 
 -- NOTE: buggy on wayland kde plasma, causes flickering
 config.hide_mouse_cursor_when_typing = false
+
+-- disable the password fancy icons
+config.detect_password_input = false
 
 --- EXTRA FILES ---
 -- merge keybindings onto the config
