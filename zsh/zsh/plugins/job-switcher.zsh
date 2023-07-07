@@ -12,7 +12,6 @@ _job-switch() {
     local jobs=$(cat =(jobs))
     local count=$(echo "$jobs" | wc -l)
 
-
     # empty text is counted as 1 line
     if [[ -z "$jobs" ]]; then
         count=0
