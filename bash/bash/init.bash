@@ -2,7 +2,7 @@
 #
 # init.bash - init file for bash, either loaded from bashrc or ran directly
 
-export SHELLDIR="$HOME/.config/zsh"
+export SHELLDIR="$HOME/.config/bash"
 
 source "${AGSHELLDIR:-$HOME/.config/shell}/non-interactive.sh"
 
@@ -16,9 +16,6 @@ source "$AGSHELLDIR/interactive-pre.sh"
 
 alias reload-shell='source ~/.bashrc'
 alias reload-bash='source ~/.bashrc'
-
-# autocd
-shopt -s autocd
 
 # updates LINES & COLUMN
 shopt -s checkwinsize
@@ -37,7 +34,7 @@ HISTSIZE=1000000
 HISTTIMEFORMAT="[%F %T %Z]"
 
 # updates history every command
-PROMPT_COMMAND="history -a; history -c; history -r;"
+#PROMPT_COMMAND="history -a; history -c; history -r;"
 
 # ignore duplicate commands and those that start with space
 HISTCONTROL='ignoreboth'

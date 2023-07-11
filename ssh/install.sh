@@ -13,10 +13,9 @@ if [[ -f "$HOME/.dotfiles-state/$CONFIG" ]] && [[ -z "$REINSTALL" ]]; then
 fi
 
 HOST=$(hostname)
-mkdir -p "$HOME"/.ssh
+mkdir -p "$HOME/.ssh/_"
 mkdir -p "$HOME/.ssh/_$HOST"
 
-util link "_$HOST" "$HOME/.ssh/_$HOST.toolbox" # allows using ssh keys in containers
 util copy ./config "$HOME"/.ssh/config
 
 mkdir -p "$HOME/.dotfiles-state"
