@@ -9,10 +9,11 @@ if [[ -n "$container" ]]; then
         CONTAINER_NAME='unknown'
     fi
 
+    # file that contains globals that should be known to containers
+    source "$AGSHELLDIR/.shenv"
+
     # source container specific file
     [[ -f "$AGSHELLDIR/distrobox/${CONTAINER_NAME}.sh" ]] && source "$AGSHELLDIR/distrobox/${CONTAINER_NAME}.sh"
-
-
 else
     # this is only sourced in non container environment (system)
     source "$AGSHELLDIR/system.sh"

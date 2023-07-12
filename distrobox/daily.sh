@@ -8,8 +8,8 @@ POSITIONAL_ARGS=()
 
 while [ $# -gt 0 ]; do
     case $1 in
-        -s|--separate-home)
-            SEPARATE_HOME=1
+        -s|--share-home)
+            SHARE_HOME=1
             shift
             ;;
         --run-config)
@@ -43,14 +43,11 @@ if [[ -n "$container" ]]; then
 fi
 
 ARGS=()
-if [[ -n "$SEPARATE_HOME" ]]; then
+if [[ -z "$SHARE_HOME" ]]; then
     ARGS+=( --home "$CONTAINER_HOME" )
 fi
 
-# TODO run config script then commit image with date as version
-
 # shellcheck disable=SC2145
-# this does not run the setup script, that has to be done manually
 distrobox create --image "$IMAGE:$IMAGE_VERSION" \
                  --name "$CONTAINER_NAME" \
                  "${ARGS[@]}" \

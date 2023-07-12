@@ -18,17 +18,7 @@ fi
 source "$AGSHELLDIR"/aliases.sh
 
 # load additional custom shell agnostic stuff
-if [[ -d "$AGSHELLDIR/custom" ]]; then
-    for i in "$AGSHELLDIR"/custom/*.sh; do
-        source "$i"
-    done
-fi
-
-# load additional custom shell specific stuff
-if [[ -d "$SHELLDIR/custom" ]]; then
-    for i in "$SHELLDIR"/custom/*.sh; do
-        source "$i"
-    done
-fi
+[[ -d "$AGSHELLDIR/custom" ]] && for i in "$AGSHELLDIR/custom"; do source "$i"; done
+[[ -d "$SHELLDIR/custom" ]] && for i in "$SHELLDIR/custom"; do source "$i"; done
 
 unset i

@@ -6,7 +6,7 @@ export SHELLDIR="$HOME/.config/bash"
 
 source "${AGSHELLDIR:-$HOME/.config/shell}/non-interactive.sh"
 
-# If not running interactively, don't do anything
+# process further only if interactive
 case $- in
     *i*) ;;
       *) return;;
@@ -59,12 +59,9 @@ __prompt_cmd() {
     echo -en "\033]0;$(pwd)\a"
 }
 
+# TODO add fallback so the prompt color is different if its not defined
 PROMPT_COMMAND="__prompt_cmd ; $PROMPT_COMMAND"
-PS1='\[$(tput setaf 2)\]$\[$(tput sgr0)\] '
-
-if [[ -n "$IN_CONTAINER" ]]; then
-    PS1="\[$(tput setaf 4)\]󰡖 \[$(tput sgr0)\]$PS1"
-fi
+PS1='\[$(tput setaf "$PROMPT_COLOR")\]$\[$(tput sgr0)\] '
 
 # enable bash completion
 if ! shopt -oq posix; then

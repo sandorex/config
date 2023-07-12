@@ -18,7 +18,7 @@ echo "Initializing dotfiles.."
 # update the submodules, otherwise many things will break
 git submodule update --init --recursive
 
-# TODO this maybe should be its own script that saves specific values in POSIX
-# compatible format
-echo "SH_HOSTNAME='$(hostname)'" > ./.shenv
-
+# set globals that need to be accessible from the containers
+SHENV_FILE=.shenv
+echo "HOST_HOSTNAME='$(hostname)'" > "$SHENV_FILE"
+echo "HOST_HOME='$HOME'" >> "$SHENV_FILE"
