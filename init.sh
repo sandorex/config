@@ -19,6 +19,6 @@ echo "Initializing dotfiles.."
 git submodule update --init --recursive
 
 # set globals that need to be accessible from the containers
-SHENV_FILE=.shenv
+SHENV_FILE="$AGSHELLDIR/.shenv"
 echo "HOST_HOSTNAME='$(hostname)'" > "$SHENV_FILE"
 echo "HOST_HOME='$HOME'" >> "$SHENV_FILE"

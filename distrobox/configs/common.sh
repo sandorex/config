@@ -65,7 +65,8 @@ UBUNTU_APT=(
 CARGO=(
     "${CARGO[@]}"
 
-    bat         # cat replacement
+    # does not build for some reason
+    #bat         # cat replacement
     bkt         # caching utility
     bob-nvim    # provides neovim
     fnm         # provides npm/node
@@ -85,8 +86,8 @@ GO=(
     'github.com/charmbracelet/glow@latest'  # useful markdown cli renderer
 )
 
-PIP=(
-    "${PIP[@]}"
+PIPX=(
+    "${PIPX[@]}"
 
     'yt-dlp' # ytdl fork
 )
@@ -99,9 +100,5 @@ DISTROBOX_HOST_EXEC=(
     flatpak
     podman
     ddcutil # allows changing brightness from within the container
-
-    # TODO find a way to detect if the host has rpm-ostree from the container
-    rpm-ostree
-    # i did not add ostree as many commands require root
 )
 

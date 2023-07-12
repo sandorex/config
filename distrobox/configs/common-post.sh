@@ -37,15 +37,20 @@ if [[ "${#GO[@]}" -ne 0 ]]; then
     if [[ -z "$GOPATH" ]]; then
         echo "Skipped as \$GOPATH is not defined!"
     else
-        go install "${GO[@]}"
+        go install "${GO[@]}" &
+        pid=$!
+
+        # added a "spinner" as go install is silent until completion and its slow
+        while kill -0 "pid" 2>/dev/null; do printf '.'; sleep 5; done
+        echo
     fi
 fi
 
-if [[ "${#PIP[@]}" -ne 0 ]]; then
+if [[ "${#PIPX[@]}" -ne 0 ]]; then
     echo
-    echo "Installing pip packages"
+    echo "Installing pipx packages"
 
-    python3 -m pip install --user "${PIP[@]}"
+    pipx install "${PIP[@]}"
 fi
 
 if [[ -n "$DISTROBOX_ENTER_PATH" ]] && [[ "${#DISTROBOX_HOST_EXEC[@]}" -ne 0 ]]; then

@@ -32,6 +32,13 @@ snippet isroot
 		${0:${VISUAL}}
 	fi
 
+snippet spinner
+	${0:${VISUAL}}sleep 10s &
+	pid=$!
+
+	while kill -0 "$pid" 2>/dev/null; do printf '.'; sleep 1; done
+	echo
+
 snippet whiptail-redirect
 	var=$(whiptail ${0:${VISUAL}} 3>&1 1>&2 2>&3)
 
