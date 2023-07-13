@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#
+# task/list - list tasks
+
+DIR="$HOME/.task"
+
+[[ ! -f "$DIR/.current.md" ]] && exit 1
+
+echo "Showling last 10 lines:"
+tail "$DIR/.current.md"

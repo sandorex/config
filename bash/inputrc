@@ -5,11 +5,13 @@ $include /etc/inputrc
 set completion-ignore-case On
 
 set colored-stats On
-set completion-prefix-display-length 3
 set mark-symlinked-directories On
 set show-all-if-ambiguous On
 set show-all-if-unmodified On
 set visible-stats On
+set menu-complete-display-prefix on
+
+TAB: menu-complete
 
 # vim: filetype=readline syntax=readline
 

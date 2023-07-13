@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# task/log - log to current task
+
+DIR="$HOME/.task"
+
+# do not write anything if it does not exist
+[[ ! -e "$DIR/.current.md" ]] && exit 1
+
+echo >> "$DIR/.current.md"
+
+# support multiline log
+if [[ -z "$*" ]]; then
+    echo "Press enter on empty line to quit"
+    while : ; do
+        read -p ">> " line
+
+        [[ -z "$line" ]] && break
+
+        echo "$line" >> "$DIR/.current.md"
+    done
+
+    echo "Please enter the message"
+    exit 1
+else
+    echo "$*" >> "$DIR/.current.md"
+fi
+

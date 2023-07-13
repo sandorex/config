@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+#
+# task/full - shows full task
+
+DIR="$HOME/.task"
+
+[[ ! -f "$DIR/.current.md" ]] && exit 1
+
+if command -v glow &>/dev/null; then
+    glow "$DIR/.current.md"
+else
+    less "$DIR/.current.md"
+fi
