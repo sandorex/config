@@ -36,14 +36,8 @@ set -- "${POSITIONAL_ARGS[@]}"
 echo >> "$DIR/.current.md"
 echo "## ${TAG} $(date "+$DATEFMT")" >> "$DIR/.current.md"
 
-# support multiline log
 if [[ -z "$*" ]]; then
-    echo "Press ^C to quit"
-    trap 'echo; exit' INT
-    while : ; do
-        read -p ">> " line
-        echo "$line" >> "$DIR/.current.md"
-    done
+    command "$EDITOR" "$DIR/$(readlink "$DIR/.current.md")"
 else
     echo "$*" >> "$DIR/.current.md"
 fi

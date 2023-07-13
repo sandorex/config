@@ -12,7 +12,7 @@ if [[ -f "$HOME/.dotfiles-state/$CONFIG" ]] && [[ -z "$REINSTALL" ]]; then
     exit
 fi
 
-link -a "$HOME"/.config/glow ./glow
+util link -a "$HOME"/.config/glow ./glow
 
 mkdir -p "$HOME/.dotfiles-state"
 touch "$HOME/.dotfiles-state/$CONFIG"
