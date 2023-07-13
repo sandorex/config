@@ -84,11 +84,6 @@ setopt auto_menu
 setopt auto_param_slash # if param is a dir add a trailing slash
 setopt interactive_comments
 
-# zstyle ':completion:*' file-sort name
-# zstyle ':completion:*' menu select=long
-# zstyle ':completion:*' use-cache on
-# zstyle ':completion:*' cache-path "${ZDOTDIR:-$HOME}/.zcompcache"
-
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' completer _complete _ignored _files
@@ -106,11 +101,12 @@ fpath=(
 autoload -U zmv
 
 # this has to be below options
-autoload -Uz compinit
+autoload -Uz compinit bashcompinit
 
 # generate compinit only every 8 hours
 for _ in "$HOME"/.zcompdump(N.mh+8); do
     compinit
+    bashcompinit
 done
 
 compinit -C

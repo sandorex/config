@@ -23,6 +23,15 @@ _first-tab() {
 zle -N _first-tab
 bindkey '^I' _first-tab
 
+# deletes first word to allow quick switch of command
+_quick-cmd-edit() {
+    zle beginning-of-line
+    zle delete-word
+    zle redisplay
+}
+zle -N _quick-cmd-edit
+bindkey '^X' _quick-cmd-edit
+
 # keybinding for isearch
 bindkey '^R' history-incremental-search-backward
 
@@ -42,9 +51,10 @@ bindkey '^H' backward-delete-word
 # push current buffer into stack which pops back up after execution of anything
 bindkey '^Q' push-input
 
+# edit the command line command in the editor (does not execute automatically)
 autoload -z edit-command-line
 zle -N edit-command-line
-bindkey '^X^E' edit-command-line
+bindkey '^E' edit-command-line
 
 _mux-select() {
     emulate -LR zsh
