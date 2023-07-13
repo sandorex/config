@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+#
+# wrapper script to modify flatpak installation on the hdd
+
+exec flatpak --installation=slowmf "$@"
