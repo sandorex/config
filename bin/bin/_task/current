@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# task/current - gets current task name, nothing if there is none
+
+DIR="$HOME/.task"
+
+if [[ -f "$DIR/.current.md" ]]; then
+    echo "$(readlink "$DIR/.current.md")"
+else
+    exit 1
+fi
+
