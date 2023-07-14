@@ -2,9 +2,29 @@
 #
 # init.zsh - the actual initialization of zsh
 
+# these read the terminfo and allow the keybindings to work across terminals
+# but they may not work in all of them, especially control options
+typeset -A KEYS
+KEYS[UP]=${terminfo[kcuu1]}
+KEYS[DOWN]=${terminfo[kcud1]}
+KEYS[LEFT]=${terminfo[kcub1]}
+KEYS[RIGHT]=${terminfo[kcuf1]}
+KEYS[C_UP]=${terminfo[kUP5]}
+KEYS[C_RIGHT]=${terminfo[kDN5]}
+KEYS[C_LEFT]=${terminfo[kLFT5]}
+KEYS[C_RIGHT]=${terminfo[kRIT5]}
+
+KEYS[TAB]=${terminfo[ht]}
+
+KEYS[BACKSPACE]=${terminfo[kbs]}
+KEYS[C_BACKSPACE]=${terminfo[cub1]} # !!
+
+KEYS[DELETE]=${terminfo[kdch1]}
+KEYS[C_DELETE]=${terminfo[kDC5]} # !!
+
 # ctr + left / right arrow keys
-bindkey '^[[1;5D' backward-word
-bindkey '^[[1;5C' forward-word
+bindkey "${KEYS[C_LEFT]}" backward-word
+bindkey "${KEYS[C_RIGHT]}" forward-word
 
 # make tab on empty buffer autocomplete like cd
 _first-tab() {
@@ -21,7 +41,7 @@ _first-tab() {
     zle redisplay
 }
 zle -N _first-tab
-bindkey '^I' _first-tab
+bindkey "${KEYS[TAB]}" _first-tab
 
 # deletes first word to allow quick switch of command
 _quick-cmd-edit() {
@@ -36,17 +56,17 @@ bindkey '^X' _quick-cmd-edit
 bindkey '^R' history-incremental-search-backward
 
 # better search mode
-bindkey -M isearch '^[[A' history-incremental-search-backward
-bindkey -M isearch '^[[B' history-incremental-search-forward
+bindkey -M isearch "${KEYS[UP]}" history-incremental-search-backward
+bindkey -M isearch "${KEYS[DOWN]}" history-incremental-search-forward
 bindkey -M isearch '^[' send-break
-bindkey -M isearch '^?' backward-delete-word
+bindkey -M isearch "${KEYS[BACKSPACE]}" backward-delete-word
 
 # delete and ctrl delete
-bindkey '^[[3~' delete-char
-bindkey '^[[3;5~' delete-word
+bindkey "${KEYS[DELETE]}" delete-char
+bindkey "${KEYS[C_DELETE]}" delete-word
 
 # ctrl backspace
-bindkey '^H' backward-delete-word
+bindkey "${KEYS[C_BACKSPACE]}" backward-delete-word
 
 # push current buffer into stack which pops back up after execution of anything
 bindkey '^Q' push-input

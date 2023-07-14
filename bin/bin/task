@@ -110,7 +110,7 @@ EOF
 
         if [[ ! -f "$TASK_DIR/$2${TASK_EXT}" ]]; then
             echo "Creating new task '$2'"
-            echo "# TASK $1" > "$TASK_DIR/$2${TASK_EXT}"
+            echo "# TASK $2" > "$TASK_DIR/$2${TASK_EXT}"
         fi
 
         echo "Setting task '$2' as the current task"
@@ -178,6 +178,9 @@ EOF
         ;;
     a|append)
         ensure_current_is_set
+
+        # shift the command
+        shift
 
         # either append all arguments as text or open editor
         if [[ -z "$*" ]]; then
