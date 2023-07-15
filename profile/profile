@@ -30,8 +30,16 @@ export EDITOR=nano
 export SUDO_EDITOR=nano
 export TASK_EDITOR=nano
 
+# options for less
+# FRX is git default args
+export LESS='FRX --mouse'
+
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # set ls colors
 eval "$(dircolors --sh "$AGSHELLDIR/gruvbox.dircolors")"
+
+# to signify if its running twice
+[[ -n "$__PROFILE_RAN" ]] && echo "~/.profile is being ran twice, stop it, get some help"
+export __PROFILE_RAN=1
 

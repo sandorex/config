@@ -24,7 +24,7 @@ if command -v lsd &>/dev/null; then
 else
     alias ls='ls -F --color=auto'
     alias l='ls -aF --color=auto'
-    alias ll='ls -alF --color=auto'
+    alias ll='ls -alFh --color=auto'
 fi
 
 if command -v distrobox-host-exec &>/dev/null; then
