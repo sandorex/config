@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+#
+# git-explain-staged - asks user to explain staged changes in git
+
+# try to use the editor git uses, otherwise default to $EDITOR, then to vi
+GIT_EDITOR=$(git config --global core.editor)
+EDITOR=${GIT_EDITOR:-${EDITOR:-vi}}
+
+notes=()
+
+# create temp file that will be edited
+tmpfile=$(mktemp)
+trap "rm -f '$tmpfile'" EXIT
+
+# TODO see if the interface could be improved by showing interactive screen and
+# only opening editor if the user wants to write something, also keeping track
+# of what has notes and what does not so the user can see if they are done and
+# the rest of files changed dont matter
+changed_files="$(git diff --name-only --staged)"
+for i in $changed_files; do
+    diff="$(git diff --cached "$i")"
+
+    # write the diff and some information
+    cat <<EOF > "$tmpfile"
+$diff
+
+Please explain this change, you can also skip it by leaving it empty below
+To stop early delete everything in this file
+-------------------------------------------------------------------------------
+
+EOF
+
+    # save template for comparison
+    template=$(cat "$tmpfile")
+
+    # open the editor
+    command "$EDITOR" "$tmpfile"
+
+    # check if changed
+    content=$(cat "$tmpfile")
+
+    # allow early break
+    if [[ -z "$content" ]]; then
+        break
+    fi
+
+    if [[ "$template" == "$content" ]]; then
+        echo "Skipping $i"
+        continue
+    fi
+
+    # count and cut off the template
+    line=$(( $(echo "$template" | wc -l) + 1 ))
+    notes+=("$(echo "$content" | tail -n +"$line")")
+done
+
+if [[ -z "${notes[*]}" ]]; then
+    echo "Nothing to note"
+    exit 0
+fi
+
+msg="$(printf "%s\n" "${notes[@]}" | sed -e 's/^/# /')"
+if [[ "$1" == "--commit" ]]; then
+    git commit -m "$msg" --edit || exit 0
+else
+    echo '---'
+    echo "$msg"
+    echo '---'
+fi
+
