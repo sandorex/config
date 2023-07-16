@@ -14,6 +14,7 @@ DNF=(
     qrencode # used for generating qr in console
     hyperfine # benchmarking tool thingy
     ripgrep # regex searching thingy
+    bat
 
     # package managers
     cargo
@@ -44,6 +45,7 @@ UBUNTU_APT=(
     qrencode # used for generating qr in console
     hyperfine # benchmarking tool thingy
     ripgrep # regex searching thingy
+    bat
 
     # package managers
     cargo
@@ -65,7 +67,7 @@ UBUNTU_APT=(
 CARGO=(
     "${CARGO[@]}"
 
-    # does not build for some reason
+    # does not build for some reason, install in the package manager
     #bat         # cat replacement
     bkt         # caching utility
     bob-nvim    # provides neovim

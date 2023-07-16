@@ -10,11 +10,6 @@ if [[ "$TERM" == "console" ]]; then
     source "$AGSHELLDIR/console-theming.sh"
 fi
 
-if [[ -z "$ZSH_VERSION" ]]; then
-    # dummy to use compdef only on zsh
-    compdef() { :; }
-fi
-
 source "$AGSHELLDIR"/aliases.sh
 
 # load additional custom shell agnostic stuff

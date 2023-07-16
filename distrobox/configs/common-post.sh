@@ -41,7 +41,7 @@ if [[ "${#GO[@]}" -ne 0 ]]; then
         pid=$!
 
         # added a "spinner" as go install is silent until completion and its slow
-        while kill -0 "pid" 2>/dev/null; do printf '.'; sleep 5; done
+        while kill -0 "$pid" 2>/dev/null; do printf '.'; sleep 5; done
         echo
     fi
 fi

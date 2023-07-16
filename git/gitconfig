@@ -7,6 +7,7 @@
     ds = diff --staged # show only files to be commited
     l = "log --date=iso --format='%C(auto) %h %d %s %Cgreen [%ad]'"
     p = add --patch
+    i = add --interactive
 
     # auto commit with hostname
     autocommit = "!git commit --message=\"#A $(hostname)\" --edit"
@@ -16,6 +17,10 @@
     ec = "!git-explain-staged --commit"
     # just explain
     ex = "!git-explain-staged"
+
+    # reset last commit so files are back to staged
+    fuck = reset --soft HEAD~
+    undo = fuck
 
     # aliases for changes at the HEAD, not yet pulled
     hlog = "!git remote update; git log HEAD..origin/HEAD"

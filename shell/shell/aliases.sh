@@ -3,7 +3,13 @@
 # aliases.sh - aliases for bash and zsh
 #
 # this script is sourced by both bash and zsh, beware of bashisms
+#
+# this file should always be sourceable without any other file
 
+# make compdef an no op on bash
+if [[ -z "$ZSH_VERSION" ]]; then
+    compdef() { :; }
+fi
 
 alias e="$EDITOR"; compdef e="$EDITOR"
 alias se="sudo -e"
@@ -13,8 +19,18 @@ alias s='sudo'
 alias g='git'; compdef g="git"
 alias cg='cgit'; compdef cg="git"
 
-if command -v bat &>/dev/null; then
-    alias cat='bat'
+# use bat if available
+if command -v batcat &>/dev/null; then
+    # for some reason debian renamed bat to batcat
+    alias bat='batcat'
+    alias cat='batcat --style=plain'
+elif command -v bat &>/dev/null; then
+    alias cat='bat --style=plain'
+fi
+
+# it seems on debian its been renamed
+if command -v batcat &>/dev/null; then
+    alias cat='batcat'
 fi
 
 if command -v lsd &>/dev/null; then
@@ -31,6 +47,8 @@ if command -v distrobox-host-exec &>/dev/null; then
     alias h='distrobox-host-exec'
 fi
 
+# little wrapper that lists the current directoy without arguments but if there
+# are any then they are passed to \. aka source command
 _smart_dot() {
     if [ "$#" -eq 0 ]; then
         ls -F --color=auto
@@ -48,13 +66,6 @@ alias -- '....'='cd ../../..'
 alias diff='diff --report-identical-files --color=auto'
 alias grep='grep --color=auto'
 alias rcat='cat -A' # safely read escape sequences
-
-alias cal='cal -3'
-
-# termux aliases
-if command -v termux-setup-storage &>/dev/null; then
-    alias reload-termux='termux-reload-settings'
-fi
 
 # quick monitor brightness control
 alias m='monb'
