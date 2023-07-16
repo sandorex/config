@@ -15,6 +15,7 @@
   "nvim-lspconfig": { "branch": "master", "commit": "deade69789089c3da15237697156334fb3e943f0" },
   "nvim-web-devicons": { "branch": "master", "commit": "9ab9b0b894b2388a9dbcdee5f00ce72e25d85bf9" },
   "resession.nvim": { "branch": "master", "commit": "6ec6f20cf2cf3dc9c23a06deba36e1d2de9c75a4" },
+  "vim-just": { "branch": "main", "commit": "f678f5ef3d6bc589e88b7f1da6e969a5f67a99dc" },
   "vim-sleuth": { "branch": "master", "commit": "1cc4557420f215d02c4d2645a748a816c220e99b" },
   "which-key.nvim": { "branch": "main", "commit": "d871f2b664afd5aed3dc1d1573bef2fb24ce0484" }
 }

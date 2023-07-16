@@ -1,0 +1,14 @@
+// opens git commit and staged diff next it so its easier to see changes
+layout {
+    pane split_direction="vertical" {
+        pane command="git" close_on_exit=true {
+            args "commit"
+        }
+        pane command="git" {
+            args "--paginate" "diff" "--staged"
+        }
+    }
+    pane size=1 borderless=true {
+        plugin location="zellij:compact-bar"
+    }
+}

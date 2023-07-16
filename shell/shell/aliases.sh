@@ -43,6 +43,11 @@ else
     alias ll='ls -alFh --color=auto'
 fi
 
+if command -v zellij &>/dev/null; then
+    # quickly spin up a layout
+    alias zl='zellij --layout'
+fi
+
 if command -v distrobox-host-exec &>/dev/null; then
     alias h='distrobox-host-exec'
 fi
