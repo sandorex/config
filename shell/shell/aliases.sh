@@ -28,11 +28,6 @@ elif command -v bat &>/dev/null; then
     alias cat='bat --style=plain'
 fi
 
-# it seems on debian its been renamed
-if command -v batcat &>/dev/null; then
-    alias cat='batcat'
-fi
-
 if command -v lsd &>/dev/null; then
     alias ls='lsd -F'
     alias l='lsd -aF'
