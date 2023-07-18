@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 #
-# init.zsh - the actual initialization of zsh
+# keybindings.zsh - keybindings for zsh
 
 # these read the terminfo and allow the keybindings to work across terminals
 # but they may not work in all of them, especially control options
@@ -76,16 +76,49 @@ autoload -z edit-command-line
 zle -N edit-command-line
 bindkey '^E' edit-command-line
 
-_mux-select() {
+# makes ctrl z run fg
+_job-switch() {
     emulate -LR zsh
 
-    # only run on empty buffer
-    if [[ $#BUFFER == 0 ]]; then
-        BUFFER="mux-select"
-        zle accept-line
-        zle redisplay
-    fi
+    fg
+    zle redisplay
 }
-zle -N _mux-select
-bindkey '^S' _mux-select
+zle -N _job-switch
+bindkey '^Z' _job-switch
+
+# quickly cycle between sudo and sudo -e
+_quick-sudo() {
+    emulate -LR zsh
+
+    if [[ "$BUFFER" =~ ^sudo ]]; then
+        cursor=$(( $#BUFFER - $CURSOR ))
+        BUFFER="$(printf "%s" "$BUFFER" | sed -E 's/^sudo( -e)? ?//')"
+        CURSOR=$(( $#BUFFER - $cursor ))
+    else
+        BUFFER="sudo $BUFFER"
+        CURSOR=$(( $CURSOR + 5 ))
+    fi
+
+    zle redisplay
+}
+zle -N _quick-sudo
+bindkey '^S^S' _quick-sudo
+
+_quick-sudo-e() {
+    emulate -LR zsh
+
+    if [[ "$BUFFER" =~ ^sudo ]]; then
+        cursor=$(( $#BUFFER - $CURSOR ))
+        BUFFER="$(printf "%s" "$BUFFER" | sed -E 's/^sudo( -e)? ?//')"
+        CURSOR=$(( $#BUFFER - $cursor ))
+    else
+        BUFFER="sudo -e $BUFFER"
+        CURSOR=$(( $CURSOR + 8 ))
+    fi
+
+    zle redisplay
+}
+
+zle -N _quick-sudo-e
+bindkey '^S' _quick-sudo-e
 

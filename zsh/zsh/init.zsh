@@ -114,12 +114,7 @@ compinit -C
 # show dotfiles with tab completion
 _comp_options+=(globdots)
 
-# load all plugins
-source "$SHELLDIR/plugins/quick-sudo.zsh"
-source "$SHELLDIR/plugins/job-switcher.zsh"
-
 source "$SHELLDIR/keybindings.zsh"
-
 source "$AGSHELLDIR/interactive-post.sh"
 
 # zsh compdef for scripts # TODO MOVE ELSEWHERE
