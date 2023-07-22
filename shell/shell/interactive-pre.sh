@@ -4,7 +4,7 @@
 
 if [[ -n "$container" ]]; then
     if [[ -f "/run/.containerenv" ]]; then
-        CONTAINER_NAME="$(gawk 'match($0, /name="(.+)"/, r) { print r[1] }' /run/.containerenv)"
+        CONTAINER_NAME="$(perl -lne 'print $1 if /name="(\w+)"/' < /run/.containerenv)"
     else
         CONTAINER_NAME='unknown'
     fi

@@ -15,7 +15,7 @@ alias e="$EDITOR"; compdef e="$EDITOR"
 alias se="sudo -e"
 alias edit="$EDITOR"; compdef e="$EDITOR"
 alias s='sudo'
-
+alias t='task'
 alias g='git'; compdef g="git"
 alias cg='cgit'; compdef cg="git"
 
