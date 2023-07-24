@@ -14,10 +14,11 @@ fi
 alias e="$EDITOR"; compdef e="$EDITOR"
 alias se="sudo -e"
 alias edit="$EDITOR"; compdef e="$EDITOR"
-alias s='sudo'
+alias s='sudo'; compdef s='sudo'
 alias t='task'
-alias g='git'; compdef g="git"
-alias cg='cgit'; compdef cg="git"
+alias g='git'; compdef g='git'
+alias cg='cgit'; compdef cg='git'
+alias f="$FILE_MANAGER";
 
 # use bat if available
 if command -v batcat &>/dev/null; then

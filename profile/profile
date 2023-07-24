@@ -3,7 +3,7 @@
 # .profile - place to put env vars
 #
 # THIS SHOULD NOT RUN ON START OF EACH SHELL
-# SYMLINK .zprofile TO THIS FILE
+# SYMLINK ~/.zprofile TO THIS FILE
 
 export DOTFILES="$HOME/.dotfiles"       # dotfiles path
 export AGSHELLDIR="$HOME/.config/shell" # agnostic shell stuff
@@ -28,10 +28,11 @@ export PATH
 # nano is default, override in shell
 export EDITOR=nano
 export SUDO_EDITOR=nano
+export FILE_MANAGER=ranger
 export TASK_EDITOR=nano
 
 # options for less
-# FRX is git default args
+# FRX is git default args, adding mouse to mousewheel scrolling
 export LESS='FRX --mouse'
 
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
@@ -40,6 +41,6 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 eval "$(dircolors --sh "$AGSHELLDIR/gruvbox.dircolors")"
 
 # to signify if its running twice
-[[ -n "$__PROFILE_RAN" ]] && echo "~/.profile is being ran twice, stop it, get some help"
+[[ -n "$__PROFILE_RAN" ]] && echo "Profile was sourced again, something's off and you have to fix it"
 export __PROFILE_RAN=1
 
