@@ -3,6 +3,8 @@
 # audio-switcher - script that sets/toggles headphones or speakers using pactl
 #
 # the script works on piperwire, written for debian 12
+#
+# optionally depends on notify-send
 
 set -e
 
@@ -17,6 +19,36 @@ set-sink() { pactl set-default-sink "$1"; }
 set-port() { pactl set-sink-port 0 "$1"; }
 is-active-port() { pactl list sinks | grep "Active Port: $1" &>/dev/null; }
 
+POSITIONAL_ARGS=()
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        --notify)
+            NOTIFY=1
+            shift
+            ;;
+        -*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            # save positional arg
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+notification() {
+    if [[ -n "$NOTIFY" ]]; then
+        # allow it to fail if not installed, redirect supresses error msg
+        notify-send -t 1000 -u low -i headphones "$1" "$2" &>/dev/null || true
+    fi
+}
+
 active_sink="$(pactl get-default-sink)"
 
 # explicitly sets output so change the sink if not correct
@@ -24,10 +56,12 @@ case "$1" in
     h|headphones)
         [[ "$active_sink" != "$SINK" ]] && set-sink "$SINK"
         set-port "$HEADPHONES"
+        notification 'audio-switcher' "Switched to headphones"
         ;;
     s|speakers)
         [[ "$active_sink" != "$SINK" ]] && set-sink "$SINK"
         set-port "$SPEAKERS"
+        notification 'audio-switcher' "Switched to speakers"
         ;;
     t|toggle|'') # empty argument defaults to toggle as well
         # if active sink is not the correct one just give up
@@ -39,8 +73,10 @@ case "$1" in
         # toggle between speakers and headphones
         if is-active-port "$HEADPHONES"; then
             set-port "$SPEAKERS"
+            notification 'audio-switcher' "Switched to speakers"
         elif is-active-port "$SPEAKERS"; then
             set-port "$HEADPHONES"
+            notification 'audio-switcher' "Switched to headphones"
         else
             set-port "$SPEAKERS"
             echo "Invalid port was set defaulted to speakers"
