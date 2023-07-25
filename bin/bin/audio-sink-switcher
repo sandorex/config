@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 #
-# audio-switcher - script that sets/toggles headphones or speakers using pactl
+# audio-sink-switcher - script that sets/toggles headphones or speakers
 #
 # the script works on piperwire, written for debian 12
 #
-# optionally depends on notify-send
+# depends on pactl, optionally on notify-send
 
 set -e
 
-# get these using `pactl list sinks` in ports section, motherboard dependant
+# get these using `pactl list sinks` in ports section
 HEADPHONES='analog-output-headphones'
 SPEAKERS='analog-output-lineout'
 
@@ -17,7 +17,6 @@ SINK='alsa_output.pci-0000_09_00.6.analog-stereo'
 
 set-sink() { pactl set-default-sink "$1"; }
 set-port() { pactl set-sink-port 0 "$1"; }
-is-active-port() { pactl list sinks | grep "Active Port: $1" &>/dev/null; }
 
 POSITIONAL_ARGS=()
 
@@ -51,6 +50,9 @@ notification() {
 
 active_sink="$(pactl get-default-sink)"
 
+# gets active port for current sink, should not print anything if sink is invalid
+active_port="$(pactl list sinks | awk "BEGIN { found = 0 } /Name: $active_sink/ { found = 1 } /.*Active Port: .*/ && found { print \$3; exit }")"
+
 # explicitly sets output so change the sink if not correct
 case "$1" in
     h|headphones)
@@ -71,15 +73,16 @@ case "$1" in
         fi
 
         # toggle between speakers and headphones
-        if is-active-port "$HEADPHONES"; then
+        if [[ "$active_port" == "$HEADPHONES" ]]; then
             set-port "$SPEAKERS"
             notification 'audio-switcher' "Switched to speakers"
-        elif is-active-port "$SPEAKERS"; then
+        elif [[ "$active_port" == "$SPEAKERS" ]]; then
             set-port "$HEADPHONES"
             notification 'audio-switcher' "Switched to headphones"
         else
             set-port "$SPEAKERS"
-            echo "Invalid port was set defaulted to speakers"
+            echo "Unknown port was used '$active_port', switching to speakers"
+            notification 'audio-switcher' "Switched to speakers"
         fi
         ;;
     *)
