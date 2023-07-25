@@ -18,13 +18,13 @@ snippet grep-parse-listfile
 
 snippet rerun-sudo-bash
 	# non posix compliant!
-	if [[ $EUID -ne 0 ]]; then
-		exec sudo "$SHELL" "$0" "$@"
+	if [[ $$EUID -ne 0 ]]; then
+		exec sudo "$$SHELL" "\$0" "$@"
 	fi
 
 snippet rerun-sudo-sh
-	if [ "$(id -u)" -ne 0 ]; then
-		exec sudo "$SHELL" "$0" "$@"
+	if [ "$$(id -u)" -ne 0 ]; then
+		exec sudo "$$SHELL" "\\$0" "$@"
 	fi
 
 snippet isroot
