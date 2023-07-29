@@ -29,8 +29,13 @@ kcfg 'kwinrc/org.kde.kdecoration2/ButtonsOnLeft' --write 'MF'
 # profile 1 is flat acceleration profile
 
 ## E-Signal USB Gaming Mouse 04D9:A09F ##
-kcfg 'kcminputrc/Libinput/1241/41119/E-Signal USB Gaming Mouse/PointerAcceleration' --write -0.200
+kcfg 'kcminputrc/Libinput/1241/41119/E-Signal USB Gaming Mouse/PointerAcceleration' --write '-0.200'
 kcfg 'kcminputrc/Libinput/1241/41119/E-Signal USB Gaming Mouse/PointerAccelerationProfile' --write 1
+
+## Logitech, Inc. Unifying Receiver 046D:C534 ##
+# this is actually a Logitech M212 mouse from MK240 wireless combo
+kcfg 'kcminputrc/Libinput/1133/16418/Logitech Wireless Mouse PID:4022/PointerAcceleration' --write '0.200'
+kcfg 'kcminputrc/Libinput/1133/16418/Logitech Wireless Mouse PID:4022/PointerAccelerationProfile' --write 1
 
 ### KEYBOARD ###
 # make caps into hyper key

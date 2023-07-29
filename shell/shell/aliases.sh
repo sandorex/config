@@ -23,7 +23,7 @@ alias f="$FILE_MANAGER";
 # use bat if available
 if command -v batcat &>/dev/null; then
     # for some reason debian renamed bat to batcat
-    alias bat='batcat'
+    # alias bat='batcat'
     alias cat='batcat --style=plain'
 elif command -v bat &>/dev/null; then
     alias cat='bat --style=plain'
