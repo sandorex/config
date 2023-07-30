@@ -1,15 +1,33 @@
 #!/usr/bin/env bash
 #
-# monb - monitor brightness utility
+# https://github.com/sandorex/config
+# monb
+# tool to set monitor brightness, used in terminal and using slider execute
+# applet in kde plasma, has monitor brightness offset which is very important
+
+# these offsets are added to brightness value when a literal value is set, it
+# is used to make monitors the same apparent brightness as they usually are not
+# equal out of the box if they are different models
+monitor_offset=( '0' '-10' )
+
+# adding padding to make the array start with index 1
+monitor_offset=( 'padding' "${monitor_offset[@]}" )
 
 list_monitors() { ddcutil detect | awk ' /^Display [0-9]+/ { printf $2 " " }'; }
 
 send() {
-    local display=$1
-    shift
+    local display=${1:?}
+    local brightness="${2:?}"
 
-    echo "Sending to display $display"
-    ddcutil --display "$display" setvcp 10 "$@"
+    # easiest way to prevent sending invalid numbers
+    if [[ "$brightness" -lt 0 ]]; then
+        brightness='0'
+    elif [[ "$brightness" -gt 100 ]]; then
+        brightness='100'
+    fi
+
+    echo "Display $display ${brightness}%"
+    ddcutil --display "$display" setvcp 10 "$brightness"
 }
 
 MONITOR=$2
@@ -21,7 +39,13 @@ case "$1" in
             send "$MONITOR" "$1"
         else
             for d in $(list_monitors); do
-                send "$d" "$1"
+                # use the offset to make the monitors seem the same brightness
+                offset="${monitor_offset[$d]}"
+                if [[ -n "$offset" ]]; then
+                    send "$d" "$(( $1 + $offset ))"
+                else
+                    send "$d" "$1"
+                fi
             done
         fi
         ;;

@@ -24,6 +24,13 @@ kcfg 'kcminputrc/Mouse/cursorTheme' --write 'Breeze_Snow'
 kcfg 'kwinrc/org.kde.kdecoration2/ButtonsOnRight' --delete
 kcfg 'kwinrc/org.kde.kdecoration2/ButtonsOnLeft' --write 'MF'
 
+## FONTS ##
+kcfg 'kdeglobals/General/fixed' --write 'Hack,11,-1,5,50,0,0,0,0,0'
+kcfg 'kdeglobals/General/font' --write 'Noto Sans,11,-1,5,50,0,0,0,0,0'
+kcfg 'kdeglobals/General/menuFont' --write 'Noto Sans,11,-1,5,50,0,0,0,0,0'
+kcfg 'kdeglobals/General/smallestReadableFont' --write 'Noto Sans,9,-1,5,50,0,0,0,0,0'
+kcfg 'kdeglobals/General/toolBarFont' --write 'Noto Sans,11,-1,5,50,0,0,0,0,0'
+
 #### HARDWARE ####
 ### MICE ###
 # profile 1 is flat acceleration profile
