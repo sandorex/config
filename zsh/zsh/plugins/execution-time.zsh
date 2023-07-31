@@ -4,12 +4,14 @@
 #
 # adapted by Sandorex
 
+export ZSH_COMMAND_TIME_EXCLUDE=( vi vim nvim nano emacs micro less man )
+
 _command_time_preexec() {
     # check excluded
-    if [ -n "$ZSH_COMMAND_TIME_EXCLUDE" ]; then
+    if [[ -n "$ZSH_COMMAND_TIME_EXCLUDE" ]]; then
         cmd="$1"
         for exc ($ZSH_COMMAND_TIME_EXCLUDE) do;
-            if [ "$(echo $cmd | grep -c "$exc")" -gt 0 ]; then
+            if [[ "$1" =~ "^$exc" ]]; then
                 # echo "command excluded: $exc"
                 return
             fi

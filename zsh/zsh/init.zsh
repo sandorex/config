@@ -122,6 +122,9 @@ compdef cgit=git
 # include execution time plugin
 source "$SHELLDIR/plugins/execution-time.zsh"
 
+# exclude editor and file manager macros too
+ZSH_COMMAND_TIME_EXCLUDE+=( 'e' 'f' )
+
 # syntax highlighting
 # HAS TO BE LOADED LAST!
 source "$SHELLDIR"/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
