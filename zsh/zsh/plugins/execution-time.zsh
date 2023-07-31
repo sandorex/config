@@ -55,7 +55,7 @@ zsh_command_time() {
             timer_show="$(printf '%dh' "$hours")"
         fi
 
-        print -P "%F{$ZSH_COMMAND_TIME_COLOR}$(printf "${ZSH_COMMAND_TIME_MSG}\n" "$timer_show")%f"
+        print -P "%F{$ZSH_COMMAND_TIME_COLOR}$(printf "${ZSH_COMMAND_TIME_MSG}\n" "%f$timer_show")"
     fi
 }
 
