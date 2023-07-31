@@ -38,21 +38,21 @@ _command_time_precmd() {
 zsh_command_time() {
     if [ -n "$ZSH_COMMAND_TIME" ]; then
         # splits up so it shows nicer output like 2h 10s, 3m etc
-        local hours="$(($ZSH_COMMAND_TIME/3600))"
-        local minutes="$(($ZSH_COMMAND_TIME%3600/60))"
-        local seconds="$(($ZSH_COMMAND_TIME%60))"
+        local hours="$(( $ZSH_COMMAND_TIME / 3600 ))"
+        local minutes="$(( $ZSH_COMMAND_TIME % 3600 / 60))"
+        local seconds="$(( $ZSH_COMMAND_TIME % 60 ))"
 
         timer_show=""
         if [[ "$seconds" -ne 0 ]]; then
-            timer_show="$(printf '%ds' "$seconds")"
+            timer_show="$(printf '%ds' "$seconds") $timer_show"
         fi
 
         if [[ "$minutes" -ne 0 ]]; then
-            timer_show="$(printf '%dm' "$minutes")"
+            timer_show="$(printf '%dm' "$minutes") $timer_show"
         fi
 
         if [[ "$hours" -ne 0 ]]; then
-            timer_show="$(printf '%dh' "$hours")"
+            timer_show="$(printf '%dh' "$hours") $timer_show"
         fi
 
         print -P "%F{$ZSH_COMMAND_TIME_COLOR}$(printf "${ZSH_COMMAND_TIME_MSG}\n" "%f$timer_show")"
