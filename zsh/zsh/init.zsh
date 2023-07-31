@@ -43,8 +43,9 @@ else
     }
 fi
 
+# TODO move these wezterm specific escapes to separate plugin that uses
+# precmd_functions, preexec_functions
 precmd() {
-    # TODO make this into a plugin
     # wezterm semantic zone
     [[ -n "$WEZTERM_PANE" ]] && printf "\033]133;P;k=i\007"
 
@@ -52,7 +53,6 @@ precmd() {
     printf "\033]0;%s\007" "$(pwd)"
 }
 
-# TODO add this into a plugin so it can be loaded only if using wezterm
 if [[ -n "$WEZTERM_PANE" ]]; then
     preexec() {
         # wezterm semantic zone so you can easily select command output
@@ -65,7 +65,6 @@ fi
 HISTFILE=~/.zhistory
 HISTSIZE=SAVEHIST=10000
 setopt extended_history append_history hist_ignore_dups hist_ignore_space
-# TODO save history after every command like in bash
 
 setopt no_beep          # no bell
 setopt no_clobber       # do not overwrite stuff with redirection
@@ -119,6 +118,9 @@ source "$AGSHELLDIR/interactive-post.sh"
 
 # zsh compdef for scripts # TODO MOVE ELSEWHERE
 compdef cgit=git
+
+# include execution time plugin
+source "$SHELLDIR/plugins/execution-time.zsh"
 
 # syntax highlighting
 # HAS TO BE LOADED LAST!
