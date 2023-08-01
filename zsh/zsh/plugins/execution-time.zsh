@@ -1,65 +1,50 @@
 #!/usr/bin/env zsh
-# shamelessly stolen from
+# original taken from
 # https://github.com/popstas/zsh-command-time/tree/master
 #
-# adapted by Sandorex
-
-export ZSH_COMMAND_TIME_EXCLUDE=( vi vim nvim nano emacs micro less man )
+# rewritten by Sandorex
+#
+# this will probably clash if any other plugin adds to RPROMPT as well
 
 _command_time_preexec() {
-    # check excluded
-    if [[ -n "$ZSH_COMMAND_TIME_EXCLUDE" ]]; then
-        cmd="$1"
-        for exc ($ZSH_COMMAND_TIME_EXCLUDE) do;
-            if [[ "$1" =~ "^$exc" ]]; then
-                # echo "command excluded: $exc"
-                return
-            fi
-        done
-    fi
-
-    timer=${timer:-$SECONDS}
-    ZSH_COMMAND_TIME_MSG=${ZSH_COMMAND_TIME_MSG-"Execution time: %s"}
-    ZSH_COMMAND_TIME_COLOR=${ZSH_COMMAND_TIME_COLOR-"blue"}
-    export ZSH_COMMAND_TIME=""
+    _command_time_timer=${_command_time_timer:-$SECONDS}
+    _command_time_elapsed=''
 }
 
 _command_time_precmd() {
-    if [ $timer ]; then
-        timer_show=$(($SECONDS - $timer))
-        if [ -n "$TTY" ] && [ $timer_show -ge ${ZSH_COMMAND_TIME_MIN_SECONDS:-3} ]; then
-            export ZSH_COMMAND_TIME="$timer_show"
-            if [ ! -z ${ZSH_COMMAND_TIME_MSG} ]; then
-                zsh_command_time
+    if [[ $_command_time_timer ]]; then
+        local elapsed_seconds=$(($SECONDS - $_command_time_timer))
+        if [[ -n "$TTY" ]] && [[ $elapsed_seconds -ge ${ZSH_COMMAND_TIME_MINIMUM_SECONDS:-10} ]]; then
+            # split it up so its human readable output like '2h 10s', '3m' etc
+            local hours="$(( $elapsed_seconds / 3600 ))"
+            local minutes="$(( $elapsed_seconds % 3600 / 60))"
+            local seconds="$(( $elapsed_seconds % 60 ))"
+
+            local formatted_time=""
+            if [[ "$seconds" -ne 0 ]]; then
+                formatted_time="$(printf '%ds' "$seconds") $formatted_time"
             fi
+
+            if [[ "$minutes" -ne 0 ]]; then
+                formatted_time="$(printf '%dm' "$minutes") $formatted_time"
+            fi
+
+            if [[ "$hours" -ne 0 ]]; then
+                formatted_time="$(printf '%dh' "$hours") $formatted_time"
+            fi
+
+            # add the color
+            _command_time_elapsed="%F{${ZSH_COMMAND_TIME_COLOR:-blue}}${formatted_time:-???}%f"
         fi
-        unset timer
+
+        unset _command_time_timer
     fi
+
+    # prepend to existing RPROMPT
+    export RPROMPT="${_command_time_elapsed}${_command_tme_original_rprompt}"
 }
 
-zsh_command_time() {
-    if [ -n "$ZSH_COMMAND_TIME" ]; then
-        # splits up so it shows nicer output like 2h 10s, 3m etc
-        local hours="$(( $ZSH_COMMAND_TIME / 3600 ))"
-        local minutes="$(( $ZSH_COMMAND_TIME % 3600 / 60))"
-        local seconds="$(( $ZSH_COMMAND_TIME % 60 ))"
-
-        timer_show=""
-        if [[ "$seconds" -ne 0 ]]; then
-            timer_show="$(printf '%ds' "$seconds") $timer_show"
-        fi
-
-        if [[ "$minutes" -ne 0 ]]; then
-            timer_show="$(printf '%dm' "$minutes") $timer_show"
-        fi
-
-        if [[ "$hours" -ne 0 ]]; then
-            timer_show="$(printf '%dh' "$hours") $timer_show"
-        fi
-
-        print -P "%F{$ZSH_COMMAND_TIME_COLOR}$(printf "${ZSH_COMMAND_TIME_MSG}\n" "%f$timer_show")"
-    fi
-}
-
+_command_tme_original_rprompt="$RPOMPT"
 precmd_functions+=(_command_time_precmd)
 preexec_functions+=(_command_time_preexec)
+
