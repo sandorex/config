@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 #
-# init.zsh - the actual initialization of zsh
+# https://github.com/sandorex/config
+# zsh initialization file, ~/.zshrc should link to this file
 
 export SHELLDIR="$HOME/.config/zsh"
 
@@ -17,20 +18,19 @@ alias reload-zsh='source ~/.zshrc; compinit'
 # set default color for the prompt
 # allows for distinct color for each container / environment
 if [[ -z "$PROMPT_COLOR" ]]; then
-    # make container default to gray
+    # make container default to blue
     if [[ -n "$container" ]]; then
-        PROMPT_COLOR='gray'
+        PROMPT_COLOR='blue'
     else
-        # otherwise green as this is most likely the main system
-        PROMPT_COLOR='green'
+        PROMPT_COLOR='red'
     fi
 fi
 
 # prompt expansion https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
-PROMPT="%F{$PROMPT_COLOR}%(1j.%B.)%%%b%f "
+PROMPT="%F{$PROMPT_COLOR}%(1j.%U.)%%%u%f "
 
 # shows exit code if last command exited with non-zero
-RPROMPT='%(?..%F{red}[ %?%  ]%f )'
+RPROMPT="%(?..%F{red}[ %?%  ]%f ) %F{${PROMPT_ICON_COLOR:-$PROMPT_COLOR}}${PROMPT_ICON_UTF8}%f "
 
 # list files on dir change but use lsd if available
 if command -v lsd &>/dev/null; then
@@ -43,23 +43,10 @@ else
     }
 fi
 
-# TODO move these wezterm specific escapes to separate plugin that uses
-# precmd_functions, preexec_functions
 precmd() {
-    # wezterm semantic zone
-    [[ -n "$WEZTERM_PANE" ]] && printf "\033]133;P;k=i\007"
-
     # update the title
     printf "\033]0;%s\007" "$(pwd)"
 }
-
-if [[ -n "$WEZTERM_PANE" ]]; then
-    preexec() {
-        # wezterm semantic zone so you can easily select command output
-        printf "\033]133;B\007"
-        printf "\033]133;C;\007"
-    }
-fi
 
 ## OPTIONS ##
 HISTFILE=~/.zhistory
@@ -119,12 +106,18 @@ source "$AGSHELLDIR/interactive-post.sh"
 # zsh compdef for scripts # TODO MOVE ELSEWHERE
 compdef cgit=git
 
-# include execution time plugin
+## PLUGINS ##
+# NOTE order of these matter a lot!
+# smart features depending on the terminal
+source "$SHELLDIR/plugins/smart-terminal.zsh"
+
+# include execution time plugin, if RPATH breaks this is probably the culprit
+# as it saves and reloads RPATH each time so any modification after it wont
+# work... TODO rework it!
 source "$SHELLDIR/plugins/execution-time.zsh"
 
 # syntax highlighting
-# HAS TO BE LOADED LAST!
-source "$SHELLDIR"/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source "$SHELLDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # remove duplicates from path just in case
 typeset -U path

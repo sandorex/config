@@ -2,6 +2,8 @@
 #
 # interactive-pre.sh - ran in interactive shells after non-interactive.sh
 
+source "$AGSHELLDIR/distro-icon.sh"
+
 if [[ -n "$container" ]]; then
     if [[ -f "/run/.containerenv" ]]; then
         CONTAINER_NAME="$(perl -lne 'print $1 if /name="(\w+)"/' < /run/.containerenv)"
