@@ -4,6 +4,8 @@
 #
 # optional dependency: glow
 
+set -eu
+
 TASK_DIR="${TASK_DIR:-$HOME/.task}"
 TASK_LINK="$HOME/.task_current"
 TASK_EXT='.md'
@@ -26,7 +28,9 @@ Commands (uppercase letters are shorthand for that command):
     help    - Prints help message including some additional information
     Current - Prints current task name, if no task is selected then exit code
               is 1 and prints nothing
-    set     - Sets current task, if task does not exist it is created
+    new     - Creates new task
+    unset   - Unsets the current task
+    set     - Sets current task
     Status  - Prints last heading from the task file (uses glow if available)
     Log     - Creates and new heading and takes the arguments as a single line
               and writes them to the task file, if no arguments are provided
@@ -48,8 +52,6 @@ if [[ ! -p /dev/stdout ]] && command -v glow &>/dev/null; then
     HAS_GLOW=1
 fi
 
-POSITIONAL_ARGS=()
-
 ensure_current_is_set() {
     if [[ ! -f "$TASK_LINK" ]]; then
         echo "No task is selected"
@@ -58,7 +60,7 @@ ensure_current_is_set() {
 }
 
 get_current_path() {
-    echo "$(readlink "$TASK_LINK")"
+    readlink "$TASK_LINK"
 }
 
 write_header() {
@@ -68,7 +70,7 @@ write_header() {
     # if any tags print with an extra space for nice looking headings
     [[ "${#TAGS[@]}" -gt 0 ]] && echo -n "${TAGS[*]} "
 
-    echo "$(date "+$DATE_FMT")"
+    date +"$DATE_FMT"
 }
 
 create_tempfile() {
@@ -76,7 +78,7 @@ create_tempfile() {
     mktemp "/tmp/tmp.XXXXXXXXXX${TASK_EXT}"
 }
 
-case $1 in
+case "${1:-''}" in
     help)
         show_help
 
@@ -97,24 +99,45 @@ EOF
         # the command should be empty when no task is set
         ensure_current_is_set &>/dev/null
 
-        echo "$(basename "$(get_current_path)" "$TASK_EXT")"
+        basename "$(get_current_path)" "$TASK_EXT"
+        ;;
+    new)
+        if [[ -z "${2:-}" ]]; then
+            echo "Please enter name of the new task"
+            exit 1
+        fi
+
+        if [[ -f "$TASK_DIR/$2${TASK_EXT}" ]]; then
+            echo "Task '$2' already exists"
+            exit 1
+        fi
+
+        echo "Creating new task '$2'"
+        echo "# TASK $2" > "$TASK_DIR/$2${TASK_EXT}"
+        ;;
+    unset)
+        ensure_current_is_set
+
+        echo "Unsetting current task '$("$0" current)'"
+        rm "$TASK_LINK"
+        exit
         ;;
     set)
-        if [[ -z "$2" ]]; then
-            ensure_current_is_set
-
-            echo "Removing current task"
-            rm "$TASK_LINK"
-            exit
+        task="${2:-}"
+        if [[ -z "$task" ]]; then
+            select task in $(find ~/.task/ -name '*.md' -exec basename {} \;); do
+                task="$(basename "$task" "$TASK_EXT")"
+                break
+            done
         fi
 
-        if [[ ! -f "$TASK_DIR/$2${TASK_EXT}" ]]; then
-            echo "Creating new task '$2'"
-            echo "# TASK $2" > "$TASK_DIR/$2${TASK_EXT}"
+        if [[ ! -f "$TASK_DIR/${task}${TASK_EXT}" ]]; then
+            echo "Task '${task}' does not exist"
+            exit 1
         fi
 
-        echo "Setting task '$2' as the current task"
-        ln -sf "$TASK_DIR/$2${TASK_EXT}" "$TASK_LINK"
+        echo "Setting task '${task}' as the current task"
+        ln -sf "$TASK_DIR/${task}${TASK_EXT}" "$TASK_LINK"
         ;;
     s|status)
         ensure_current_is_set
@@ -139,6 +162,7 @@ EOF
         while [ $# -gt 0 ]; do
             case $1 in
                 @*)
+                    # trims '@' and turns it uppercase
                     tag="${1:1}"
                     tag="${tag^^}"
                     TAGS+=("$tag")
@@ -210,7 +234,7 @@ EOF
         ;;
     ls|list)
         for task in "$TASK_DIR"/*; do
-            echo "$(basename "$task" "$TASK_EXT")"
+            printf "%s\n" "$(basename "$task" "$TASK_EXT")"
         done
         ;;
     ss|show)

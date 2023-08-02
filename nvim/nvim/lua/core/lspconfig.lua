@@ -14,6 +14,9 @@ setmetatable(M.configs, {
     end
 })
 
+-- TODO remind the user somehow:
+-- these have to be installed manually in :Mason:
+-- shellcheck
 M.configs.mason_lsp = {
     ensure_installed = {
         'lua_ls',
