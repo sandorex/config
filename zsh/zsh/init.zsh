@@ -107,16 +107,27 @@ source "$AGSHELLDIR/interactive-post.sh"
 compdef cgit=git
 
 ## PLUGINS ##
-# NOTE order of these matter a lot!
-# smart features depending on the terminal
-source "$SHELLDIR/plugins/smart-terminal.zsh"
+# prevent duplicates on reload
+precmd_functions=( )
+preexec_functions=( )
 
-# include execution time plugin, if RPATH breaks this is probably the culprit
-# as it saves and reloads RPATH each time so any modification after it wont
-# work... TODO rework it!
+# restores the prompt so the plugins do not clash and can just append stuff
+# some hackery to evaluate the prompt at "compile-time"
+source <(cat <<EOF
+_zsh_restore_prompts() {
+    export PROMPT="${PROMPT}"
+    export RPROMPT="${RPROMPT}"
+}
+EOF
+)
+
+# prepend it so it always runs first
+precmd_functions=( _zsh_restore_prompts "${precmd_functions[@]}" )
+
+source "$SHELLDIR/plugins/smart-terminal.zsh"
 source "$SHELLDIR/plugins/execution-time.zsh"
 
-# syntax highlighting
+# load last
 source "$SHELLDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # remove duplicates from path just in case

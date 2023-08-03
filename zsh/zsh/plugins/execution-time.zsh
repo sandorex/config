@@ -41,10 +41,9 @@ _command_time_precmd() {
     fi
 
     # prepend to existing RPROMPT
-    export RPROMPT="${_command_time_elapsed}${_command_time_original_rprompt}"
+    export RPROMPT="${_command_time_elapsed}${RPROMPT}"
 }
 
-_command_time_original_rprompt="$RPROMPT"
 precmd_functions+=(_command_time_precmd)
 preexec_functions+=(_command_time_preexec)
 
