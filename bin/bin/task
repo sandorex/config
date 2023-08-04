@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
-# task - task management script
+# https://github.com/sandorex/config
+# task management script
 #
 # optional dependency: glow
 

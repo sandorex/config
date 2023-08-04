@@ -1,0 +1,217 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# task management script version 3
+#
+# optional dependency: glow
+
+set -eu
+
+TASK_DIR="$HOME/.taskv3"
+TASK_LINK="$HOME/.taskv3_current"
+
+# ISO8601 format without the extra characters
+DATE_FMT="%Y%m%dT%H%M"
+
+# set default editor globally
+EDITOR=${TASK_EDITOR:-${EDITOR:-vi}}
+
+# ensure it exists
+mkdir -p "$TASK_DIR"
+
+show_help() {
+    cat <<EOF
+Usage: $(basename "$0") <command> [<args..>]
+
+Commands (uppercase letters are shorthand for that command):
+    <default>  - if task is selected then shows latest entry, otherwise shows
+                 all tasks created
+
+    help       - Prints help message including some additional information
+    Current    - Prints current task name, if no task is selected then exit
+                 code is 1 and prints nothing
+    new        - Creates new task
+    unset      - Unsets the current task
+    select     - Selects a task, argument is task name, if no task name is
+                 provided then user picks from a list
+    Log        - Adds new log entry to the task then opens editor, arguments
+                 are entry tags
+    Show       - Shows the latest log entry
+    Edit       - Edit latest log entry
+    summary/su - Shows latest log entry for each task, arguments are tasks to
+                 show latest log if none are provided then shows for all tasks
+    list/ls    - Lists all tasks, number of entries, date of latest entry
+    export     - Concatenates all log entries into one file by order of their
+                 creation
+EOF
+}
+
+# do not use glow if outputting to a pipe
+if [[ ! -p /dev/stdout ]] && command -v glow &>/dev/null; then
+    HAS_GLOW=1
+fi
+
+ensure_current_is_set() {
+    if [[ ! -d "$TASK_LINK" ]]; then
+        echo "No task is selected"
+        exit 1
+    fi
+}
+
+get_current_path() {
+    readlink "$TASK_LINK"
+}
+
+# gets last entry of current task
+get_last_entry() {
+    tasks=( "$(get_current_path)"/* )
+    echo "${tasks[-1]}"
+}
+
+case "${1:-''}" in
+    help)
+        show_help
+
+        # show additional information if help command is ran
+        cat <<EOF
+Options
+    TASK_DIR=$TASK_DIR
+    EDITOR=$EDITOR
+
+Customization
+    Editor is set to either \$TASK_EDITOR, \$EDITOR or 'vi' in order
+    Task directory is controlled using \$TASK_DIR, defaults to '~/.task'
+
+EOF
+        exit
+        ;;
+    c|current)
+        # the command should be empty when no task is set
+        ensure_current_is_set &>/dev/null
+
+        basename "$(get_current_path)"
+        ;;
+    new)
+        if [[ -z "${2:-}" ]]; then
+            echo "Please enter name of the new task"
+            exit 1
+        fi
+
+        if [[ -e "$TASK_DIR/$2" ]]; then
+            echo "Task '$2' already exists"
+            exit 1
+        fi
+
+        echo "Creating new task '$2'"
+        mkdir -p "$TASK_DIR/$2"
+        ;;
+    unset)
+        ensure_current_is_set
+
+        echo "Unsetting current task '$("$0" current)'"
+        rm -f "$TASK_LINK"
+        ;;
+    select|set) # i kept 'set' for compatibilty sake
+        task="${2:-}"
+        if [[ -z "$task" ]]; then
+            tasks=( "$TASK_DIR"/* )
+            if [[ "${tasks[0]}" == "$TASK_DIR/*" ]]; then
+                echo "There are no tasks found"
+                exit 1
+            fi
+
+            select i in "${tasks[@]}"; do
+                task=$(basename "$i")
+                break
+            done
+        fi
+
+        if [[ ! -d "$TASK_DIR/$task" ]]; then
+            echo "Task '$task' does not exist"
+            exit 1
+        fi
+
+        echo "Setting task '$task' as the current task"
+        ln -sf "$TASK_DIR/$task" "$TASK_LINK"
+        ;;
+    show|s)
+        ensure_current_is_set
+
+        file=$(get_last_entry)
+        if [[ -n "$HAS_GLOW" ]]; then
+            glow --local "$file"
+        else
+            less "$file"
+        fi
+        ;;
+    l|log)
+        ensure_current_is_set
+
+        # shift the command
+        shift
+
+        TAGS=( )
+        while [ $# -gt 0 ]; do
+            # turn tag uppercase
+            TAGS+=( "${1^^}" )
+            shift
+        done
+
+        # using full path so the editor remembers it regardless of current task
+        file="$(readlink "$TASK_LINK")/$(date +"$DATE_FMT").md"
+
+        # only create it if it does not already exists
+        if [[ ! -e "$file" ]]; then
+            cat <<EOF > "$file"
+
+## ${TAGS[*]}${TAGS:+ }$(date +"$DATE_FMT")
+EOF
+        fi
+
+        command "$EDITOR" "$file"
+        ;;
+    list|ls)
+        echo "Tasks:" 1>&2
+        for task in "$TASK_DIR"/*/; do
+            tasks=( "$task"/* )
+            last_task="$(basename "${tasks[-1]}" ".md")"
+            if [[ "$last_task" == "*" ]]; then
+                # show correctly if the task has no log entries
+                last_task=""
+                tasks=( )
+            fi
+            printf "%s %d %s\n" "$(basename "$task")" "${#tasks[@]}" "$last_task"
+        done
+        ;;
+    summary|su)
+        for task in "$TASK_DIR"/*/; do
+            tasks=( "$task"/* )
+            echo "Task '$(basename "$task")':"
+
+            if [[ -n "$HAS_GLOW" ]]; then
+                glow --local "${tasks[-1]}"
+            else
+                less "${tasks[-1]}"
+            fi
+        done
+        ;;
+    export)
+        ensure_current_is_set 1>&2
+
+        # TODO maybe there needs to be a space between each entry?
+        # really simple
+        echo "## Task $("$0" current)"
+        cat "$TASK_LINK"/*
+        ;;
+    e|edit)
+        ensure_current_is_set
+
+        command "$EDITOR" "$(get_last_entry)"
+        ;;
+    *)
+        echo "Invalid command"
+        show_help
+        exit 1
+        ;;
+esac
+
