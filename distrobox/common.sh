@@ -4,6 +4,8 @@
 #
 # do not run this file, source it from another with all the options set
 
+set -eu
+
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 POSITIONAL_ARGS=()

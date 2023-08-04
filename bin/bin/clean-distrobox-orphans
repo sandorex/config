@@ -1,0 +1,100 @@
+#!/usr/bin/env python3
+#
+# https://github.com/sandorex/config
+# stops distrobox containers that are running without anything attached, does
+# not work with toolbox or raw podman
+#
+# add to crontab using `crontab -e`
+# */30 * * * * /home/sandorex/.bin/clean-distrobox-orphans do it
+
+import subprocess
+import re
+import sys
+import time
+
+from typing import List
+
+conmon_pat = re.compile(r' -n (\w+) ')
+distrobox_pat = re.compile(r' -n (\w+) | (\w+)$')
+
+def pgrep(exe):
+    return subprocess.run([ 'pgrep', '-a', exe ], stdout=subprocess.PIPE).stdout.decode('utf-8').splitlines()
+
+def find_orphaned_containers() -> List[str]:
+    # how many total processes running for each container indexed by name
+    CONMON = {}
+
+    for line in pgrep('conmon'):
+        m = conmon_pat.search(line)
+        if not m:
+            print('could not find name of container in arguments of conmon, this is not good')
+            sys.exit(1)
+
+        name = m.group(1)
+        if name not in CONMON:
+            CONMON[name] = 1
+        else:
+            CONMON[name] += 1
+
+    # how many distrobox-enter processes are running for each container indexed by
+    # name, if there are none then the container is not being used and there are
+    # either orpahned shells or background processes
+    DISTROBOX = {}
+
+    for line in pgrep('distrobox-enter'):
+        m = distrobox_pat.search(line)
+        if not m:
+            print('Could not find name of container in arguments of distrobox-enter, this is not good')
+            sys.exit(1)
+
+        name = m.group(1)
+        if name is None:
+            name = m.group(2)
+
+        if name not in DISTROBOX:
+            DISTROBOX[name] = 1
+        else:
+            DISTROBOX[name] += 1
+
+    orphaned_containers = []
+    for name in set(list(CONMON.keys()) + list(DISTROBOX.keys())):
+        total = CONMON.setdefault(name, 0)
+        distrobox = DISTROBOX.setdefault(name, 0)
+
+        if total == 0:
+            print(f"Something is broken, detected distrobox processes but no conmon processes for container '{name}'")
+            sys.exit(1)
+
+        if distrobox > 0:
+            print(f"Container '{name}' has {distrobox}/{total} processes, skipped")
+            continue
+
+        if distrobox == 0:
+            print(f"Container '{name}' has {distrobox}/{total} processes, will be killed")
+            orphaned_containers.append(name)
+
+    return orphaned_containers
+
+if __name__ == '__main__':
+    if sys.argv[1:] == ['do', 'it']:
+        culling_list = find_orphaned_containers()
+
+        for name in culling_list:
+            subprocess.run(['distrobox', 'stop', '--yes', name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            time.sleep(0.1)
+
+        time.sleep(0.3)
+
+        # now check if all of them are dead
+        for name in find_orphaned_containers():
+            if name in culling_list:
+                print(f"Container '{name}' refusing to die, stopping using podman now")
+
+                # podman containr stop has timeout of 10 seconds
+                subprocess.run(['podman', 'container', 'stop', name])
+
+                time.sleep(0.1)
+    else:
+        print("Dry run, no containers will be killed")
+        find_orphaned_containers()
+
