@@ -67,7 +67,7 @@ alias -- '....'='cd ../../..'
 alias diff='diff --report-identical-files --color=auto'
 alias grep='grep --color=auto'
 alias rcat='cat -A' # safely read escape sequences
-alias rfcdate="date +'%Y%m%dT%H%M'"
+alias isodate="date +'%Y%m%dT%H%M'"
 
 # quick monitor brightness control
 alias m='monb'

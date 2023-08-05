@@ -24,25 +24,21 @@ show_help() {
 Usage: $(basename "$0") <command> [<args..>]
 
 Commands (uppercase letters are shorthand for that command):
-    <default>  - if task is selected then shows latest entry, otherwise shows
-                 all tasks created
-
     help       - Prints help message including some additional information
     Current    - Prints current task name, if no task is selected then exit
                  code is 1 and prints nothing
     new        - Creates new task
-    unset      - Unsets the current task
+    Drop       - Unsets the current task
     select     - Selects a task, argument is task name, if no task name is
                  provided then user picks from a list
     Log        - Adds new log entry to the task then opens editor, arguments
                  are entry tags
-    Show       - Shows the latest log entry
+    Status     - Shows the latest log entry
+    show/ss    - Shows all the log entries concatenated into one file
     Edit       - Edit latest log entry
     summary/su - Shows latest log entry for each task, arguments are tasks to
                  show latest log if none are provided then shows for all tasks
     list/ls    - Lists all tasks, number of entries, date of latest entry
-    export     - Concatenates all log entries into one file by order of their
-                 creation
 EOF
 }
 
@@ -51,24 +47,51 @@ if [[ ! -p /dev/stdout ]] && command -v glow &>/dev/null; then
     HAS_GLOW=1
 fi
 
-ensure_current_is_set() {
-    if [[ ! -d "$TASK_LINK" ]]; then
+is_task_selected() { [[ -e "$TASK_LINK" ]]; }
+
+ensure_task_is_selected() {
+    if ! is_task_selected; then
         echo "No task is selected"
         exit 1
     fi
 }
 
-get_current_path() {
-    readlink "$TASK_LINK"
+get_task_path() { readlink "$TASK_LINK"; }
+get_selected_task_name() { basename "$(get_task_path)"; }
+
+get_tasks() {
+    tasks=( "$TASK_DIR"/*/ )
+    if [[ "${tasks[0]}" == "$TASK_DIR/*" ]]; then
+        return 1
+    fi
+
+    echo "${tasks[*]}"
 }
 
-# gets last entry of current task
-get_last_entry() {
-    tasks=( "$(get_current_path)"/* )
-    echo "${tasks[-1]}"
+get_task_entries() {
+    path="${1:-$(get_task_path)}"
+    entries=( "$path"/* )
+    if [[ "${entries[0]}" == "$path/*" ]]; then
+        return 1
+    fi
+
+    echo "${entries[*]}"
 }
 
-case "${1:-''}" in
+get_last_task_entry() {
+    # shellcheck disable=SC2207
+    if ! entries=( $(get_task_entries "${1:-}") ); then
+        return 1
+    fi
+
+    echo "${entries[-1]}"
+}
+
+# remove the command from the arguments
+CMD="${1:-""}"
+shift || true
+
+case "$CMD" in
     help)
         show_help
 
@@ -87,35 +110,35 @@ EOF
         ;;
     c|current)
         # the command should be empty when no task is set
-        ensure_current_is_set &>/dev/null
+        ensure_task_is_selected &>/dev/null
 
-        basename "$(get_current_path)"
+        get_selected_task_name
         ;;
     new)
-        if [[ -z "${2:-}" ]]; then
+        name="${1:-}"
+        if [[ -z "$name" ]]; then
             echo "Please enter name of the new task"
             exit 1
         fi
 
-        if [[ -e "$TASK_DIR/$2" ]]; then
-            echo "Task '$2' already exists"
+        if [[ -e "$TASK_DIR/$name" ]]; then
+            echo "Task '$name' already exists"
             exit 1
         fi
 
-        echo "Creating new task '$2'"
-        mkdir -p "$TASK_DIR/$2"
+        echo "Creating new task '$name'"
+        mkdir -p "$TASK_DIR/$name"
         ;;
-    unset)
-        ensure_current_is_set
+    d|drop|unset) # 'unset' for compatbility sake
+        ensure_task_is_selected
 
-        echo "Unsetting current task '$("$0" current)'"
+        echo "Dropping current task '$(get_selected_task_name)'"
         rm -f "$TASK_LINK"
         ;;
     select|set) # i kept 'set' for compatibilty sake
-        task="${2:-}"
+        task="${1:-}"
         if [[ -z "$task" ]]; then
-            tasks=( "$TASK_DIR"/* )
-            if [[ "${tasks[0]}" == "$TASK_DIR/*" ]]; then
+            if ! tasks=( $(get_tasks) ); then
                 echo "There are no tasks found"
                 exit 1
             fi
@@ -134,10 +157,13 @@ EOF
         echo "Setting task '$task' as the current task"
         ln -sf "$TASK_DIR/$task" "$TASK_LINK"
         ;;
-    show|s)
-        ensure_current_is_set
+    status|s)
+        ensure_task_is_selected
 
-        file=$(get_last_entry)
+        if ! file="$(get_last_task_entry)"; then
+            echo "There is no task entries in task '$(get_selected_task_name)'"
+            exit 1
+        fi
         if [[ -n "$HAS_GLOW" ]]; then
             glow --local "$file"
         else
@@ -145,10 +171,7 @@ EOF
         fi
         ;;
     l|log)
-        ensure_current_is_set
-
-        # shift the command
-        shift
+        ensure_task_is_selected
 
         TAGS=( )
         while [ $# -gt 0 ]; do
@@ -162,6 +185,9 @@ EOF
 
         # only create it if it does not already exists
         if [[ ! -e "$file" ]]; then
+            # create it in case it was deleted or something but still selected
+            mkdir -p "$(get_task_path)"
+
             cat <<EOF > "$file"
 
 ## ${TAGS[*]}${TAGS:+ }$(date +"$DATE_FMT")
@@ -171,42 +197,55 @@ EOF
         command "$EDITOR" "$file"
         ;;
     list|ls)
-        echo "Tasks:" 1>&2
-        for task in "$TASK_DIR"/*/; do
-            tasks=( "$task"/* )
-            last_task="$(basename "${tasks[-1]}" ".md")"
-            if [[ "$last_task" == "*" ]]; then
-                # show correctly if the task has no log entries
-                last_task=""
-                tasks=( )
-            fi
-            printf "%s %d %s\n" "$(basename "$task")" "${#tasks[@]}" "$last_task"
+        for task in $(get_tasks); do
+            printf "%s\n" "$(basename "$task")"
         done
         ;;
     summary|su)
-        for task in "$TASK_DIR"/*/; do
-            tasks=( "$task"/* )
+        for task in $(get_tasks); do
             echo "Task '$(basename "$task")':"
 
+            # in case the task has no entries just dont do anything
+            if ! last_entry="$(get_last_task_entry "$task")"; then
+                continue
+            fi
+
             if [[ -n "$HAS_GLOW" ]]; then
-                glow --local "${tasks[-1]}"
+                glow --local "$last_entry"
             else
-                less "${tasks[-1]}"
+                less "$last_entry"
             fi
         done
         ;;
-    export)
-        ensure_current_is_set 1>&2
+    show|ss)
+        # shouldnt print anything on error
+        ensure_task_is_selected 1>&2
 
-        # TODO maybe there needs to be a space between each entry?
-        # really simple
-        echo "## Task $("$0" current)"
-        cat "$TASK_LINK"/*
+        if ! get_task_entries &>/dev/null; then
+            echo "There is no task entries in task '$(get_selected_task_name)'" 1>&2
+            exit 1
+        fi
+
+        concat() {
+            echo "## Task $(get_selected_task_name)"
+            cat "$(get_task_path)"/*
+        }
+
+        if [[ -n "$HAS_GLOW" ]]; then
+            concat | glow --local
+        else
+            concat | less
+        fi
         ;;
     e|edit)
-        ensure_current_is_set
+        ensure_task_is_selected
 
-        command "$EDITOR" "$(get_last_entry)"
+        # automatically create new log entry if there are none
+        if ! last_entry="$(get_last_task_entry)"; then
+            exec "$0" log
+        fi
+
+        command "$EDITOR" "$last_entry"
         ;;
     *)
         echo "Invalid command"
