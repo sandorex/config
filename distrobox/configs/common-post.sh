@@ -66,3 +66,7 @@ echo
 echo "Installing latest stable neovim"
 bob use stable
 
+if [[ ! "$SHELL" =~ zsh$ ]]; then
+    chsh -s "$(which zsh)" "$USER"
+fi
+

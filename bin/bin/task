@@ -1,19 +1,17 @@
 #!/usr/bin/env bash
 #
 # https://github.com/sandorex/config
-# task management script
+# task management script version 3
 #
 # optional dependency: glow
 
 set -eu
 
-TASK_DIR="${TASK_DIR:-$HOME/.task}"
-TASK_LINK="$HOME/.task_current"
-TASK_EXT='.md'
+TASK_DIR="${TASK_DIR:-$HOME/.tasks}"
+TASK_LINK="$HOME/.task"
 
-DATE_FMT="%d-%m-%Y %H:%M"
-
-EDIT_TEMPLATE="<!-- TO CANCEL DO NOT EDIT THE FILE OR DELETE EVERYTHING -->\n"
+# ISO8601 format without the extra characters
+DATE_FMT="%Y%m%dT%H%M"
 
 # set default editor globally
 EDITOR=${TASK_EDITOR:-${EDITOR:-vi}}
@@ -26,24 +24,21 @@ show_help() {
 Usage: $(basename "$0") <command> [<args..>]
 
 Commands (uppercase letters are shorthand for that command):
-    help    - Prints help message including some additional information
-    Current - Prints current task name, if no task is selected then exit code
-              is 1 and prints nothing
-    new     - Creates new task
-    unset   - Unsets the current task
-    set     - Sets current task
-    Status  - Prints last heading from the task file (uses glow if available)
-    Log     - Creates and new heading and takes the arguments as a single line
-              and writes them to the task file, if no arguments are provided
-              then editor is ran
-
-              All arguments prefixed by @ at the start will be consumed and
-              used as tags
-    Append  - Writes the arguments as a single line to the last heading, if no
-              arguments are provided then editor is ran
-    list/ls - Lists all tasks in task directory (without extension or path)
-    show/ss - Prints whole task file (uses glow if available)
-    Edit    - Opens task file in the editor
+    help       - Prints help message including some additional information
+    Current    - Prints current task name, if no task is selected then exit
+                 code is 1 and prints nothing
+    new        - Creates new task
+    Drop       - Unsets the current task
+    select     - Selects a task, argument is task name, if no task name is
+                 provided then user picks from a list
+    Log        - Adds new log entry to the task then opens editor, arguments
+                 are entry tags
+    Status     - Shows the latest log entry
+    show/ss    - Shows all the log entries concatenated into one file
+    Edit       - Edit latest log entry
+    summary/su - Shows latest log entry for each task, arguments are tasks to
+                 show latest log if none are provided then shows for all tasks
+    list/ls    - Lists all tasks, number of entries, date of latest entry
 
 EOF
 }
@@ -53,33 +48,51 @@ if [[ ! -p /dev/stdout ]] && command -v glow &>/dev/null; then
     HAS_GLOW=1
 fi
 
-ensure_current_is_set() {
-    if [[ ! -f "$TASK_LINK" ]]; then
+is_task_selected() { [[ -e "$TASK_LINK" ]]; }
+
+ensure_task_is_selected() {
+    if ! is_task_selected; then
         echo "No task is selected"
         exit 1
     fi
 }
 
-get_current_path() {
-    readlink "$TASK_LINK"
+get_task_path() { readlink "$TASK_LINK"; }
+get_selected_task_name() { basename "$(get_task_path)"; }
+
+get_tasks() {
+    tasks=( "$TASK_DIR"/*/ )
+    if [[ "${tasks[0]}" == "$TASK_DIR/*/" ]]; then
+        return 1
+    fi
+
+    echo "${tasks[*]}"
 }
 
-write_header() {
-    echo
-    echo -n "## "
+get_task_entries() {
+    path="${1:-$(get_task_path)}"
+    entries=( "$path"/* )
+    if [[ "${entries[0]}" == "$path/*" ]]; then
+        return 1
+    fi
 
-    # if any tags print with an extra space for nice looking headings
-    [[ "${#TAGS[@]}" -gt 0 ]] && echo -n "${TAGS[*]} "
-
-    date +"$DATE_FMT"
+    echo "${entries[*]}"
 }
 
-create_tempfile() {
-    # adding the extension allows the editors to automatically adjust syntax
-    mktemp "/tmp/tmp.XXXXXXXXXX${TASK_EXT}"
+get_last_task_entry() {
+    # shellcheck disable=SC2207
+    if ! entries=( $(get_task_entries "${1:-}") ); then
+        return 1
+    fi
+
+    echo "${entries[-1]}"
 }
 
-case "${1:-''}" in
+# remove the command from the arguments
+CMD="${1:-""}"
+shift || true
+
+case "$CMD" in
     help)
         show_help
 
@@ -98,161 +111,148 @@ EOF
         ;;
     c|current)
         # the command should be empty when no task is set
-        ensure_current_is_set &>/dev/null
+        ensure_task_is_selected &>/dev/null
 
-        basename "$(get_current_path)" "$TASK_EXT"
+        get_selected_task_name
         ;;
     new)
-        if [[ -z "${2:-}" ]]; then
+        name="${1:-}"
+        if [[ -z "$name" ]]; then
             echo "Please enter name of the new task"
             exit 1
         fi
 
-        if [[ -f "$TASK_DIR/$2${TASK_EXT}" ]]; then
-            echo "Task '$2' already exists"
+        if [[ -e "$TASK_DIR/$name" ]]; then
+            echo "Task '$name' already exists"
             exit 1
         fi
 
-        echo "Creating new task '$2'"
-        echo "# TASK $2" > "$TASK_DIR/$2${TASK_EXT}"
+        echo "Creating new task '$name'"
+        mkdir -p "$TASK_DIR/$name"
         ;;
-    unset)
-        ensure_current_is_set
+    d|drop|unset) # 'unset' for compatbility sake
+        ensure_task_is_selected
 
-        echo "Unsetting current task '$("$0" current)'"
-        rm "$TASK_LINK"
-        exit
+        echo "Dropping current task '$(get_selected_task_name)'"
+        rm -f "$TASK_LINK"
         ;;
-    set)
-        task="${2:-}"
+    select|set) # i kept 'set' for compatibilty sake
+        task="${1:-}"
         if [[ -z "$task" ]]; then
-            select task in $(find ~/.task/ -name '*.md' -exec basename {} \;); do
-                task="$(basename "$task" "$TASK_EXT")"
+            if ! tasks=( $(get_tasks) ); then
+                echo "There are no tasks found"
+                exit 1
+            fi
+
+            # TODO make the tasks the name only not a full path
+            select i in "${tasks[@]}"; do
+                task=$(basename "$i")
                 break
             done
         fi
 
-        if [[ ! -f "$TASK_DIR/${task}${TASK_EXT}" ]]; then
-            echo "Task '${task}' does not exist"
+        if [[ ! -d "$TASK_DIR/$task" ]]; then
+            echo "Task '$task' does not exist"
             exit 1
         fi
 
-        echo "Setting task '${task}' as the current task"
-        ln -sf "$TASK_DIR/${task}${TASK_EXT}" "$TASK_LINK"
+        echo "Setting task '$task' as the current task"
+        ln -sf "$TASK_DIR/$task" "$TASK_LINK"
         ;;
-    s|status)
-        ensure_current_is_set
+    status|s)
+        ensure_task_is_selected
 
-        # shows only the last heading
-        LINE="$(awk 'BEGIN { line=0 } /^#/ { line=NR } END { print line }' "$TASK_LINK")"
+        if ! file="$(get_last_task_entry)"; then
+            echo "There is no task entries in task '$(get_selected_task_name)'"
+            exit 1
+        fi
         if [[ -n "$HAS_GLOW" ]]; then
-            tail -n +"$LINE" "$TASK_LINK" | glow
+            glow --local "$file"
         else
-            tail -n +"$LINE" "$TASK_LINK"
+            less "$file"
         fi
         ;;
     l|log)
-        ensure_current_is_set
+        ensure_task_is_selected
 
-        # shift the subcommand
-        shift
-
-        TAGS=()
-
-        # get tags but they have to be first arguments and in sequence
+        TAGS=( )
         while [ $# -gt 0 ]; do
-            case $1 in
-                @*)
-                    # trims '@' and turns it uppercase
-                    tag="${1:1}"
-                    tag="${tag^^}"
-                    TAGS+=("$tag")
-                    shift
-                    ;;
-                *)
-                    break
-                    ;;
-            esac
+            # turn tag uppercase
+            TAGS+=( "${1^^}" )
+            shift
         done
 
-        # if no arguments provdided then edit a tempfile
-        if [[ "$#" -eq 0 ]]; then
-            TMPFILE="$(create_tempfile)"
+        # using full path so the editor remembers it regardless of current task
+        file="$(readlink "$TASK_LINK")/$(date +"$DATE_FMT").md"
 
-            echo -e "${EDIT_TEMPLATE}$(write_header)" > "$TMPFILE"
+        # only create it if it does not already exists
+        if [[ ! -e "$file" ]]; then
+            # create it in case it was deleted or something but still selected
+            mkdir -p "$(get_task_path)"
 
-            # saving a template to check if it was modified
-            template="$(cat "$TMPFILE")"
+            cat <<EOF > "$file"
 
-            # open the tempfile in editor
-            command "$EDITOR" "$TMPFILE"
-
-            content="$(cat "$TMPFILE")"
-            rm -f "${TMPFILE:?}"
-
-            if [[ -z "$content" ]] || [[ "$content" == "$template" ]]; then
-                echo "Log cancelled"
-                exit
-            fi
-
-            echo "$content" | tail -n+2 >> "$TASK_LINK"
-        else
-            write_header >> "$TASK_LINK"
-            echo "$*" >> "$TASK_LINK"
+## ${TAGS[*]}${TAGS:+ }$(date +"$DATE_FMT")
+EOF
         fi
+
+        command "$EDITOR" "$file"
         ;;
-    a|append)
-        ensure_current_is_set
-
-        # shift the command
-        shift
-
-        # either append all arguments as text or open editor
-        if [[ -z "$*" ]]; then
-            TMPFILE="$(create_tempfile)"
-
-            echo -e "${EDIT_TEMPLATE}\n" > "$TMPFILE"
-
-            # saving a template to check if it was modified
-            template="$(cat "$TMPFILE")"
-
-            # open the tempfile in editor
-            command "$EDITOR" "$TMPFILE"
-
-            content="$(cat "$TMPFILE")"
-            rm -f "${TMPFILE:?}"
-
-            if [[ -z "$content" ]] || [[ "$content" == "$template" ]]; then
-                echo "Append cancelled"
-                exit
-            fi
-
-            echo "$content" | tail -n+2 >> "$TASK_LINK"
-        else
-            echo >> "$TASK_LINK"
-            echo "$*" >> "$TASK_LINK"
+    list|ls)
+        if ! tasks=( $(get_tasks) ); then
+            echo "There are no tasks found"
+            exit 1
         fi
-        ;;
-    ls|list)
-        for task in "$TASK_DIR"/*; do
-            printf "%s\n" "$(basename "$task" "$TASK_EXT")"
+
+        for task in "${tasks[@]}"; do
+            printf "%s\n" "$(basename "$task")"
         done
         ;;
-    ss|show)
-        ensure_current_is_set
+    summary|su)
+        for task in $(get_tasks); do
+            echo "Task '$(basename "$task")':"
+
+            # in case the task has no entries just dont do anything
+            if ! last_entry="$(get_last_task_entry "$task")"; then
+                continue
+            fi
+
+            if [[ -n "$HAS_GLOW" ]]; then
+                glow --local "$last_entry"
+            else
+                less "$last_entry"
+            fi
+        done
+        ;;
+    show|ss)
+        # shouldnt print anything on error
+        ensure_task_is_selected 1>&2
+
+        if ! get_task_entries &>/dev/null; then
+            echo "There is no task entries in task '$(get_selected_task_name)'" 1>&2
+            exit 1
+        fi
+
+        concat() {
+            echo "## Task $(get_selected_task_name)"
+            cat "$(get_task_path)"/*
+        }
 
         if [[ -n "$HAS_GLOW" ]]; then
-            # glow shows file name so open the file directly
-            glow --local "$(get_current_path)"
+            concat | glow --local
         else
-            cat "$TASK_LINK"
+            concat | less
         fi
         ;;
     e|edit)
-        ensure_current_is_set
+        ensure_task_is_selected
 
-        # opening the file directly not the link
-        command "$EDITOR" "$(get_current_path)"
+        # automatically create new log entry if there are none
+        if ! last_entry="$(get_last_task_entry)"; then
+            exec "$0" log
+        fi
+
+        command "$EDITOR" "$last_entry"
         ;;
     *)
         echo "Invalid command"

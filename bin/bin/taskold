@@ -1,0 +1,263 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# task management script
+#
+# optional dependency: glow
+
+set -eu
+
+TASK_DIR="${TASK_DIR:-$HOME/.task}"
+TASK_LINK="$HOME/.task_current"
+TASK_EXT='.md'
+
+DATE_FMT="%d-%m-%Y %H:%M"
+
+EDIT_TEMPLATE="<!-- TO CANCEL DO NOT EDIT THE FILE OR DELETE EVERYTHING -->\n"
+
+# set default editor globally
+EDITOR=${TASK_EDITOR:-${EDITOR:-vi}}
+
+# ensure it exists
+mkdir -p "$TASK_DIR"
+
+show_help() {
+    cat <<EOF
+Usage: $(basename "$0") <command> [<args..>]
+
+Commands (uppercase letters are shorthand for that command):
+    help    - Prints help message including some additional information
+    Current - Prints current task name, if no task is selected then exit code
+              is 1 and prints nothing
+    new     - Creates new task
+    unset   - Unsets the current task
+    set     - Sets current task
+    Status  - Prints last heading from the task file (uses glow if available)
+    Log     - Creates and new heading and takes the arguments as a single line
+              and writes them to the task file, if no arguments are provided
+              then editor is ran
+
+              All arguments prefixed by @ at the start will be consumed and
+              used as tags
+    Append  - Writes the arguments as a single line to the last heading, if no
+              arguments are provided then editor is ran
+    list/ls - Lists all tasks in task directory (without extension or path)
+    show/ss - Prints whole task file (uses glow if available)
+    Edit    - Opens task file in the editor
+
+EOF
+}
+
+# do not use glow if outputting to a pipe
+if [[ ! -p /dev/stdout ]] && command -v glow &>/dev/null; then
+    HAS_GLOW=1
+fi
+
+ensure_current_is_set() {
+    if [[ ! -f "$TASK_LINK" ]]; then
+        echo "No task is selected"
+        exit 1
+    fi
+}
+
+get_current_path() {
+    readlink "$TASK_LINK"
+}
+
+write_header() {
+    echo
+    echo -n "## "
+
+    # if any tags print with an extra space for nice looking headings
+    [[ "${#TAGS[@]}" -gt 0 ]] && echo -n "${TAGS[*]} "
+
+    date +"$DATE_FMT"
+}
+
+create_tempfile() {
+    # adding the extension allows the editors to automatically adjust syntax
+    mktemp "/tmp/tmp.XXXXXXXXXX${TASK_EXT}"
+}
+
+case "${1:-''}" in
+    help)
+        show_help
+
+        # show additional information if help command is ran
+        cat <<EOF
+Options
+    TASK_DIR=$TASK_DIR
+    EDITOR=$EDITOR
+
+Customization
+    Editor is set to either \$TASK_EDITOR, \$EDITOR or 'vi' in order
+    Task directory is controlled using \$TASK_DIR, defaults to '~/.task'
+
+EOF
+        exit
+        ;;
+    c|current)
+        # the command should be empty when no task is set
+        ensure_current_is_set &>/dev/null
+
+        basename "$(get_current_path)" "$TASK_EXT"
+        ;;
+    new)
+        if [[ -z "${2:-}" ]]; then
+            echo "Please enter name of the new task"
+            exit 1
+        fi
+
+        if [[ -f "$TASK_DIR/$2${TASK_EXT}" ]]; then
+            echo "Task '$2' already exists"
+            exit 1
+        fi
+
+        echo "Creating new task '$2'"
+        echo "# TASK $2" > "$TASK_DIR/$2${TASK_EXT}"
+        ;;
+    unset)
+        ensure_current_is_set
+
+        echo "Unsetting current task '$("$0" current)'"
+        rm "$TASK_LINK"
+        exit
+        ;;
+    set)
+        task="${2:-}"
+        if [[ -z "$task" ]]; then
+            select task in $(find ~/.task/ -name '*.md' -exec basename {} \;); do
+                task="$(basename "$task" "$TASK_EXT")"
+                break
+            done
+        fi
+
+        if [[ ! -f "$TASK_DIR/${task}${TASK_EXT}" ]]; then
+            echo "Task '${task}' does not exist"
+            exit 1
+        fi
+
+        echo "Setting task '${task}' as the current task"
+        ln -sf "$TASK_DIR/${task}${TASK_EXT}" "$TASK_LINK"
+        ;;
+    s|status)
+        ensure_current_is_set
+
+        # shows only the last heading
+        LINE="$(awk 'BEGIN { line=0 } /^#/ { line=NR } END { print line }' "$TASK_LINK")"
+        if [[ -n "$HAS_GLOW" ]]; then
+            tail -n +"$LINE" "$TASK_LINK" | glow
+        else
+            tail -n +"$LINE" "$TASK_LINK"
+        fi
+        ;;
+    l|log)
+        ensure_current_is_set
+
+        # shift the subcommand
+        shift
+
+        TAGS=()
+
+        # get tags but they have to be first arguments and in sequence
+        while [ $# -gt 0 ]; do
+            case $1 in
+                @*)
+                    # trims '@' and turns it uppercase
+                    tag="${1:1}"
+                    tag="${tag^^}"
+                    TAGS+=("$tag")
+                    shift
+                    ;;
+                *)
+                    break
+                    ;;
+            esac
+        done
+
+        # if no arguments provdided then edit a tempfile
+        if [[ "$#" -eq 0 ]]; then
+            TMPFILE="$(create_tempfile)"
+
+            echo -e "${EDIT_TEMPLATE}$(write_header)" > "$TMPFILE"
+
+            # saving a template to check if it was modified
+            template="$(cat "$TMPFILE")"
+
+            # open the tempfile in editor
+            command "$EDITOR" "$TMPFILE"
+
+            content="$(cat "$TMPFILE")"
+            rm -f "${TMPFILE:?}"
+
+            if [[ -z "$content" ]] || [[ "$content" == "$template" ]]; then
+                echo "Log cancelled"
+                exit
+            fi
+
+            echo "$content" | tail -n+2 >> "$TASK_LINK"
+        else
+            write_header >> "$TASK_LINK"
+            echo "$*" >> "$TASK_LINK"
+        fi
+        ;;
+    a|append)
+        ensure_current_is_set
+
+        # shift the command
+        shift
+
+        # either append all arguments as text or open editor
+        if [[ -z "$*" ]]; then
+            TMPFILE="$(create_tempfile)"
+
+            echo -e "${EDIT_TEMPLATE}\n" > "$TMPFILE"
+
+            # saving a template to check if it was modified
+            template="$(cat "$TMPFILE")"
+
+            # open the tempfile in editor
+            command "$EDITOR" "$TMPFILE"
+
+            content="$(cat "$TMPFILE")"
+            rm -f "${TMPFILE:?}"
+
+            if [[ -z "$content" ]] || [[ "$content" == "$template" ]]; then
+                echo "Append cancelled"
+                exit
+            fi
+
+            echo "$content" | tail -n+2 >> "$TASK_LINK"
+        else
+            echo >> "$TASK_LINK"
+            echo "$*" >> "$TASK_LINK"
+        fi
+        ;;
+    ls|list)
+        for task in "$TASK_DIR"/*; do
+            printf "%s\n" "$(basename "$task" "$TASK_EXT")"
+        done
+        ;;
+    ss|show)
+        ensure_current_is_set
+
+        if [[ -n "$HAS_GLOW" ]]; then
+            # glow shows file name so open the file directly
+            glow --local "$(get_current_path)"
+        else
+            cat "$TASK_LINK"
+        fi
+        ;;
+    e|edit)
+        ensure_current_is_set
+
+        # opening the file directly not the link
+        command "$EDITOR" "$(get_current_path)"
+        ;;
+    *)
+        echo "Invalid command"
+        show_help
+        exit 1
+        ;;
+esac
+

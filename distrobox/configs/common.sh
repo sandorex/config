@@ -5,6 +5,9 @@
 DNF=(
     "${DNF[@]}"
 
+    # chsh
+    util-linux-user
+
     # tools i use directly
     file
     lsd
