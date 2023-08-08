@@ -50,6 +50,7 @@ return {
     },
 
     { 'numToStr/Comment.nvim', config = true },
+    { "lukas-reineke/indent-blankline.nvim" },
 
     -- smart indent
     'tpope/vim-sleuth',
