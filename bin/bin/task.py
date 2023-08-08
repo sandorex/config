@@ -7,7 +7,7 @@ import sys
 import subprocess as sp
 import os
 import datetime
-import shutil
+import click
 
 from pathlib import Path
 from typing import List, Any, Callable
@@ -24,39 +24,6 @@ PAGER = os.environ.get("TASK_PAGER", os.environ.get("PAGER", "less"))
 
 os.makedirs(TASK_DIR, exist_ok=True)
 
-def print_help(full=False):
-    print(r"""Usage: task [<command>] [<command args..>]
-
-If no command passed defaults to log command
-
-Commands (uppercase letters are shorthand for that command):
-    help       - Prints help message including some additional information
-    Current    - Prints current task name, if no task is selected then exit
-                 code is 1 and prints nothing
-    new        - Creates new task
-    Drop       - Unsets the current task
-    select     - Selects a task, argument is task name, if no task name is
-                 provided then user picks from a list
-    Log        - Adds new log entry to the task then opens editor, arguments
-                 are entry tags
-    Status     - Shows the latest log entry
-    show/ss    - Shows all the log entries concatenated into one file
-    Edit       - Edit latest log entry
-    summary/su - Shows latest log entry for each task, arguments are tasks to
-                 show latest log if none are provided then shows for all tasks
-    list/ls    - Lists all tasks, number of entries, date of latest entry
-""")
-
-    if full:
-        print(rf"""Options
-    TASK_DIR={TASK_DIR}
-    EDITOR={EDITOR}
-
-Customization
-    Editor is set to either $TASK_EDITOR, $EDITOR or 'vi' in order
-    Task directory is controlled using $TASK_DIR, defaults to '~/.task'
-""")
-
 def is_task_selected() -> bool:
     return TASK_LINK.exists()
 
@@ -71,32 +38,14 @@ def get_task_name() -> str:
     return get_task().name
 
 def abort(msg):
-    print(msg, file=sys.stderr)
-    sys.exit(1)
+    raise click.clickException(msg)
 
 def task_selected_or_abort():
     if not is_task_selected():
-        abort("No task selected")
+        abort("No task is selected")
 
 def get_tasks() -> List[Path]:
     return [ dir for dir in TASK_DIR.iterdir() if dir.is_dir() and not dir.is_symlink() ]
-
-def select(options, formatter_fn: Callable) -> Any:
-    '''Imitates the select shell command'''
-    for i, option in enumerate(options):
-        print(f"{i}) {formatter_fn(option)}")
-
-    while True:
-        try:
-            answer = int(input("#) "))
-            answer = options[answer]
-        except (ValueError, IndexError):
-            print("Invalid index", file=sys.stderr)
-            continue
-
-        break
-
-    return answer
 
 def make_timestamp() -> str:
     return datetime.datetime.now().strftime(TIMESTAMP_FORMAT)
@@ -108,131 +57,170 @@ def show_raw(text: str):
     with sp.Popen([PAGER], stdin=sp.PIPE) as p:
         p.communicate(input=text.encode("UTF-8"))
 
-def edit(file):
-    sp.run([EDITOR, str(file)])
+def select_menu(msg, options, formatter_fn):
+    click.echo(click.style(msg, fg="blue", bold=True))
+    while True:
+        for i, option in enumerate(options):
+            click.secho(f"{i}) ", fg="blue", nl=False)
+            click.echo(formatter_fn(option))
 
-def main(args=sys.argv[1:]):
-    try:
-        cmd = args[0]
-    except IndexError:
-        cmd = None
-
-    if cmd == "help":
-        print_help(full=True)
-        sys.exit(0)
-    elif cmd in ["current", "c"]:
-        task_selected_or_abort()
-
-        print(get_task_name())
-    elif cmd == "new":
-        task = None
+        answer = click.prompt("#) ", prompt_suffix="", type=int)
         try:
-            task = TASK_DIR / args[1]
+            return options[answer]
         except IndexError:
-            abort("Please provide a task name")
+            click.echo("Invalid index", err=True)
+            continue
 
-        if task.exists():
-            abort(f"Task '{task.name}' already exists")
+@click.group(epilog="To change the editor or pager change either $TASK_EDITOR/$TASK_PAGER or $EDITOR/$PAGER")
+@click.version_option("0.3")
+def cli():
+    pass
 
-        task.mkdir(exist_ok=True)
-    elif cmd in ["drop", "d", "unset"]:
-        task_selected_or_abort()
+@cli.command("current")
+def current_cmd():
+    """Prints currently selected task"""
+    task_selected_or_abort()
 
-        print(f"Dropping task '{get_task_name()}'")
-        TASK_LINK.unlink(missing_ok=True)
-    elif cmd in ["select", "set"]:
-        try:
-            task = TASK_DIR / args[1]
-        except IndexError:
-            tasks = get_tasks()
-            if len(tasks) == 0:
-                abort("No tasks found")
+    click.echo(get_task_name())
 
-            task = select(tasks, lambda x: x.name)
+@cli.command("new")
+@click.argument("task_name")
+def new_cmd(task_name):
+    """Creates a new task"""
+    task = TASK_DIR / task_name
 
-        if not task.exists():
-            abort(f"Task '{task.name}' does not exist")
+    if task.exists():
+        abort(f"Task '{task.name}' already exists")
 
-        print(f"Selecting task '{task.name}'")
-        TASK_LINK.unlink(missing_ok=True)
-        TASK_LINK.symlink_to(task.name, target_is_directory=True)
-    elif cmd in ["log", "l"] or cmd is None:
-        task_selected_or_abort()
+    task.mkdir(exist_ok=True)
 
-        tags = [ x.upper() for x in args[1:] ]
+@cli.command("drop")
+def drop_cmd():
+    """Drops the current task, so there is no task selected"""
+    task_selected_or_abort()
 
-        task = get_task()
-        time = make_timestamp()
-        entry = task / (time + ".md")
+    click.echo(f"Dropping task '{get_task_name()}'")
+    TASK_LINK.unlink(missing_ok=True)
 
-        if not entry.exists():
-            entry.write_text(rf"""
+@cli.command("select")
+@click.argument("task-name", metavar="[<task-name>]", required=False)
+def select_cmd(task_name):
+    """Select the current task, if no arguments provided then allows user to
+    choose which task to select"""
+
+    if task_name:
+        task = TASK_DIR / task_name
+    else:
+        task = select_menu("Choose a task", get_tasks(), lambda x: x.stem)
+
+    if not task.exists():
+        abort(f"Task '{task.name}' does not exist")
+
+    click.echo(f"Selecting task '{task.name}'")
+    TASK_LINK.unlink(missing_ok=True)
+    TASK_LINK.symlink_to(task.name, target_is_directory=True)
+
+@cli.command("log")
+@click.argument("tags", nargs=-1)
+def log_cmd(tags):
+    """Creates new entry file in selected task if it does not already exist and opens in the editor"""
+    task_selected_or_abort()
+
+    # convert tags to uppercase
+    tags = [ x.upper() for x in tags ]
+
+    task = get_task()
+    time = make_timestamp()
+    entry = task / (time + ".md")
+
+    if not entry.exists():
+        entry.write_text(rf"""
 ## {" ".join(tags)}{" " if tags else ""}{time}
 """)
 
-        edit(entry)
-    elif cmd in ["status", "s"]:
-        task_selected_or_abort()
+    click.edit(filename=str(entry), editor=EDITOR)
 
+@cli.command("status")
+@click.argument("task_name", required=False)
+def status_cmd(task_name):
+    """Show last entry in selected task, or if argument is provided then use it instead"""
+    task_selected_or_abort()
+
+    # if provided try using that
+    if task_name:
+        task = TASK_DIR / task_name
+    else:
         task = get_task()
-        entries = list(task.glob("*.md"))
-        entries = sorted(entries, key=lambda x: x.stem)
-        if not entries:
-            abort(f"No entries found in task '{task.name}'")
 
-        show(entries[-1])
-    elif cmd in ["show", "ss", "export"]:
-        task_selected_or_abort()
+    if not task.exists():
+        abort(f"Task '{task.name}' does not exist")
 
-        task = get_task()
-        entries = sorted(task.glob("*.md"), key=lambda x: x.stem)
-        output = ""
-        for i in entries:
-            output += i.read_text()
+    entries = list(task.glob("*.md"))
+    entries = sorted(entries, key=lambda x: x.stem)
+    if not entries:
+        abort(f"No entries found in task '{task.name}'")
 
-        show_raw(rf"""
+    show(entries[-1])
+
+@cli.command("show")
+def show_cmd(task):
+    """Shows full task including all entries in sequence"""
+    task_selected_or_abort()
+
+    task = get_task()
+    entries = sorted(task.glob("*.md"), key=lambda x: x.stem)
+    output = ""
+    for i in entries:
+        output += i.read_text()
+
+    show_raw(rf"""
 # TASK {task.name}
 {output}
 """)
-    elif cmd in ["edit", "e"]:
-        task_selected_or_abort()
 
-        task = get_task()
+@cli.command("edit")
+def edit_cmd():
+    """Edit one of entries of selected task"""
+    task_selected_or_abort()
+
+    task = get_task()
+    entries = list(task.glob("*.md"))
+    entries = sorted(entries, key=lambda x: x.stem, reverse=True)
+
+    if not entries:
+        abort(f"No entries found in task '{task.name}'")
+
+    # do not ask if there is only one
+    if len(entries) == 1:
+        file = entries[0]
+    else:
+        file = select_menu("Select task entry", entries, lambda x: x.stem)
+
+    click.edit(filename=str(file), editor=EDITOR)
+
+@cli.command("summary")
+def summary_cmd():
+    """Shows last entry for each task"""
+    output = "**Summary**"
+    for task in get_tasks():
         entries = list(task.glob("*.md"))
-        entries = sorted(entries, key=lambda x: x.stem, reverse=True)
-
+        entries = sorted(entries, key=lambda x: x.stem)
         if not entries:
-            abort(f"No entries found in task '{task.name}'")
+            continue
 
-        # do not ask if there is only one
-        if len(entries) == 1:
-            file = entries[0]
-        else:
-            file = select(entries, lambda x: x.stem)
-
-        edit(file)
-    elif cmd in ["summary", "su"]:
-        output = "**Summary**"
-        for task in get_tasks():
-            entries = list(task.glob("*.md"))
-            entries = sorted(entries, key=lambda x: x.stem)
-            if not entries:
-                continue
-
-            output += rf"""
+        output += rf"""
 # TASK {task.name}
 {entries[-1].read_text()}
 """
 
-        show_raw(output)
-    elif cmd in ["list", "ls"]:
-        for i in get_tasks():
-            print(i.name)
-    else:
-        print("Invalid command")
-        print_help()
-        sys.exit(1)
+    show_raw(output)
+
+@cli.command("list")
+def list_cmd():
+    """Lists all tasks, one per line"""
+    for i in get_tasks():
+        click.echo(i.name)
 
 if __name__ == "__main__":
-    main()
+    cli()
 
