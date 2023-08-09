@@ -9,11 +9,11 @@
 #
 # supported by: kitty wezterm
 _smart_term_precmd_semantic_zones() {
-    printf "\033]133;P;k=i\007"
+    PROMPT="%{$(printf "\033]133;P;k=i\007")%}${PROMPT}%{$(printf "\033]133;B\007")%}"
+    printf "\033]133;A;cl=m\007"
 }
 
 _smart_term_preexec_semantic_zones() {
-    printf "\033]133;B\007"
     printf "\033]133;C;\007"
 }
 
