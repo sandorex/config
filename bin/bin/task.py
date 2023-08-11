@@ -38,7 +38,7 @@ def get_task_name() -> str:
     return get_task().name
 
 def abort(msg):
-    raise click.clickException(msg)
+    raise click.ClickException(msg)
 
 def task_selected_or_abort():
     if not is_task_selected():
