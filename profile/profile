@@ -25,11 +25,28 @@ fi
 
 export PATH
 
+# editors listen in startup time
+export EDITOR1=nano
+EDITOR2="$EDITOR1"
+EDITOR3="$EDITOR1"
+
+if command -v nvim >/dev/null; then
+    EDITOR2=nvim
+fi
+
+if command -v vscodium >/dev/null; then
+    EDITOR3=vscodium
+fi
+export EDITOR2
+export EDITOR3
+
 # nano is default, override in shell
-export EDITOR=nano
-export SUDO_EDITOR=nano
+export EDITOR=EDITOR1
+export SUDO_EDITOR=EDITOR1
 export FILE_MANAGER=ranger
+
 export TASK_EDITOR=nano
+export TASK_PAGER=glow
 
 # options for less
 # FRX is git default args, adding mouse to mousewheel scrolling

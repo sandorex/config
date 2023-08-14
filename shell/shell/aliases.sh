@@ -11,9 +11,11 @@ if [[ -z "$ZSH_VERSION" ]]; then
     compdef() { :; }
 fi
 
-alias e="$EDITOR"; compdef e="$EDITOR"
+alias e="$EDITOR1"; compdef e="$EDITOR1"
+alias ee="$EDITOR2"; compdef e="$EDITOR2"
+alias eee="$EDITOR3"; compdef e="$EDITOR3"
 alias se="sudo -e"
-alias edit="$EDITOR"; compdef e="$EDITOR"
+alias edit="$EDITOR1"; compdef e="$EDITOR1"
 alias s='sudo'; compdef s='sudo'
 alias t='task'
 alias g='git'; compdef g='git'
