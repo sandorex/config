@@ -25,13 +25,16 @@ fi
 
 export PATH
 
-# editors listen in startup time
+# editors listed in startup time
 export EDITOR1=nano
 EDITOR2="$EDITOR1"
 EDITOR3="$EDITOR1"
 
 if command -v nvim >/dev/null; then
     EDITOR2=nvim
+
+    # fallback to previous editor in case it does not exist
+    EDITOR3=nvim
 fi
 
 if command -v vscodium >/dev/null; then

@@ -64,6 +64,7 @@ setopt extendedglob
 setopt no_caseglob
 setopt no_banghist      # disable !x history expansion
 setopt complete_in_word # complete from both ends of a word
+setopt complete_aliases # completion for aliases
 setopt always_to_end    # move cursor to the end of completed word
 setopt auto_list        # list on first tab if ambiguous completion
 setopt auto_menu
