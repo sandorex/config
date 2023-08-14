@@ -13,6 +13,7 @@ if [[ -f "$HOME/.dotfiles-state/$CONFIG" ]] && [[ -z "$REINSTALL" ]]; then
 fi
 
 util link -a "$HOME"/.config/nvim ./nvim
+util link -a "$HOME"/.var/app/io.neovim.nvim/config/nvim ./nvim
 
 mkdir -p "$HOME/.dotfiles-state"
 touch "$HOME/.dotfiles-state/$CONFIG"

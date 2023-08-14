@@ -16,6 +16,11 @@ snippet shellcheck
 snippet grep-parse-listfile
 	grep -E -v '(^\s*#)|(^\s*$)' ${0:${VISUAL}}
 
+snippet source-or-execution-bash
+	if [[ "$${BASH_SOURCE[0]}" == "\$0" ]]; then
+		# works only in bash
+	fi
+
 snippet rerun-sudo-bash
 	# non posix compliant!
 	if [[ $$EUID -ne 0 ]]; then
