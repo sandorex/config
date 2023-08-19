@@ -25,8 +25,18 @@ fi
 
 export PATH
 
+# this section basically select editor levels based on what is installed, it
+# does more than profile script should but its only a tiny startup penalty and
+# should not be evaluated again
+
 # editors listed in startup time
-export EDITOR1=nano
+EDITOR1=nano
+
+# micro is nicer but not always available
+if command -v micro >/dev/null; then
+    EDITOR1=micro
+fi
+
 EDITOR2="$EDITOR1"
 EDITOR3="$EDITOR1"
 
@@ -40,19 +50,19 @@ fi
 if command -v vscodium >/dev/null; then
     EDITOR3=vscodium
 fi
+
+export EDITOR1
 export EDITOR2
 export EDITOR3
 
-# nano is default, override in shell
-export EDITOR=EDITOR1
-export SUDO_EDITOR=EDITOR1
+export EDITOR="$EDITOR1"
+export SUDO_EDITOR="$EDITOR1"
 export FILE_MANAGER=ranger
 
-export TASK_EDITOR=nano
 export TASK_PAGER=glow
 
 # options for less
-# FRX is git default args, adding mouse to mousewheel scrolling
+# FRX is git default, adding mouse for mousewheel scrolling
 export LESS='FRX --mouse'
 
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
@@ -60,7 +70,6 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 # set ls colors
 eval "$(dircolors --sh "$AGSHELLDIR/gruvbox.dircolors")"
 
-# to signify if its running twice
-[ -n "$__PROFILE_RAN" ] && echo "Profile was sourced again, something's off and you have to fix it"
+# check if sourced again needlessly
+[ -n "$__PROFILE_RAN" ] && echo "This is going to be a terrible night..."
 export __PROFILE_RAN=1
-
