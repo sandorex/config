@@ -33,8 +33,13 @@ kcfg 'kdeglobals/General/toolBarFont' --write 'Noto Sans,11,-1,5,50,0,0,0,0,0'
 
 #### HARDWARE ####
 ### MICE ###
-# profile 1 is flat acceleration profile
+# for X11, only one global settings is availabel
+kcfg 'kcminputrc/Mouse/X11LibInputXAccelProfileFlat' --write false
+kcfg 'kcminputrc/Mouse/XLbInptAccelProfileFlat' --write true
+kcfg 'kcminputrc/Mouse/XLbInptPointerAcceleration' --write '-0.2'
 
+# for wayland each device can get its own settings
+# profile value 1 means flat acceleration profile
 ## E-Signal USB Gaming Mouse 04D9:A09F ##
 kcfg 'kcminputrc/Libinput/1241/41119/E-Signal USB Gaming Mouse/PointerAcceleration' --write '-0.200'
 kcfg 'kcminputrc/Libinput/1241/41119/E-Signal USB Gaming Mouse/PointerAccelerationProfile' --write 1
