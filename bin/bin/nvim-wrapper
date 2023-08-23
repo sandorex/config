@@ -8,10 +8,15 @@ set -eu
 # NOTE: python is included by default
 FLATPAK_EXT="rust-stable,node18"
 
+args=()
+
 POSITIONAL_ARGS=()
 
 while [ $# -gt 0 ]; do
     case $1 in
+	--network)
+            args+=( "--share=network" )
+            ;;
         --install)
             echo "Installing neovim flatpak"
 
@@ -36,8 +41,6 @@ done
 
 # restore positional parameters
 set -- "${POSITIONAL_ARGS[@]}"
-
-args=()
 
 POSITIONAL_ARGS=()
 
@@ -80,26 +83,22 @@ done
 # restore positional parameters
 set -- "${POSITIONAL_ARGS[@]}"
 
-# arguments notes, explaining why is what set
-#
-# TERMINFO_DIRS makes it prefer host system terminfo files over builtin ones
-# and makes using kitty or some terminal with custom terminfo painless
-#
-# org.freedesktop.Flatpak allows host execution using flatpak-spawn, exactly
-# what we dont want for sandboxing
-#
-# disabled home access by default
+# TODO remove the exception for config and figure out some solution
 
-# TODO redo this and use --sandbox and pick the permissions manually as they may
-# change and break sandbox without knowing
+# all default permissions are removed and explicitely defined here
+# no networking by default
+# no filesystem access by default (only the config)
 FLATPAK_ENABLE_SDK_EXT="$FLATPAK_EXT" flatpak run \
+    --sandbox \
+    --socket=wayland \
+    --socket=fallback-x11 \
+    --share=ipc \
     --env="TERMINFO_DIRS=/var/run/host/usr/share/terminfo:/usr/share/terminfo" \
-    --no-talk-name=org.freedesktop.Flatpak \
+    --filesystem=host-os \
+    --persist=.config/nvim \
+    --persist=.local/share/nvim \
+    --persist=.local/state/nvim \
+    --persist=.cache/nvim \
     --filesystem="$DOTFILES/nvim/nvim" \
-    --nofilesystem="host" \
-    --nofilesystem="$HOME" \
-    --nofilesystem="/mnt" \
-	--nofilesystem="/media" \
-	"${args[@]}" \
+    "${args[@]}" \
     io.neovim.nvim "$@"
-

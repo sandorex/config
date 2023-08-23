@@ -31,12 +31,6 @@ export PATH
 
 # editors listed in startup time
 EDITOR1=nano
-
-# micro is nicer but not always available
-if command -v micro >/dev/null; then
-    EDITOR1=micro
-fi
-
 EDITOR2="$EDITOR1"
 EDITOR3="$EDITOR1"
 
