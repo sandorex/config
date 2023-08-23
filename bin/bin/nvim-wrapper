@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# neovim flatpak wrapper script
+
+set -eu
+
+# NOTE: python is included by default
+FLATPAK_EXT="rust-stable,node18"
+
+POSITIONAL_ARGS=()
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        --install)
+            echo "Installing neovim flatpak"
+
+            flatpak install -y flathub io.neovim.nvim
+
+            echo "Installing flatpak extension SDKs '$FLATPAK_EXT'"
+
+            # converting the comma to space
+            for i in ${FLATPAK_EXT/,/ }; do
+                flatpak install -y "org.freedesktop.Sdk.Extension.$i"
+            done
+
+            exit 0
+            ;;
+        *)
+            # save positional arg
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+args=()
+
+POSITIONAL_ARGS=()
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        # TODO this is temporary solution, its simple rework into something
+        # better for real world use
+        --)
+            # consume all args left as paths
+            for i in "$@"; do
+                if [[ -e "$i" ]]; then
+                    # if it exists just allow it
+                    args+=( "--filesystem='$i'" )
+
+                    # nothing more needed
+                    continue
+                fi
+
+                invalid_path=1
+                echo "Invalid path '$i', it does not exist and for security reasons wont be created"
+            done
+
+            if [[ -n "$invalid_path" ]]; then
+                echo "Failed cause of the previous errors"
+                exit 69
+            fi
+
+            # add rest of args
+            POSITIONAL_ARGS+=("$@")
+            break
+            ;;
+        *)
+
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+# arguments notes, explaining why is what set
+#
+# TERMINFO_DIRS makes it prefer host system terminfo files over builtin ones
+# and makes using kitty or some terminal with custom terminfo painless
+#
+# org.freedesktop.Flatpak allows host execution using flatpak-spawn, exactly
+# what we dont want for sandboxing
+#
+# disabled home access by default
+
+# TODO redo this and use --sandbox and pick the permissions manually as they may
+# change and break sandbox without knowing
+FLATPAK_ENABLE_SDK_EXT="$FLATPAK_EXT" flatpak run \
+    --env="TERMINFO_DIRS=/var/run/host/usr/share/terminfo:/usr/share/terminfo" \
+    --no-talk-name=org.freedesktop.Flatpak \
+    --filesystem="$DOTFILES/nvim/nvim" \
+    --nofilesystem="host" \
+    --nofilesystem="$HOME" \
+    --nofilesystem="/mnt" \
+	--nofilesystem="/media" \
+	"${args[@]}" \
+    io.neovim.nvim "$@"
+

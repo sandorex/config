@@ -70,5 +70,21 @@ return {
         event = 'VeryLazy',
         opts = {},
     },
+
+    {
+        -- flatpak only
+        enabled = os.getenv("container") == "flatpak",
+        'sandorex/neobrew',
+        lazy = false, -- make sure to load on startup so the PATH is adjusted
+        priority = 999, -- make sure it loads before other package managers
+        config = function()
+            require("neobrew").init({
+                ensure_installed = {
+                    "bat",
+                    "shellcheck",
+                },
+            })
+        end
+    },
 }
 
