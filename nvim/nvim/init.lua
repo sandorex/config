@@ -10,6 +10,8 @@ local options = {
 
     showmode = false,
 
+    completeopt = 'menuone,noselect',
+
     cursorline = true,
     --cursorlineopt = 'number',
 
