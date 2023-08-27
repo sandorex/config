@@ -1,0 +1,5 @@
+# this prevents mouse from waking up the display when its in standby
+# and requires pressing a button on the mouse
+
+# E-Signal Mouse (nacon)
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="04d9", ATTR{idProduct}=="a09f", ATTR{power/control}!="auto", ATTR{power/control}="auto", ATTR{power/autosuspend_delay_ms}="300000"
