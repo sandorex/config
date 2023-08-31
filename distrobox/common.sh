@@ -38,13 +38,13 @@ set -- "${POSITIONAL_ARGS[@]}"
 CONTAINER_NAME=${1:-${CONTAINER_NAME:?}}
 IMAGE="${CONTAINER_IMAGE:?}"
 
-if [[ -n "$container" ]]; then
+if [[ -v container ]]; then
     echo "Running distrobox inside a container is not recommended"
     exit 1
 fi
 
 ARGS=()
-if [[ -n "$CUSTOM_HOME" ]]; then
+if [[ -v CUSTOM_HOME ]]; then
     ARGS+=( --home "$CUSTOM_HOME" )
 fi
 
@@ -59,10 +59,9 @@ distrobox create --image "$IMAGE" \
                  "${ARGS[@]}" \
                  --pre-init-hooks "hostname \"$(hostname)\""
 
-if [[ -n "$RUN_CONFIG" ]] && [[ -n "$CONTAINER_SETUP_SCRIPT" ]]; then
+if [[ -v RUN_CONFIG ]] && [[ -v CONTAINER_SETUP_SCRIPT ]]; then
     echo "Running config script, this will take a while.."
     echo
 
     distrobox enter --name "$CONTAINER_NAME" -- "./configs/${CONTAINER_SETUP_SCRIPT}"
 fi
-

@@ -30,7 +30,7 @@ fi
 PROMPT="[%F{magenta}%n%f@%F{blue}%m %F{${PROMPT_ICON_COLOR:-$PROMPT_COLOR}}${PROMPT_ICON_UTF8} %f] %F{$PROMPT_COLOR}%(1j.%U.)%%%u%f "
 
 # shows exit code if last command exited with non-zero
-RPROMPT="%(?..%F{red}[ %?%  ]%f )"
+RPROMPT="%(?..%F{red}[ %?%  ]%f ) %F{white}%2~%f"
 
 # list files on dir change but use lsd if available
 if command -v lsd &>/dev/null; then
@@ -51,7 +51,12 @@ precmd() {
 ## OPTIONS ##
 HISTFILE=~/.zhistory
 HISTSIZE=SAVEHIST=10000
-setopt extended_history append_history hist_ignore_dups hist_ignore_space
+setopt extended_history
+setopt append_history
+setopt hist_ignore_dups
+setopt hist_ignore_space
+setopt share_history 	# share history between all sessions (load history on change)
+setopt inc_append_history # incrementally update history (after each command)
 
 setopt no_beep          # no bell
 setopt no_clobber       # do not overwrite stuff with redirection

@@ -46,7 +46,7 @@ if command -v zellij &>/dev/null; then
     alias zl='zellij --layout'
 fi
 
-if command -v distrobox-host-exec &>/dev/null; then
+if [[ -v DISTROBOX_ENTER_PATH ]]; then
     alias h='distrobox-host-exec'
 fi
 

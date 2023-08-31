@@ -57,6 +57,9 @@ if [[ -n "$DISTROBOX_ENTER_PATH" ]] && [[ "${#DISTROBOX_HOST_EXEC[@]}" -ne 0 ]];
     echo
     echo "Making distrobox-host-exec symlinks"
 
+    # automatically install the host-spawn
+    distrobox-host-exec -y echo || true
+
     for i in "${DISTROBOX_HOST_EXEC[@]}"; do
         sudo ln -sf /usr/bin/distrobox-host-exec /usr/local/bin/"$i"
     done

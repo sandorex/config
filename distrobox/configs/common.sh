@@ -23,6 +23,7 @@ DNF=(
     cargo
     golang
     python3-pip
+    pipx
 
     # clipboard support for vim and tmux
     xclip
@@ -54,6 +55,7 @@ UBUNTU_APT=(
     cargo
     golang
     python3-pip
+    pipx
 
     # clipboard support for vim and tmux
     xclip
