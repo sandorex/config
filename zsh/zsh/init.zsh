@@ -30,7 +30,7 @@ fi
 PROMPT="[%F{magenta}%n%f@%F{blue}%m %F{${PROMPT_ICON_COLOR:-$PROMPT_COLOR}}${PROMPT_ICON_UTF8} %f] %F{$PROMPT_COLOR}%(1j.%U.)%%%u%f "
 
 # shows exit code if last command exited with non-zero
-RPROMPT="%(?..%F{red}[ %?%  ]%f ) %F{white}%2~%f"
+RPROMPT="%(?..%F{red}[ %?%  ] %f)%F{8}%27<..<%~%f"
 
 # list files on dir change but use lsd if available
 if command -v lsd &>/dev/null; then
