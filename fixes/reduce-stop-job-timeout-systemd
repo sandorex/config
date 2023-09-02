@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+#
+# reduces time for systemd stop job to more sane value, rather than 2m30s
+
+CONTENT="$(sed 's/^#*DefaultTimeoutStopSec=[^ ]*/DefaultTimeoutStopSec=14s/' /etc/systemd/system.conf)"
+
+echo "Following changes will be made:"
+echo "$CONTENT" | diff --color=always /etc/systemd/system.conf -
+
+printf "%s" "Do you accept these changes? (sudo will be invoked) [y/N] "
+read -r answer
+
+case "$answer" in
+    Y|y)
+        ;;
+    *)
+        echo "Cancelled"
+        exit 1
+        ;;
+esac
+
+echo "$CONTENT" | sudo tee /etc/systemd/system.conf
+

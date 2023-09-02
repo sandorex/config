@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# monitor-off
+#
+# script that turns off the monitor to save power, works best if mouse
+# autosuspend is enabled so it does not wake up when you breathe on it
+
+DELAY="${1:-1s}"
+
+# xorg is easy
+if [[ "$XDG_SESSION_TYPE" == "x11" ]]; then
+    if [[ -z "$DISPLAY" ]]; then
+        echo "Not display found, neither x11 nor wayland.."
+        exit 1
+    fi
+
+    sleep "$DELAY"
+    xset dpms force off
+    exit 0
+fi
+
+# wayland is desktop specific..
+case "$XDG_SESSION_DESKTOP" in
+    KDE)
+        sleep "$DELAY"
+        dbus-send --session --print-reply --dest=org.kde.kglobalaccel  /component/org_kde_powerdevil org.kde.kglobalaccel.Component.invokeShortcut string:'Turn Off Screen'
+        ;;
+    *)
+        echo "Unsupported wayland compositor $XDG_SESSION_DESKTOP"
+        exit 1
+        ;;
+esac
+
