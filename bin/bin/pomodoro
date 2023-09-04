@@ -1,0 +1,112 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# simple pomodore timer
+#
+# requires at notify-send
+
+set -e
+
+NOTIF_TIME=0
+NOTIF_ICON="clock"
+NOTIF_URGENCY="low"
+
+TIMER_MSGS=(
+    "The timer has expired"
+    "Whatever this was, it is no more."
+    "The end has come"
+    "Hey $USER, pizza's here"
+)
+
+WORK_MSGS=(
+    "We're free!"
+    "Glad this is over, now we can do nothing for a while"
+    "Hey hey thats enough, go get some rest"
+    "Why are you still here? Go touch some grass"
+)
+
+BREAK_MSGS=(
+    "Now get back to work you mongrel!"
+    "Ahh it was fun while it lasted"
+    "Time for some good ol' grass touching"
+)
+
+if ! command -v at &>/dev/null; then
+    echo "Please install 'at' command to use this script"
+    exit 1
+fi
+
+POSITIONAL_ARGS=()
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        --notify)
+            NOTIFY=1
+            shift
+            ;;
+        -*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            # save positional arg
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+get_random_msg() {
+    shuf -en1 "$@"
+}
+
+schedule() {
+    profile="${1:?}"
+    time="${2:?}"
+    shift 2
+
+    msg="$(get_random_msg "$@")"
+    echo notify-send -a "'pomodore ($profile)'" -t $NOTIF_TIME -u "$NOTIF_URGENCY" -i "$NOTIF_ICON" "'$msg'" \
+        | at now + "$time" minutes &>/dev/null
+}
+
+# to support the notify icon without much spaghetti
+msg() {
+    if [[ "$NOTIFY" == "1" ]]; then
+        notify-send -a "pomodore" -t 5000 -u low -i "$NOTIF_ICON" "${1:?}"
+    else
+        echo "${1:?}"
+    fi
+}
+
+case "$1" in
+    [0-9]|[0-9][0-9])
+        schedule "${1}m timer" "$1" "${2:-${TIMER_MSGS[@]}}"
+        msg "Scheduled timer in ${1}m"
+        ;;
+    # these are the profiles
+    w|work)
+        schedule "Work" 30 "${2:-${WORK_MSGS[@]}}"
+        msg "The timer has been scheduled, now get back to work!"
+        ;;
+    b|break)
+        schedule "Break" 15 "${2:-${BREAK_MSGS[@]}}"
+        msg "The timer has been scheduled, now go away!"
+        ;;
+    r|rest)
+        schedule "Rest" 30 "${2:-${BREAK_MSGS[@]}}"
+        msg "The timer has been scheduled, now go rest a bit"
+        ;;
+    *)
+        echo "Invalid option"
+        cat <<EOF
+Usage: $(basename "$0") [--notify] <time/profile> [<message>]
+EOF
+        exit 1
+        ;;
+esac
+
+
