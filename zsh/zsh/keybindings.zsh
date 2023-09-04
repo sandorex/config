@@ -72,9 +72,15 @@ bindkey "${KEYS[C_BACKSPACE]}" backward-delete-word
 bindkey '^Q' push-input
 
 # edit the command line command in the editor (does not execute automatically)
+# regular edit-command-line does not refresh so can mess up the screen
+_edit-command-fixed() {
+    emulate -LR zsh
+    zle edit-command-line
+    zle redisplay
+}
 autoload -z edit-command-line
-zle -N edit-command-line
-bindkey '^E' edit-command-line
+zle -N _edit-command-fixed
+bindkey '^E' _edit-command-fixed
 
 # makes ctrl z run fg
 _job-switch() {

@@ -30,15 +30,15 @@ set numbercolor white,normal
 set preserve
 
 # hides help at the bottom
-set nohelp
+#set nohelp
 
 ## Keybindings
 bind ^Z suspend main
 
 # i am appalled at default keybindings for these..
-bind M-Z undo main
-bind Sh-M-Z redo main
-bind M-Y redo main
+#bind M-Z undo main
+#bind Sh-M-Z redo main
+#bind M-Y redo main
 
 # alt + {X, C, V} => cut, copy, paste
 bind M-X cut main
