@@ -5,7 +5,7 @@
 #
 # requires at notify-send
 
-set -e
+set -eo pipefail
 
 NOTIF_TIME=0
 NOTIF_ICON="clock"
@@ -33,6 +33,11 @@ BREAK_MSGS=(
 
 if ! command -v at &>/dev/null; then
     echo "Please install 'at' command to use this script"
+    exit 1
+fi
+
+if ! command -v notify-send &>/dev/null; then
+    echo "Please install 'notify-send' command to use this script"
     exit 1
 fi
 
@@ -73,7 +78,7 @@ schedule() {
         | at now + "$time" minutes &>/dev/null
 }
 
-# to support the notify icon without much spaghetti
+# to support use from kde execute applet without much spaghetti
 msg() {
     if [[ "$NOTIFY" == "1" ]]; then
         notify-send -a "pomodore" -t 5000 -u low -i "$NOTIF_ICON" "${1:?}"
@@ -91,6 +96,10 @@ case "$1" in
     w|work)
         schedule "Work" 30 "${2:-${WORK_MSGS[@]}}"
         msg "The timer has been scheduled, now get back to work!"
+        ;;
+    sb|shortbreak)
+        schedule "Break" 15 "${2:-${BREAK_MSGS[@]}}"
+        msg "The timer has been scheduled, now go drink some water then come back!"
         ;;
     b|break)
         schedule "Break" 15 "${2:-${BREAK_MSGS[@]}}"
