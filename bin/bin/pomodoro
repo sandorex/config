@@ -98,7 +98,7 @@ case "$1" in
         msg "The timer has been scheduled, now get back to work!"
         ;;
     sb|shortbreak)
-        schedule "Break" 15 "${2:-${BREAK_MSGS[@]}}"
+        schedule "Break" 5 "${2:-${BREAK_MSGS[@]}}"
         msg "The timer has been scheduled, now go drink some water then come back!"
         ;;
     b|break)
