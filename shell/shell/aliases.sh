@@ -78,19 +78,26 @@ alias night='monb night'
 
 # function aliases
 rcp() {
-  # -a = -rlptgoD
-  #   -r = recursive
-  #   -l = copy symlinks as symlinks
-  #   -p = preserve permissions
-  #   -t = preserve mtimes
-  #   -g = preserve owning group
-  #   -o = preserve owner
-  # -z = use compression
-  # -P = show progress on transferred file
-  # -J = don't touch mtimes on symlinks (always errors)
-  rsync -azPJ \
-    --include=.git/ \
-    --filter=':- .gitignore' \
-    --filter=":- ~/.config/git/ignore" \
-    "$@"
+    # -a = -rlptgoD
+    #   -r = recursive
+    #   -l = copy symlinks as symlinks
+    #   -p = preserve permissions
+    #   -t = preserve mtimes
+    #   -g = preserve owning group
+    #   -o = preserve owner
+    # -z = use compression
+    # -P = show progress on transferred file
+    # -J = don't touch mtimes on symlinks (always errors)
+    rsync -azPJ \
+        --include=.git/ \
+        --filter=':- .gitignore' \
+        --filter=":- ~/.config/git/ignore" \
+        "$@"
 }; compdef rcp=rsync
+
+# cd into a project, add projects directories in the find command below
+cdproj() {
+    local dir
+    dir=$(find "$HOME/ws/" -maxdepth 1 -type d 2> /dev/null | fzf) && cd "$dir"
+}
+
