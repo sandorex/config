@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+#
+# checks if updates are available
+
+if ! command -v pkcon &>/dev/null; then
+    echo "Packagekit (pkcon) is not available, please install it"
+    exit 1
+fi
+
+POSITIONAL_ARGS=()
+
+while [ $# -gt 0 ]; do
+    case $1 in
+        --update)
+            UPDATE=1
+            shift
+            ;;
+        -*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            # save positional arg
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+flatpak=0
+
+# TODO it does not check other installations other than system and user
+count="$(flatpak remote-ls --updates | wc -l)"
+if [[ "$count" == "0" ]]; then
+    flatpak=0
+else
+    flatpak=1
+fi
+
+if [[ "$UPDATE" == "1" ]]; then
+    echo "Updating package cache"
+    if ! pkcon refresh &>/dev/null; then
+        echo "Error updating package cache"
+    fi
+fi
+
+if pkcon get-updates &>/dev/null; then
+    system=1
+else
+    system=0
+fi
+
+if [[ "$flatpak" == "1" ]]; then
+    echo "Flatpak updates available"
+fi
+
+if [[ "$system" == "1" ]]; then
+    echo "System updates available"
+fi
+
+if [[ "$system" == "1" ]] || [[ "$flatpak" == "1" ]]; then
+    exit 1
+else
+    exit 0
+fi
+

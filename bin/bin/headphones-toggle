@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+#
+# https://github.com/sandorex/config
+# headphones-toggle
+#
+# requires pactl notify-send
+
+from typing import Tuple, Dict
+
+import subprocess
+import re
+
+# get these using `pactl list sinks`
+SPEAKERS = ("alsa_output.pci-0000_09_00.6.analog-stereo", "analog-output-lineout")
+HEADPHONES = ("alsa_output.pci-0000_09_00.1.hdmi-stereo", "hdmi-output-0")
+
+NOTIFY = True
+
+# parses the output using regex magic
+PACTL_RE = re.compile(r"^\s*Name:\s*(.+)|Active Port:\s*(.+)$", re.MULTILINE)
+def get_all_sinks() -> Dict[str, str]:
+    """Get all sinks and their active port"""
+    result = subprocess.run(["pactl", "list", "sinks"], capture_output=True, text=True)
+    result.check_returncode()
+
+    sinks = {}
+    last_sink = None
+    for i in PACTL_RE.findall(result.stdout.strip()):
+        if not i:
+            continue
+
+        cur_sink = i[0]
+        cur_port = i[1]
+
+        if cur_sink:
+            sinks[cur_sink] = None
+            last_sink = cur_sink
+
+        # there should always be only one active port
+        if cur_port and last_sink:
+            sinks[last_sink] = cur_port
+
+    return sinks
+
+def get_sink() -> Tuple[str, str]:
+    result = subprocess.run(["pactl", "get-default-sink"], capture_output=True, text=True)
+    result.check_returncode()
+    sink = result.stdout.strip()
+
+    sinks = get_all_sinks()
+
+    return (sink, sinks.get(sink))
+
+def set_sink(sink, port=None):
+    subprocess.run(["pactl", "set-default-sink", sink], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).check_returncode()
+
+    if port:
+        subprocess.run(["pactl", "set-sink-port", "0", port], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).check_returncode()
+
+def notify(msg):
+    if NOTIFY:
+        subprocess.run(["notify-send", "-t", "1000", "-u", "low", "-i", "headphones", "headphones-toggle", msg]).check_returncode()
+    else:
+        print(msg)
+
+sink = get_sink()
+if sink == SPEAKERS:
+    notify("Switching to headphones")
+    set_sink(*HEADPHONES)
+else:
+    # default to speakers even if any other audio device is set
+    notify("Switching to speakers")
+    set_sink(*SPEAKERS)
+
