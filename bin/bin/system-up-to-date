@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 #
-# checks if updates are available
+# https://github.com/sandorex/config
+#
+# returns non-zero exit code if the system is not up to date
 
 if ! command -v pkcon &>/dev/null; then
     echo "Packagekit (pkcon) is not available, please install it"
@@ -11,8 +13,8 @@ POSITIONAL_ARGS=()
 
 while [ $# -gt 0 ]; do
     case $1 in
-        --update)
-            UPDATE=1
+        --refresh)
+            REFRESH=1
             shift
             ;;
         -*)
@@ -40,7 +42,7 @@ else
     flatpak=1
 fi
 
-if [[ "$UPDATE" == "1" ]]; then
+if [[ "$REFRESH" == "1" ]]; then
     echo "Updating package cache"
     if ! pkcon refresh &>/dev/null; then
         echo "Error updating package cache"
