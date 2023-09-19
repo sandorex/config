@@ -20,6 +20,7 @@ dell_common=(
 )
 
 asus_common=(
+    "$ASUS".enable
     "$ASUS".mode.0
     "$ASUS.position.0,0"
 )
