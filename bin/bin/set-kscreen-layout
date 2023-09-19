@@ -16,23 +16,33 @@ choose() {
 
 dell_common=(
     "$DELL".enable
+    "$DELL".priority.1
     "$DELL".mode.0
 )
 
 asus_common=(
     "$ASUS".enable
+    "$ASUS".priority.2
     "$ASUS".mode.0
     "$ASUS.position.0,0"
 )
 
+# modes
+# 1-3: 1080p60
+# 11: 768p60
+# 13: 720p60
+# all of them look like garbage
+#
+# overscan is only needed if the tv is connected over HDMI for some reason..
 tv_common=(
     "$TV".enable
+    "$TV".priority.3
     "$TV".mode.0
+    "$TV".overscan.0
 )
 
 LAYOUTS=( 'dual-lvert' 'dual-lvert-rtv' 'dual' 'dual-rtv' 'tv' )
 
-# dual monitor no tv, second monitor vertical to the left
 layout_dual-lvert() {
     kscreen-doctor \
         "${dell_common[@]}" \
@@ -87,7 +97,11 @@ case "$1" in
         "layout_${LAYOUTS[0]}"
         ;;
     '') # empty
-        index=$(choose "${LAYOUTS[@]}")
+        if ! index=$(choose "${LAYOUTS[@]}"); then
+            echo "Cancelled"
+            exit 1
+        fi
+
         "layout_${LAYOUTS[$index]}"
         ;;
     *)
