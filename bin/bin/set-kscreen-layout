@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# sets the layout for the monitors
+#
+# requires rofi
+
+# use `kscreen-doctor -o` to find names for these
+DELL="output.HDMI-A-1" # HDMI
+ASUS="output.DP-1"     # VGA
+TV="output.DVI-D-1"    # DVI
+
+choose() {
+    printf '%s\n' "$@" | rofi -dmenu -normal-window -steal-focus -p "${1:?}" -format 'i'
+}
+
+dell_common=(
+    "$DELL".enable
+    "$DELL".mode.0
+)
+
+asus_common=(
+    "$ASUS".mode.0
+    "$ASUS.position.0,0"
+)
+
+tv_common=(
+    "$TV".enable
+    "$TV".mode.0
+)
+
+LAYOUTS=( 'dual-lvert' 'dual-lvert-rtv' 'dual' 'dual-rtv' 'tv' )
+
+# dual monitor no tv, second monitor vertical to the left
+layout_dual-lvert() {
+    kscreen-doctor \
+        "${dell_common[@]}" \
+        "$DELL".position.1080,420 \
+        "${asus_common[@]}" \
+        "$ASUS".rotation.left \
+        "$TV".disable
+}
+
+layout_dual() {
+    kscreen-doctor \
+        "${dell_common[@]}" \
+        "$DELL".position.1920,0 \
+        "${asus_common[@]}" \
+        "$ASUS".rotation.normal \
+        "$TV".disable
+}
+
+layout_dual-lvert-rtv() {
+    kscreen-doctor \
+        "${dell_common[@]}" \
+        "$DELL".position.1080,420 \
+        "${asus_common[@]}" \
+        "$ASUS".rotation.left \
+        "${tv_common[@]}" \
+        "$TV".position.3000,420
+    # TODO note this is for 1080p and im not sure the tv is 1080p
+}
+
+layout_dual-rtv() {
+    kscreen-doctor \
+        "${dell_common[@]}" \
+        "$DELL".position.1920,0 \
+        "${asus_common[@]}" \
+        "$ASUS".rotation.normal \
+        "${tv_common[@]}" \
+        "$TV".position.3840,0
+    # TODO note this is for 1080p and im not sure the tv is 1080p
+}
+
+layout_tv() {
+    kscreen-doctor \
+        "$DELL".disable \
+        "$ASUS".disable \
+        "${tv_common[@]}" \
+        "$TV".position.0,0
+}
+
+case "$1" in
+    default)
+        # default to layout 0
+        "layout_${LAYOUTS[0]}"
+        ;;
+    '') # empty
+        index=$(choose "${LAYOUTS[@]}")
+        "layout_${LAYOUTS[$index]}"
+        ;;
+    *)
+        if ! type -t "layout_$1" &>/dev/null; then
+            echo "Invalid layout '$1'"
+            exit 1
+        fi
+
+        "layout_$1"
+        ;;
+esac
+

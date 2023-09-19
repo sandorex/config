@@ -1,0 +1,6 @@
+
+// Updates the package cache
+APT::Periodic::Update-Package-Lists "1";
+
+// Pre-downloads the updates
+APT::Periodic::Download-Upgradeable-Packages "1";
