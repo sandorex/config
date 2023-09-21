@@ -1,9 +1,5 @@
 # Preserve as much metadata as possible
 --write-description
---write-info-json
---no-clean-infojson
---write-comments
---write-all-thumbnails
 --sub-langs all
 --write-subs
 

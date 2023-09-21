@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# extracts first subtitle from video file
+#
+# requires ffmpeg
+
+[[ -z "$2" ]] && echo "Warning this will extract only the first subtitle, you may manually provide which subtitle to extract"
+ffmpeg -i "$1" -map "0:s:${2:-0}" "${1%.*}.srt"
+
