@@ -1,13 +1,10 @@
 #!/bin/sh
 #
-# aliases.sh - aliases for bash and zsh
-#
-# this script is sourced by both bash and zsh, beware of bashisms
-#
-# this file should always be sourceable without any other file
+# https://github.com/sandorex/config
+# contains aliases for bash/zsh shells
 
-# make compdef an no op on bash
-if [[ -z "$ZSH_VERSION" ]]; then
+# make compdef a noop on bash
+if [[ ! -v ZSH_VERSION ]]; then
     compdef() { :; }
 fi
 
@@ -23,22 +20,19 @@ alias cg='cgit'; compdef cg='git'
 alias f="$FILE_MANAGER";
 
 # use bat if available
-if command -v batcat &>/dev/null; then
-    # for some reason debian renamed bat to batcat
-    # alias bat='batcat'
-    alias cat='batcat --style=plain'
-elif command -v bat &>/dev/null; then
+if command -v bat &>/dev/null; then
     alias cat='bat --style=plain'
 fi
 
+# use lsd if available
 if command -v lsd &>/dev/null; then
-    alias ls='lsd -F'
-    alias l='lsd -aF'
-    alias ll='lsd -alF'
+    ls() { lsd -F "$@"; }
+    l() { lsd -aF "$@"; }
+    ll() { lsd -alF "$@"; }
 else
-    alias ls='ls -F --color=auto'
-    alias l='ls -aF --color=auto'
-    alias ll='ls -alFh --color=auto'
+    ls() { command ls -F --color=auto "$@"; }
+    l() { ls -aF --color=auto "$@"; }
+    ll() { ls -alFh --color=auto "$@"; }
 fi
 
 if command -v zellij &>/dev/null; then
@@ -50,18 +44,22 @@ if [[ -v DISTROBOX_ENTER_PATH ]]; then
     alias h='distrobox-host-exec'
 fi
 
-# little wrapper that lists the current directoy without arguments but if there
-# are any then they are passed to \. aka source command
-_smart_dot() {
+# make dot without arguments list directory, otherwise just pass args through
+_dot() {
     if [ "$#" -eq 0 ]; then
-        ls -F --color=auto
+        # as im not using an alias above this should use proper arguments with
+        # no duplicated codes
+        ls
+        # shopt -s expand_aliases
+        # l
+        # ls -F --color=auto
     else
         \. "$@"
     fi
 }
 
 alias -- '-'='cd -'
-alias -- '.'='_smart_dot'
+alias -- '.'='_dot'
 alias -- '..'='cd ..'
 alias -- '...'='cd ../..'
 alias -- '....'='cd ../../..'
@@ -95,9 +93,9 @@ rcp() {
         "$@"
 }; compdef rcp=rsync
 
-# cd into a project, add projects directories in the find command below
-cdproj() {
+# fuzzy cd, required fd
+fcd() {
     local dir
-    dir=$(find "$HOME/ws/" -maxdepth 1 -type d 2> /dev/null | fzf) && cd "$dir"
+    dir="$(fd -td -tl --follow --hidden --max-depth 5 "$@" | fzf)" && cd "${dir:?}" || exit 1
 }
 
