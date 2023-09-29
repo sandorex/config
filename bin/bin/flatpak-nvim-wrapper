@@ -1,0 +1,91 @@
+#!/usr/bin/env python3
+#
+# https://github.com/sandorex/config
+# python wrapper for running sandbox neovim flatpak
+
+VERSION = "0.1.0"
+
+import os
+import sys
+import click
+import subprocess as sp
+
+# flatpak extensions to be installed/used
+DEFAULT_FLATPAK_EXTENSIONS = [ "rust-stable", "node18" ]
+
+HOME = os.environ["HOME"]
+
+# these paths will be forbidden even in unsafe mode
+FORBIDDEN_PATHS = [
+    f"{HOME}/.ssh"
+]
+
+# paths that are always allowed rw
+ALLOWED_PATHS = [
+    f"{HOME}/ws",
+    f"{os.environ.get('DOTFILES')}/nvim/nvim"
+]
+
+@click.command(context_settings=dict(ignore_unknown_options=True))
+@click.option("--extensions", help="Flatpak extensions to use (overrides defaults)")
+@click.option("--install", is_flag=True, help="Installs neovim flatpak and extensions (may require user interaction due to how flatpak works)")
+@click.option("--unsafe", default=False, is_flag=True, help="Installs neovim flatpak and extensions")
+@click.option("--network", default=False, is_flag=True, help="Allow network access")
+@click.argument("nvim_args", nargs=-1, type=click.UNPROCESSED)
+def main(extensions, install, unsafe, network, nvim_args):
+    args = []
+
+    if extensions:
+        enabled_extensions = [ x for x in extensions.split(",") if x ]
+    else:
+        enabled_extensions = DEFAULT_FLATPAK_EXTENSIONS
+
+    if install:
+        print(f"Installing neovim flatpak and extensions ({', '.join(enabled_extensions)})")
+
+        sp.run(["flatpak", "install", "-y", "flathub", "io.neovim.nvim"]).check_returncode()
+        sp.run(["flatpak", "install", "-y"] + [ f"org.freedesktop.Sdk.Extension.{x}" for x in enabled_extensions ]).check_returncode()
+
+        sys.exit(0)
+
+    if unsafe and click.confirm("Unsafe mode enabled, are you sure you want to continue?", abort=True):
+        click.secho("Sandboxing is disabled!", fg="red")
+    else:
+        args += [
+            "--sandbox",
+            "--socket=wayland",
+            "--share=ipc",
+            "--filesystem=host-os",
+            "--persist=.config/nvim",
+            "--persist=.local/share/nvim",
+            "--persist=.local/state/nvim",
+            "--persist=.cache/nvim"
+        ]
+
+    if network:
+        args += [ "--share=network" ]
+    else:
+        args += [ "--unshare=network" ]
+
+    os.environ["FLATPAK_ENABLE_SDK_EXT"] = ",".join(enabled_extensions)
+    args = [ "flatpak", "run" ] + args
+
+    for i in FORBIDDEN_PATHS:
+        args += [ f"--nofilesystem={i}" ]
+
+    for i in ALLOWED_PATHS:
+        args += [ f"--filesystem={i}" ]
+
+    # TODO if nvim arg is '.' or a directory then just allow access to that directory
+    args += [
+        # use terminfo from the host system (https://github.com/flathub/io.neovim.nvim/issues/65)
+        "--env=\"TERMINFO_DIRS=/var/run/host/usr/share/terminfo:/usr/share/terminfo\""
+    ]
+
+    args += [ "io.neovim.nvim" ] + list(nvim_args)
+
+    os.execlp("flatpak", *args)
+
+if __name__ == "__main__":
+    main()
+

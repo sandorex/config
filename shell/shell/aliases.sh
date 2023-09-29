@@ -96,6 +96,6 @@ rcp() {
 # fuzzy cd, required fd
 fcd() {
     local dir
-    dir="$(fd -td -tl --follow --hidden --max-depth 5 "$@" | fzf)" && cd "${dir:?}" || exit 1
+    dir="$(fd -td -tl --follow --max-depth 5 | fzf)" && cd "${dir:?}"
 }
 
