@@ -23,6 +23,8 @@ FORBIDDEN_PATHS = [
 # paths that are always allowed rw
 ALLOWED_PATHS = [
     f"{HOME}/ws",
+
+    # the nvim config path (if you add a symlink here it wont work)
     f"{os.environ.get('DOTFILES')}/nvim/nvim"
 ]
 

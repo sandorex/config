@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# wayout widget for task
+# shows current status of the task
+
+MONITOR="DVI-D-1"
+
+while :; do
+    task status || echo "..."
+    echo "<BREAK>"
+    sleep 10s
+done | wayout --feed-delimiter "<BREAK>" \
+              --font "Hack Nerd Font 14" \
+              --output "$MONITOR" \
+              --width 1060 \
+              --height 1900
+
