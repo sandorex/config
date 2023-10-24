@@ -92,3 +92,19 @@ _job-switch() {
 }
 zle -N _job-switch
 bindkey '^Z' _job-switch
+
+# NOTE: this may not work on all terminals, the key is Alt+ISO_KEY (one left of z)
+_go_up() {
+    # save buffer
+    zle push-input
+
+    # change command
+    BUFFER="cd .."
+
+    # run command and automatically the buffer is restored
+    zle accept-line
+    zle redisplay
+}
+zle -N _go_up
+bindkey '\x1b<' _go_up
+
