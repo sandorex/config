@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# qscan - basically a wrapper around scanimage
+
+scan() {
+    scanimage --resolution 900 --mode Gray --format=jpeg --progress "$@"
+}
+
+if [ -t 1 ] ; then
+    echo "Please redirect the output to a file you want" 1>&2
+    exit 1
+else
+    echo "Scanning!" 1>&2
+    scan "$@"
+fi
+
