@@ -49,6 +49,10 @@ while [ $# -gt 0 ]; do
             NOTIFY=1
             shift
             ;;
+        --list)
+            LIST=1
+            shift
+            ;;
         -*)
             echo "Unknown option $1"
             exit 1
@@ -87,35 +91,41 @@ msg() {
     fi
 }
 
-case "$1" in
-    [0-9]|[0-9][0-9])
-        schedule "${1}m timer" "$1" "${2:-${TIMER_MSGS[@]}}"
-        msg "Scheduled timer in ${1}m"
-        ;;
-    # these are the profiles
-    w|work)
-        schedule "Work" 30 "${2:-${WORK_MSGS[@]}}"
-        msg "The timer has been scheduled, now get back to work!"
-        ;;
-    sb|shortbreak)
-        schedule "Break" 5 "${2:-${BREAK_MSGS[@]}}"
-        msg "The timer has been scheduled, now go drink some water then come back!"
-        ;;
-    b|break)
-        schedule "Break" 15 "${2:-${BREAK_MSGS[@]}}"
-        msg "The timer has been scheduled, now go away!"
-        ;;
-    r|rest)
-        schedule "Rest" 30 "${2:-${BREAK_MSGS[@]}}"
-        msg "The timer has been scheduled, now go rest a bit"
-        ;;
-    *)
-        echo "Invalid option"
-        cat <<EOF
-Usage: $(basename "$0") [--notify] <time/profile> [<message>]
+if [[ -n "$LIST" ]]; then
+    # TODO is there a way to filter them so only ones scheduled using this script are shown
+    echo "All scheduled timers:"
+    atq
+else
+    case "$1" in
+        [0-9]|[0-9][0-9])
+            schedule "${1}m timer" "$1" "${2:-${TIMER_MSGS[@]}}"
+            msg "Scheduled timer in ${1}m"
+            ;;
+        # these are the profiles
+        w|work)
+            schedule "Work" 30 "${2:-${WORK_MSGS[@]}}"
+            msg "The timer has been scheduled, now get back to work!"
+            ;;
+        sb|shortbreak)
+            schedule "Break" 5 "${2:-${BREAK_MSGS[@]}}"
+            msg "The timer has been scheduled, now go drink some water then come back!"
+            ;;
+        b|break)
+            schedule "Break" 15 "${2:-${BREAK_MSGS[@]}}"
+            msg "The timer has been scheduled, now go away!"
+            ;;
+        r|rest)
+            schedule "Rest" 30 "${2:-${BREAK_MSGS[@]}}"
+            msg "The timer has been scheduled, now go rest a bit"
+            ;;
+        *)
+            echo "Invalid option"
+            cat <<EOF
+Usage: $(basename "$0") [--notify / --list / --cancel] <time/profile> [<message>]
 EOF
-        exit 1
-        ;;
-esac
+            exit 1
+            ;;
+    esac
+fi
 
 
