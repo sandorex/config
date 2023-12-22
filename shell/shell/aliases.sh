@@ -16,7 +16,7 @@ alias edit="$EDITOR1"
 alias s='sudo'
 alias t='task'
 alias g='git'
-alias cg='cgit'; compdef cg='git'
+alias cg="git --git-dir $DOTFILES/.git --work-tree $DOTFILES"
 alias f="$FILE_MANAGER";
 
 # use bat if available
