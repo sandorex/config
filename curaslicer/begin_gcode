@@ -4,8 +4,9 @@ M140 S{material_bed_temperature_layer_0} ; Set Heat Bed temperature
 M104 S150 ; Set lower extruder temperature to prevent oozing
 M190 S{material_bed_temperature_layer_0} ; Wait for Heat Bed temperature
 G28 ; Home all axes
-G29 ; Auto bed-level (BL-Touch)
-M500 ; Used to store G29 results in memory
+M420 S ; Load auto bed-level
+;G29 ; Auto bed-level (BL-Touch) ; disabled as it takes too long
+;M500 ; Used to store G29 results in memory
 G92 E0 ; Reset Extruder
 G1 Z3.0 F3000 ; move z up little to prevent scratching of surface
 M104 S{material_print_temperature_layer_0} ; Set Extruder temperature
