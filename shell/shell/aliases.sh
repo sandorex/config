@@ -93,9 +93,11 @@ rcp() {
         "$@"
 }; compdef rcp=rsync
 
-# fuzzy cd, required fd
+# fuzzy cd, requires fd
 fcd() {
     local dir
-    dir="$(fd -td -tl --follow --max-depth 5 | fzf)" && cd "${dir:?}"
+    # im using cd here as fd acts weirdly with an argument
+    # using fzf exact match as it makes more sense
+    dir="$(test -n "$1" && cd "$1"; fd -td -tl --follow --max-depth 5 | fzf --exact)" && cd "${dir:?}"
 }
 
