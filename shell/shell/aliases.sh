@@ -26,13 +26,13 @@ fi
 
 # use lsd if available
 if command -v lsd &>/dev/null; then
-    ls() { lsd -F "$@"; }
-    l() { lsd -aF "$@"; }
-    ll() { lsd -alF "$@"; }
+    function ls() { lsd -F "$@"; }
+    function l() { lsd -aF "$@"; }
+    function ll() { lsd -alF "$@"; }
 else
-    ls() { command ls -F --color=auto "$@"; }
-    l() { ls -aF --color=auto "$@"; }
-    ll() { ls -alFh --color=auto "$@"; }
+    function ls() { command ls -F --color=auto "$@"; }
+    function l() { ls -aF --color=auto "$@"; }
+    function ll() { ls -alFh --color=auto "$@"; }
 fi
 
 if command -v zellij &>/dev/null; then

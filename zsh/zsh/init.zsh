@@ -26,19 +26,24 @@ if [[ -z "$PROMPT_COLOR" ]]; then
     fi
 fi
 
+# simple indicator when running in container
+if [[ -v container ]]; then
+    _prompt_container_indicator="°"
+fi
+
 # prompt expansion https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
-PROMPT="[%F{magenta}%n%f@%F{blue}%m%F{${PROMPT_ICON_COLOR:-$PROMPT_COLOR}}( ${PROMPT_ICON_UTF8} )%f] %F{$PROMPT_COLOR}%(1j.%U.)%%%u%f "
+PROMPT="[%F{magenta}%n%f@%F{blue}%m%F{${PROMPT_ICON_COLOR:-$PROMPT_COLOR}} ${PROMPT_ICON_UTF8}${_prompt_container_indicator:- }%f] %F{$PROMPT_COLOR}%(1j.%U.)%%%u%f "
 
 # shows exit code if last command exited with non-zero
 RPROMPT="%(?..%F{red}[ %?%  ] %f)%F{243}%27<..<%~%f"
 
 # list files on dir change but use lsd if available
 if command -v lsd &>/dev/null; then
-    chpwd() {
+    function chpwd() {
         lsd -F
     }
 else
-    chpwd() {
+    function chpwd() {
         ls --color=auto -F
     }
 fi

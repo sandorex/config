@@ -65,5 +65,5 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 eval "$(dircolors --sh "$AGSHELLDIR/gruvbox.dircolors")"
 
 # check if sourced again needlessly
-[ -n "$__PROFILE_RAN" ] && echo "This is going to be a terrible night..."
+[ -n "$__PROFILE_RAN" ] && echo "This unefficiency is unacceptable, ~/.profile was sourced twice!"
 export __PROFILE_RAN=1
