@@ -74,4 +74,9 @@ fi
 
 source "$AGSHELLDIR/interactive-post.sh"
 
-"$HOME"/.config/shell/init.sh
+# container specific init and system init
+if [[ -v container ]]; then
+    "$AGSHELLDIR"/container-init.sh
+else
+    "$AGSHELLDIR"/init.sh
+fi

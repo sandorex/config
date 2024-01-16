@@ -11,4 +11,3 @@ if [[ "$TERM" == "console" ]]; then
 fi
 
 source "$AGSHELLDIR"/aliases.sh
-

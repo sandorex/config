@@ -114,9 +114,6 @@ _comp_options+=(globdots)
 source "$SHELLDIR/keybindings.zsh"
 source "$AGSHELLDIR/interactive-post.sh"
 
-# zsh compdef for scripts # TODO MOVE ELSEWHERE
-compdef cgit=git
-
 ## PLUGINS ##
 # prevent duplicates on reload
 precmd_functions=( )
@@ -144,6 +141,10 @@ source "$SHELLDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 # remove duplicates from path just in case
 typeset -U path
 
-# startup apps and stuff
-"$AGSHELLDIR"/init.sh
+# container specific init and system init
+if [[ -v container ]]; then
+    "$AGSHELLDIR"/container-init.sh
+else
+    "$AGSHELLDIR"/init.sh
+fi
 
