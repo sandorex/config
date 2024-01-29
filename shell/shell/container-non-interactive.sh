@@ -5,6 +5,6 @@
 
 # make sure the system and container have the same hostname
 host_hostname="$(distrobox-host-exec hostname)"
-if [[ "$(hostname)" != "$host_hostname" ]] && [[ -n "$host_name" ]]; then
+if [[ "$(hostname)" != "$host_hostname" ]] && [[ -n "$host_hostname" ]]; then
     sudo hostname "$host_hostname"
 fi
