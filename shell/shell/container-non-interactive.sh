@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 #
-# http://github.com/sandorex/config
-# init script for containers (toolbx/distrobox)
+# https://github.com/sandorex/config
+# non-interactive shell init file for containers
 
 # make sure the system and container have the same hostname
 host_hostname="$(distrobox-host-exec hostname)"
-if [[ "$(hostname)" != "$host_hostname" ]]; then
+if [[ "$(hostname)" != "$host_hostname" ]] && [[ -n "$host_name" ]]; then
     sudo hostname "$host_hostname"
 fi

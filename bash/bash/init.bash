@@ -4,7 +4,7 @@
 
 export SHELLDIR="$HOME/.config/bash"
 
-source "${AGSHELLDIR:-$HOME/.config/shell}/non-interactive.sh"
+source "$AGSHELLDIR/non-interactive.sh"
 
 # process further only if interactive
 case $- in
@@ -73,10 +73,3 @@ if ! shopt -oq posix; then
 fi
 
 source "$AGSHELLDIR/interactive-post.sh"
-
-# container specific init and system init
-if [[ -v container ]]; then
-    "$AGSHELLDIR"/container-init.sh
-else
-    "$AGSHELLDIR"/init.sh
-fi

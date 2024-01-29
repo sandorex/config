@@ -5,7 +5,7 @@
 
 export SHELLDIR="$HOME/.config/zsh"
 
-source "${AGSHELLDIR:-$HOME/.config/shell}/non-interactive.sh"
+source "$AGSHELLDIR/non-interactive.sh"
 
 # the rest is only if it's an interactive shell
 [[ -o interactive ]] || return
@@ -140,11 +140,3 @@ source "$SHELLDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # remove duplicates from path just in case
 typeset -U path
-
-# container specific init and system init
-if [[ -v container ]]; then
-    "$AGSHELLDIR"/container-init.sh
-else
-    "$AGSHELLDIR"/init.sh
-fi
-
