@@ -4,7 +4,7 @@
 
 export SHELLDIR="$HOME/.config/bash"
 
-source "$AGSHELLDIR/non-interactive.sh"
+source "$AGSHELLDIR/init.sh"
 
 # process further only if interactive
 case $- in
@@ -12,10 +12,10 @@ case $- in
       *) return;;
 esac
 
-source "$AGSHELLDIR/interactive-pre.sh"
+source "$AGSHELLDIR/init-i.sh"
 
-alias reload-shell='source ~/.bashrc'
-alias reload-bash='source ~/.bashrc'
+alias reload-shell="source '$SHELLDIR/init.bash'"
+alias reload-bash="source '$SHELLDIR/init.bash'"
 
 # updates LINES & COLUMN
 shopt -s checkwinsize
@@ -71,5 +71,3 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
-
-source "$AGSHELLDIR/interactive-post.sh"

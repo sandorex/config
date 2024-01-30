@@ -2,6 +2,8 @@
 #
 # interactive-pre.sh - ran in interactive shells after non-interactive.sh
 
+# TODO rework this whole system, its a mess
+
 source "$AGSHELLDIR/distro-icon.sh"
 
 if [[ -n "$container" ]]; then

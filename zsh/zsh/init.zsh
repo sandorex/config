@@ -5,25 +5,20 @@
 
 export SHELLDIR="$HOME/.config/zsh"
 
-source "$AGSHELLDIR/non-interactive.sh"
+source "$AGSHELLDIR/init.sh"
+
 
 # the rest is only if it's an interactive shell
 [[ -o interactive ]] || return
 
-source "$AGSHELLDIR/interactive-pre.sh"
+source "$AGSHELLDIR/init-i.sh"
 
-alias reload-shell='source ~/.zshrc; compinit'
-alias reload-zsh='source ~/.zshrc; compinit'
+alias reload-shell="source '$SHELLDIR/init.zsh'; compinit"
+alias reload-zsh="source '$SHELLDIR/init.zsh'; compinit"
 
-# set default color for the prompt
-# allows for distinct color for each container / environment
+# set default color for the prompt to red as something is not right
 if [[ -z "$PROMPT_COLOR" ]]; then
-    # make container default to blue
-    if [[ -n "$container" ]]; then
-        PROMPT_COLOR='blue'
-    else
-        PROMPT_COLOR='red'
-    fi
+    PROMPT_COLOR='red'
 fi
 
 # simple indicator when running in container
@@ -32,7 +27,7 @@ if [[ -v container ]]; then
 fi
 
 # prompt expansion https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
-PROMPT="[%F{magenta}%n%f@%F{blue}%m%F{${PROMPT_ICON_COLOR:-$PROMPT_COLOR}} ${PROMPT_ICON_UTF8}${_prompt_container_indicator:- }%f] %F{$PROMPT_COLOR}%(1j.%U.)%%%u%f "
+PROMPT="[%F{magenta}%n%f@%F{blue}%m%F{${PROMPT_ICON_COLOR:-$PROMPT_COLOR}} ${PROMPT_ICON}${_prompt_container_indicator:- }%f] %F{$PROMPT_COLOR}%(1j.%U.)%%%u%f "
 
 # shows exit code if last command exited with non-zero
 RPROMPT="%(?..%F{red}[ %?%  ] %f)%F{243}%27<..<%~%f"
@@ -102,6 +97,7 @@ autoload -Uz compinit bashcompinit
 
 # generate compinit only every 8 hours
 for _ in "$HOME"/.zcompdump(N.mh+8); do
+    echo "Generating compinit.."
     compinit
     bashcompinit
 done
@@ -112,9 +108,9 @@ compinit -C
 _comp_options+=(globdots)
 
 source "$SHELLDIR/keybindings.zsh"
-source "$AGSHELLDIR/interactive-post.sh"
 
 ## PLUGINS ##
+# TODO redo this so its less complicated
 # prevent duplicates on reload
 precmd_functions=( )
 preexec_functions=( )

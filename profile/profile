@@ -23,6 +23,8 @@ if command -v fnm >/dev/null && [ -z "$FNM_DIR" ]; then
     eval "$(fnm env)"
 fi
 
+# TODO add nix but make it work with the rest
+
 export PATH
 
 # this section basically select editor levels based on what is installed, it
@@ -62,8 +64,9 @@ export LESS='FRX --mouse'
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # set ls colors
-eval "$(dircolors --sh "$AGSHELLDIR/gruvbox.dircolors")"
+eval "$(dircolors --sh "$AGSHELLDIR/util/gruvbox.dircolors")"
 
 # check if sourced again needlessly
 [ -n "$__PROFILE_RAN" ] && echo "This unefficiency is unacceptable, ~/.profile was sourced twice!"
 export __PROFILE_RAN=1
+
