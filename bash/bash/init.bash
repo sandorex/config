@@ -13,6 +13,7 @@ case $- in
 esac
 
 source "$AGSHELLDIR/init-i.sh"
+source "$AGSHELLDIR/aliases.sh"
 
 alias reload-shell="source '$SHELLDIR/init.bash'"
 alias reload-bash="source '$SHELLDIR/init.bash'"

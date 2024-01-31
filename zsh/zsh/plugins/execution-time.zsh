@@ -4,9 +4,10 @@
 #
 # rewritten by Sandorex
 #
-# this will probably clash if any other plugin adds to RPROMPT as well
+# this plugin has to be the last one that modifies RPOMPT
 
 _command_time_preexec() {
+    export RPROMPT="$_command_time_original_rprompt"
     _command_time_timer=${_command_time_timer:-$SECONDS}
     _command_time_elapsed=''
 }
@@ -38,11 +39,13 @@ _command_time_precmd() {
         fi
 
         unset _command_time_timer
-    fi
 
-    # prepend to existing RPROMPT
-    export RPROMPT="${_command_time_elapsed}${RPROMPT}"
+        # prepend to existing RPROMPT
+        export RPROMPT="${_command_time_elapsed}${RPROMPT}"
+    fi
 }
+
+_command_time_original_rprompt="$RPROMPT"
 
 precmd_functions+=(_command_time_precmd)
 preexec_functions+=(_command_time_preexec)
