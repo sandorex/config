@@ -31,3 +31,6 @@ source "$VENV_DIR/bin/activate"
 if ! command -v ansible &>/dev/null; then
     pip install ansible
 fi
+
+echo "You can exit out of the virtualenv using 'deactivate' command"
+
