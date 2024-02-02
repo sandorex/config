@@ -1,0 +1,9 @@
+---
+- name: Configure wezterm (linux)
+  import_tasks: linux.yml
+  when: ansible_system == 'Linux'
+
+- name: Configure wezterm (windows)
+  import_tasks: windows.yml
+  when: ansible_system == 'Win32NT'
+

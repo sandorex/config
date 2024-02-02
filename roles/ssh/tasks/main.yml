@@ -1,0 +1,19 @@
+---
+- name: Ensure proper permissions on ~/.ssh
+  ansible.builtin.file:
+    path: '{{ ansible_env.HOME }}/.ssh'
+    state: touch
+    mode: 0700
+
+- name: Link ssh configuration file
+  ansible.builtin.copy:
+    src: '{{ role_path }}/config'
+    dest: '{{ ansible_env.HOME }}/.ssh/config'
+    mode: 0600
+
+- name: Create ssh directories
+  ansible.builtin.file:
+    path: '{{ ansible_env.HOME }}/.ssh/_'
+    state: directory
+    mode: 0600
+

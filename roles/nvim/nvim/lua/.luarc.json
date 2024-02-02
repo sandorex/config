@@ -1,0 +1,23 @@
+{
+    "workspace.library": [
+        "/var/home/sandorex/.local/share/nvim/lazy/neodev.nvim/types/stable",
+        "/var/home/sandorex/.local/share/bob/v0.9.0/nvim-linux64/share/nvim/runtime/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/nvim-web-devicons/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/cmp-nvim-lsp/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/Comment.nvim/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/nvim-lspconfig/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/LuaSnip/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/mason.nvim/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/cmp_luasnip/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/nightfox.nvim/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/neodev.nvim/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/which-key.nvim/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/lualine.nvim/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/lazy.nvim/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/resession.nvim/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/nvim-cmp/lua",
+        "/var/home/sandorex/.local/share/nvim/lazy/mason-lspconfig.nvim/lua",
+        "/var/home/sandorex/.dotfiles/nvim/nvim/lua",
+        "${3rd}/luv/library"
+    ]
+}

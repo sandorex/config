@@ -1,0 +1,3 @@
+---
+- ansible.builtin.fail:
+    msg: "Wezterm configuration on windows has not been implemented"

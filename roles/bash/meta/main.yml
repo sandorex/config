@@ -1,0 +1,5 @@
+---
+dependencies:
+  - role: profile
+  - role: shell
+

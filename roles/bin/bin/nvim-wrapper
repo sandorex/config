@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# neovim flatpak wrapper script
+
+set -eu
+
+# NOTE: python is included by default
+FLATPAK_EXT="rust-stable,node18"
+
+args=()
+
+POSITIONAL_ARGS=()
+
+while [ $# -gt 0 ]; do
+    case $1 in
+	--network)
+            args+=( "--share=network" )
+            shift
+            ;;
+        --install)
+            echo "Installing neovim flatpak"
+
+            flatpak install -y flathub io.neovim.nvim
+
+            echo "Installing flatpak extension SDKs '$FLATPAK_EXT'"
+
+            # converting the comma to space
+            for i in ${FLATPAK_EXT/,/ }; do
+                flatpak install -y "org.freedesktop.Sdk.Extension.$i"
+            done
+
+            exit 0
+            ;;
+        --unsafe)
+            # TODO
+            echo "Running in unstafe mode, are you sure? (y/N) "
+            answer="$(read -rp)"
+            case "$answer" in
+                [Yy])
+                    ;;
+                *)
+                    exit 1
+                    ;;
+            esac
+            ;;
+        *)
+            # save positional arg
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+# TODO maybe if opened with a directory 'nvim .' then lock it into that dir only?
+# this should probably be rewritten in python..
+
+# all default permissions are removed and explicitely defined here
+# no networking by default
+# no filesystem access by default with exceptions
+# TODO do this with more parameterization, like array of paths that are RW
+FLATPAK_ENABLE_SDK_EXT="$FLATPAK_EXT" flatpak run \
+    --sandbox \
+    --socket=wayland \
+    --socket=fallback-x11 \
+    --share=ipc \
+    --env="TERMINFO_DIRS=/var/run/host/usr/share/terminfo:/usr/share/terminfo" \
+    --filesystem=host-os \
+    --persist=.config/nvim \
+    --persist=.local/share/nvim \
+    --persist=.local/state/nvim \
+    --persist=.cache/nvim \
+    --filesystem="$DOTFILES/nvim/nvim" \
+    --filesystem="$HOME/ws"
+    "${args[@]}" \
+    io.neovim.nvim "$@"
+

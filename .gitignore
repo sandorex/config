@@ -1,4 +1,2 @@
 __pycache__/
-state/
-.shenv
-.installed
+venv/

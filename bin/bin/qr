@@ -1,5 +1,0 @@
-#!/bin/sh
-# generates QR code using UTF8 chars and prints to stdout
-#
-# requires 'qrencode' package
-qrencode -t UTF8 "$@"

@@ -1,0 +1,44 @@
+- name: Basic system bootstrap
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Create ~/.config if it does not exist
+      ansible.builtin.file:
+        path: '{{ ansible_env.HOME }}/.config'
+        state: directory
+
+    - name: Configure ssh
+      tags: ssh
+      import_role:
+        name: ssh
+
+    - name: Configure nano editor
+      tags: nano
+      import_role:
+        name: nano
+
+    - name: Configure ranger
+      tags: ranger
+      import_role:
+        name: ranger
+
+    - name: Configure neovim
+      tags: neovim
+      import_role:
+        name: nvim
+
+    - name: Configure bin
+      tags: bin
+      import_role:
+        name: bin
+
+    - name: Configure ZSH shell
+      tags: zsh
+      import_role:
+        name: zsh
+
+    - name: Configure BASH shell
+      tags: bash
+      import_role:
+        name: bash
+

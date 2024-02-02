@@ -1,0 +1,67 @@
+#!/usr/bin/env python3
+#
+# https://github.com/sandorex/config
+# embed subtitle into video file without re-encoding
+#
+# requires ffmpeg
+#
+# usage: embed-subtitle <video file> <subtitle file> <subtitle track name>
+
+VERSION = '0.1.0'
+
+import subprocess as sp
+import click
+
+from pathlib import Path
+
+# from collections import namedtuple
+
+
+
+# import os
+
+# try:
+# video_file = Path(sys.argv[1])
+# except IndexError:
+#     print("Please pass valid path file")
+
+@click.command()
+@click.version_option(VERSION)
+@click.argument("video", help="Video file to embed subtitles into (mkv, mp4)")
+def cli():
+    pass
+
+if __name__ == "__main__":
+    cli()
+
+# TODO redo this and automatically set language etc from name <filename>_lang.srt
+# https://gist.github.com/spirillen/af307651c4261383a6d651038a82565d
+
+# set -eu
+#
+# if ! command -v ffmpeg &>/dev/null; then
+#     echo "ffmpeg not found"
+#     exit 1
+# fi
+#
+# case "$1" in
+#     *.mkv)
+#         ;;
+#     *.mp4)
+#         ;;
+#     *)
+#         echo "Unsupported format ${1##*.}"
+#         exit 1
+#         ;;
+# esac
+#
+# # TODO find all *.srt files in directory where video file is
+#
+# args=(
+#     -i "$1"
+#     -sub_charenc CP1252
+# )
+#
+# # CP1252 is windows latin encoding supporting serbian characters
+# ffmpeg -i "$1" -sub_charenc CP1252 -i "$2" -c copy -c:s mov_text -metadata:s:s:0 title="$3" "embedded_$1"
+

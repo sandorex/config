@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# image cat, prints image to terminal if possible otherwise run in some image
+# viewer
+#
+# supports:
+#   kitty
+
+# TODO
+

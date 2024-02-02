@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-#
-# fallback/bkt - fallback for bkt, just runs argument with same syntax as bkt
-
-# consume all arguments
-while [[ "$1" != '--' ]]; do shift; done
-
-exec "$@"

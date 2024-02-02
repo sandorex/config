@@ -1,0 +1,7 @@
+---
+- name: Link profile
+  ansible.builtin.file:
+    src: '{{ role_path }}/profile'
+    dest: '{{ ansible_env.HOME }}/.profile'
+    state: link
+

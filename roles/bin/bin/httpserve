@@ -1,0 +1,12 @@
+#!/usr/bin/env python3
+#
+# https://github.com/sandorex/config
+# http server with password authentication and some extra features
+
+# TODO
+# 1. on-by-default password authentication cause sharing everything on public network is a bad idea
+# 2. share specific files (link to them in another directory and server that directory? or just filter urls to those two)
+# 3. share single file (ignore the url always serve that specific file so you can download it from other device using just the ip)
+# 4. default to 8080 (or whatever the http port is so) so that it loads with just ip `192.168.1.100` example
+
+
