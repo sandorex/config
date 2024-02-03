@@ -121,6 +121,3 @@ function precmd() {
     printf "\033]0;%s\007" "$(pwd)"
 }
 
-
-# Created by `pipx` on 2024-02-02 13:41:58
-export PATH="$PATH:/home/sandorex/.dbx/ansible-testing/.local/bin"

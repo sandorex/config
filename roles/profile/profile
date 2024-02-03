@@ -70,6 +70,3 @@ eval "$(dircolors --sh "$AGSHELLDIR/util/gruvbox.dircolors")"
 [ -n "$__PROFILE_RAN" ] && echo "This unefficiency is unacceptable, ~/.profile was sourced twice!"
 export __PROFILE_RAN=1
 
-
-# Created by `pipx` on 2024-02-02 13:41:58
-export PATH="$PATH:/home/sandorex/.dbx/ansible-testing/.local/bin"
