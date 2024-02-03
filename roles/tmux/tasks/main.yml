@@ -1,0 +1,7 @@
+---
+- name: Link tmux configuration directory
+  ansible.builtin.file:
+    src: '{{ role_path }}/tmux'
+    dest: '{{ ansible_env.HOME }}/.config/tmux'
+    state: link
+

@@ -1,0 +1,15 @@
+---
+default_roles:
+  - git
+  - ssh
+
+  - bin
+
+  - neovim
+  - nano
+
+  - kitty
+
+  - zsh
+  - glow
+

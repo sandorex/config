@@ -4,20 +4,29 @@
 # script sets up ansible using python venv, each python version has its own
 # venv as it often breaks without errors if there is a mismatch in versions
 
-export VENV_BASE_DIR="venv"
+# get the root directory but keep compatibility with both zsh and bash
+if [[ -v ZSH_VERSION ]]; then
+    ROOT_DIR="$(realpath "$(dirname "${0:A}")/..")"
+else
+    ROOT_DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")/..")"
+fi
+
+VENV_BASE_DIR="$ROOT_DIR/venv"
 
 if ! command -v python3 &>/dev/null; then
     echo "Python3 was not found"
     return 1
 fi
 
+# NOTE: this may take more space but it prevents vague errors when you try to
+# run virtualenv with newer python3 version on an older version
+#
 # get version string like 3.11, 3.14, ..
 PYTHON_VERSION="py$(python3 -c 'import sys; print(str(sys.version_info.major) + "." + str(sys.version_info.minor))')"
 
 mkdir -p "$VENV_BASE_DIR"
 
 export VENV_DIR="$VENV_BASE_DIR/$PYTHON_VERSION"
-
 
 # check if venv is already created
 if [[ ! -d "$VENV_DIR" ]]; then
@@ -38,8 +47,4 @@ fi
 if ! command -v ansible-playbook &>/dev/null; then
     pip install ansible-core
 fi
-
-echo
-echo "You can exit out of the virtualenv using 'deactivate' command"
-echo
 

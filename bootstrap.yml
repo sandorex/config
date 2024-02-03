@@ -1,4 +1,7 @@
-- name: Basic system bootstrap
+---
+# this playbook adapts to host using the machine/<hostname>.yml var file, which
+# should define vars and especially default_roles which will be ran
+- name: System bootstrap
   hosts: localhost
   connection: local
   tasks:
@@ -7,33 +10,14 @@
         path: '{{ ansible_env.HOME }}/.config'
         state: directory
 
-    - name: Configure git
-      tags: git
-      import_role:
-        name: git
+    - name: Include {{ ansible_nodename }} specific vars
+      ansible.builtin.include_vars:
+        file: '{{ playbook_dir }}/machines/{{ ansible_nodename }}.yml'
 
-    - name: Configure ssh
-      tags: ssh
-      import_role:
-        name: ssh
-
-    - name: Configure nano editor
-      tags: nano
-      import_role:
-        name: nano
-
-    - name: Configure neovim
-      tags: neovim
-      import_role:
-        name: nvim
-
-    - name: Configure bin
-      tags: bin
-      import_role:
-        name: bin
-
-    - name: Configure ZSH shell
-      tags: zsh
-      import_role:
-        name: zsh
+    - name: Run {{ ansible_nodename }} specific roles
+      loop: '{{ default_roles }}'
+      loop_control:
+        loop_var: __target_role # to avoid conflict with role loops
+      ansible.builtin.include_role:
+        name: '{{ __target_role }}'
 
