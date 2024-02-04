@@ -39,8 +39,8 @@ fi
 
 # activate virtualenv
 if ! source "$VENV_DIR/bin/activate"; then
-    echo "Failed to activate virtualenv, try deleteing './$VENV_DIR'"
-    exit 1
+    echo "Failed to activate virtualenv, try deleteing '$VENV_DIR'"
+    return 1
 fi
 
 # install ansible-core if not present

@@ -1,8 +1,8 @@
 ---
-- name: Ensure proper permissions on ~/.ssh
+- name: Ensure directory ~/.ssh exists
   ansible.builtin.file:
     path: '{{ ansible_env.HOME }}/.ssh'
-    state: touch
+    state: directory
     mode: 0700
 
 - name: Copy ssh configuration file
