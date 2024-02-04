@@ -1,7 +1,0 @@
----
-collections:
-  - name: community.general
-
-roles:
-  - name: community.general.pipx
-

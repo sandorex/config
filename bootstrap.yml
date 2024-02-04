@@ -5,14 +5,14 @@
   hosts: localhost
   connection: local
   tasks:
-    - name: Ensure directory ~/.config
+    - name: Ensure directory ~/.config exists
       ansible.builtin.file:
         path: '{{ ansible_env.HOME }}/.config'
         state: directory
       tags: always
 
     # this delegates the whole setup to another file
-    - name: Run setup for {{ ansible_nodename }}
+    - name: Setting up @{{ ansible_nodename }}
       ansible.builtin.include_role:
         name: device
         tasks_from: '{{ ansible_nodename }}'
