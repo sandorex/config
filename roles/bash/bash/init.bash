@@ -4,15 +4,12 @@
 
 export SHELLDIR="$HOME/.config/bash"
 
-source "$AGSHELLDIR/init.sh"
-
 # process further only if interactive
 case $- in
     *i*) ;;
       *) return;;
 esac
 
-source "$AGSHELLDIR/init-i.sh"
 source "$AGSHELLDIR/aliases.sh"
 
 alias reload-shell="source '$SHELLDIR/init.bash'"
@@ -60,9 +57,8 @@ __prompt_cmd() {
     echo -en "\033]0;$(pwd)\a"
 }
 
-# TODO add fallback so the prompt color is different if its not defined
 PROMPT_COMMAND="__prompt_cmd ; $PROMPT_COMMAND"
-PS1='\[$(tput setaf "$PROMPT_COLOR")\]$\[$(tput sgr0)\] '
+PS1='$\[$(tput sgr0)\] '
 
 # enable bash completion
 if ! shopt -oq posix; then

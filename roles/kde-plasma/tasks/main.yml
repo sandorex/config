@@ -1,0 +1,99 @@
+---
+- name: Set mouse {{ item.name }} settings
+  tags: mouse
+  loop: '{{ mouse_settings }}'
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kcminputrc'
+    values:
+      - groups: [Libinput, '{{ item.pid }}', '{{ item.vid }}', '{{ item.name }}']
+        key: PointerAcceleration
+        value: '{{ item.accel }}'
+      - groups: [Libinput, '{{ item.pid }}', '{{ item.vid }}', '{{ item.name }}']
+        key: PointerAccelerationProfile
+        value: '{{ item.accelProfile }}'
+  when: mouse_settings is defined
+
+- name: Set keyboard repeat delay
+  tags: keyboard
+  vars:
+    keyboard_repeat_delay: 400
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kcminputrc'
+    values:
+      - group: Keyboard
+        key: RepeatDelay
+        value: '{{ keyboard_repeat_delay }}'
+
+- name: Disable meta app menu shortcut (clashes with Hyper)
+  tags: keyboard
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kwinrc'
+    values:
+      - group: ModifierOnlyShortcuts
+        key: Meta
+        value: ''
+
+- name: Replace capslock with hyper key
+  tags: keyboard
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kxkbrc'
+    values:
+      - group: Layout
+        key: Options
+        value: 'caps:hyper'
+
+# white cursor is much more visible
+- name: Set cursor theme
+  tags: theming
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kcminputrc'
+    values:
+      - group: Mouse
+        key: cursorTheme
+        value: 'Breeze_Snow'
+
+- name: Set window titlebar buttons
+  tags: theming
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kwinrc'
+    values:
+      # this should be --delete
+      - group: 'org.kde.kdecoration2'
+        key: ButtonsOnRight
+        value: ''
+      - group: 'org.kde.kdecoration2'
+        key: ButtonsOnLeft
+        value: 'MF'
+
+- name: Disable primary selection on wayland
+  tags: theming
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kwinrc'
+    values:
+      # this should be --delete
+      - group: Wayland
+        key: EnablePrimarySelection
+        bool_value: false
+
+# TODO install nerd fonts
+- name: Set fonts
+  tags: theming
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kdeglobals'
+    values:
+      - group: General
+        key: fixed
+        value: 'Hack,11,-1,5,50,0,0,0,0,0'
+      - group: General
+        key: font
+        value: 'Noto Sans,11,-1,5,50,0,0,0,0,0'
+      - group: menuFont
+        key: fixed
+        value: 'Noto Sans,11,-1,5,50,0,0,0,0,0'
+      - group: smallestReadableFont
+        key: fixed
+        value: 'Noto Sans,9,-1,5,50,0,0,0,0,0'
+      - group: toolBarFont
+        key: fixed
+        value: 'Noto Sans,11,-1,5,50,0,0,0,0,0'
+

@@ -16,12 +16,11 @@ PATH="$PATH:$HOME/.local/bin"
 PATH="$PATH:$HOME/.cargo/bin"
 PATH="$PATH:$GOPATH/bin"
 PATH="$PATH:$NPM_HOME/bin"
-PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
 PATH="$PATH:$HOME/.bin/polyfill"        # fallback path for optional software
 
-if command -v fnm >/dev/null && [ -z "$FNM_DIR" ]; then
-    eval "$(fnm env)"
-fi
+# if command -v fnm >/dev/null && [ -z "$FNM_DIR" ]; then
+#     eval "$(fnm env)"
+# fi
 
 # TODO add nix but make it work with the rest
 
@@ -65,6 +64,9 @@ export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quo
 
 # set ls colors
 eval "$(dircolors --sh "$AGSHELLDIR/util/gruvbox.dircolors")"
+
+# theme bare shell if ran in it
+"$AGSHELLDIR/util/console-theming.sh"
 
 # check if sourced again needlessly
 [ -n "$__PROFILE_RAN" ] && echo "This unefficiency is unacceptable, ~/.profile was sourced twice!"

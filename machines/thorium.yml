@@ -13,3 +13,19 @@ default_roles:
   - zsh
   - glow
 
+  - kde-plasma
+
+neovim_install: true
+
+mouse_settings:
+  - name: 'E-Signal USB Gaming Mouse'
+    pid: '1241'
+    vid: '41119'
+    accel: ' -0.200'
+    accelProfile: 1
+  - name: 'Logitech Wireless Mouse PID:4022'
+    pid: '1133'
+    vid: '16418'
+    accel: '0.200'
+    accelProfile: 1
+

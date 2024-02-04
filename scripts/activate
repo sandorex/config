@@ -45,6 +45,6 @@ fi
 
 # install ansible-core if not present
 if ! command -v ansible-playbook &>/dev/null; then
-    pip install ansible-core
+    pip install ansible
 fi
 

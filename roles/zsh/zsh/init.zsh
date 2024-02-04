@@ -5,12 +5,8 @@
 
 export SHELLDIR="$HOME/.config/zsh"
 
-source "$AGSHELLDIR/init.sh"
-
 # the rest is only if it's an interactive shell
 [[ -o interactive ]] || return
-
-source "$AGSHELLDIR/init-i.sh"
 
 alias reload-shell="source '$SHELLDIR/init.zsh'; compinit"
 alias reload-zsh="source '$SHELLDIR/init.zsh'; compinit"
@@ -67,15 +63,8 @@ autoload -U zmv
 # this has to be below options
 autoload -Uz compinit bashcompinit
 
-# TODO idk but it seems they canged how it works so now it generates only if it
-# thinks it needs to
-
-# generate compinit only every 8 hours
-# for _ in "$HOME"/.zcompdump(N.mh+8); do
-#     echo "Generating compinit.."
 compinit
 bashcompinit
-# done
 
 compinit -C
 
@@ -87,6 +76,9 @@ _comp_options+=(globdots)
 if [[ -v container ]]; then
     _prompt_container_indicator="°"
 fi
+
+# define color and distro icon
+source "$AGSHELLDIR/util/distro-icon.sh"
 
 # prompt expansion https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
 PROMPT="[%F{magenta}%n%f@%F{blue}%m%F{${PROMPT_ICON_COLOR}} ${PROMPT_ICON}${_prompt_container_indicator:- }%f] %F{$PROMPT_ICON_COLOR}%(1j.%U.)%%%u%f "
