@@ -1,0 +1,4 @@
+---
+- name: Restart KWin
+  ansible.builtin.command: qdbus org.kde.KWin /KWin reconfigure
+

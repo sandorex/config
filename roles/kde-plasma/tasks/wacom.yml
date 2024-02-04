@@ -1,0 +1,18 @@
+---
+# wacom tablet settings
+
+- name: Set wacom drawing tablet settings
+  loop: '{{ kde_wacom_settings }}'
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kcminputrc'
+    values:
+      - groups: [Libinput, '{{ item.pid }}', '{{ item.vid }}', '{{ item.name }}']
+        key: LeftHanded
+        bool_value: '{{ item.leftHanded }}'
+      - groups: [Libinput, '{{ item.pid }}', '{{ item.vid }}', '{{ item.name }}']
+        key: OutputArea
+        value: '{{ item.outputArea }}'
+      # NOTE: i left out 'OutputName' as it may change
+  when: kde_wacom_settings is defined
+  notify: 'Restart KWin'
+

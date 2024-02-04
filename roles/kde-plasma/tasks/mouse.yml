@@ -1,0 +1,26 @@
+---
+# mouse oriented settings
+
+- name: Set per mouse settings
+  loop: '{{ kde_mouse_settings }}'
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kcminputrc'
+    values:
+      - groups: [Libinput, '{{ item.pid }}', '{{ item.vid }}', '{{ item.name }}']
+        key: PointerAcceleration
+        value: '{{ item.accel }}'
+      - groups: [Libinput, '{{ item.pid }}', '{{ item.vid }}', '{{ item.name }}']
+        key: PointerAccelerationProfile
+        value: '{{ item.accelProfile }}'
+  when: kde_mouse_settings is defined
+  notify: 'Restart KWin'
+
+- name: Disable primary selection (middle click paste) on wayland
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kwinrc'
+    values:
+      - group: Wayland
+        key: EnablePrimarySelection
+        bool_value: false
+  notify: 'Restart KWin'
+

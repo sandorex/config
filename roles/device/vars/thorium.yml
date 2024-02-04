@@ -1,23 +1,13 @@
 ---
-default_roles:
-  - git
-  - ssh
-
-  - bin
-
-  - neovim
-  - nano
-
-  - kitty
-
-  - zsh
-  - glow
-
-  - kde-plasma
-
 neovim_install: true
 
-mouse_settings:
+nerdfonts_version: 'v3.1.1'
+nerdfonts_fonts:
+  - Hack
+  - FiraCode
+  - Noto
+
+kde_mouse_settings:
   - name: 'E-Signal USB Gaming Mouse'
     pid: '1241'
     vid: '41119'
@@ -28,4 +18,11 @@ mouse_settings:
     vid: '16418'
     accel: '0.200'
     accelProfile: 1
+
+kde_wacom_settings:
+  - name: 'Wacom One by Wacom S Pen'
+    pid: '1386'
+    vid: '890'
+    leftHanded: false
+    outputArea: '0,0,1,1'
 

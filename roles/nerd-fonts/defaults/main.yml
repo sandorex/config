@@ -1,0 +1,3 @@
+---
+nerdfonts_install_dir: '{{ ansible_env.HOME }}/.fonts'
+

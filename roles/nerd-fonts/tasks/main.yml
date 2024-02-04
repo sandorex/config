@@ -1,0 +1,16 @@
+---
+- name: Ensure ~/.fonts directory exists
+  file:
+    path: '{{ ansible_env.HOME }}/.fonts'
+    state: directory
+
+- name: Install NerdFonts
+  loop: '{{ nerdfonts_fonts }}'
+  ansible.builtin.include_tasks:
+    file: '{{ role_path }}/tasks/install-font.yml'
+    apply:
+      vars:
+        font_version: '{{ nerdfonts_version }}'
+        font_name: '{{ item }}'
+        install_dir: '{{ nerdfonts_install_dir }}'
+

@@ -1,0 +1,21 @@
+---
+# this task list installs one nerd font, not meant to be used directly, instead
+# use the role 'nerd-fonts'
+#
+# NOTE: this does not compare versions or anything, if it is installed it wont
+# be installed again
+
+- name: Check is font {{ font_name }} installed
+  shell: 'ls {{ install_dir }}/{{ font_name }}NerdFont*'
+  ignore_errors: yes
+  changed_when: false
+  failed_when: false
+  register: font_exists
+
+- name: Install font {{ font_name }}
+  ansible.builtin.unarchive:
+    src: 'https://github.com/ryanoasis/nerd-fonts/releases/download/{{ font_version }}/{{ font_name }}.tar.xz'
+    dest: '{{ install_dir }}/'
+    remote_src: yes
+  when: font_exists.rc != 0
+

@@ -1,0 +1,49 @@
+---
+# everything look n feel related
+
+# TODO set theme to breeze-dark with dracula purple accent
+
+# white cursor is much more visible
+- name: Set cursor theme
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kcminputrc'
+    values:
+      - group: Mouse
+        key: cursorTheme
+        value: 'Breeze_Snow'
+  notify: 'Restart KWin'
+
+- name: Set window titlebar buttons
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kwinrc'
+    values:
+      - group: 'org.kde.kdecoration2'
+        key: ButtonsOnLeft
+        value: 'MF'
+      - group: 'org.kde.kdecoration2'
+        key: ButtonsOnRight
+        value: 'HIAX' # help, minimize, maximize, close (default on kde 5.27)
+  notify: 'Restart KWin'
+
+# TODO check if fonts are missing, maybe install them too?
+- name: Set fonts
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kdeglobals'
+    values:
+      - group: General
+        key: fixed
+        value: 'Hack,11,-1,5,50,0,0,0,0,0'
+      - group: General
+        key: font
+        value: 'Noto Sans,11,-1,5,50,0,0,0,0,0'
+      - group: menuFont
+        key: fixed
+        value: 'Noto Sans,11,-1,5,50,0,0,0,0,0'
+      - group: smallestReadableFont
+        key: fixed
+        value: 'Noto Sans,9,-1,5,50,0,0,0,0,0'
+      - group: toolBarFont
+        key: fixed
+        value: 'Noto Sans,11,-1,5,50,0,0,0,0,0'
+  notify: 'Restart KWin'
+

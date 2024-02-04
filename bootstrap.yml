@@ -1,23 +1,21 @@
 ---
-# this playbook adapts to host using the machine/<hostname>.yml var file, which
-# should define vars and especially default_roles which will be ran
+# all host specific code is in /roles/device/tasks/<hostname>.yml
+
 - name: System bootstrap
   hosts: localhost
   connection: local
   tasks:
-    - name: Create ~/.config if it does not exist
+    - name: Ensure directory ~/.config
       ansible.builtin.file:
         path: '{{ ansible_env.HOME }}/.config'
         state: directory
+      tags: always
 
-    - name: Include {{ ansible_nodename }} specific vars
-      ansible.builtin.include_vars:
-        file: '{{ playbook_dir }}/machines/{{ ansible_nodename }}.yml'
-
-    - name: Run {{ ansible_nodename }} specific roles
-      loop: '{{ default_roles }}'
-      loop_control:
-        loop_var: __target_role # to avoid conflict with role loops
+    # this delegates the whole setup to another file
+    - name: Run setup for {{ ansible_nodename }}
       ansible.builtin.include_role:
-        name: '{{ __target_role }}'
+        name: device
+        tasks_from: '{{ ansible_nodename }}'
+        vars_from: '{{ ansible_nodename }}'
+      tags: always
 

@@ -1,0 +1,40 @@
+---
+- tags: [terminal, fonts]
+  ansible.builtin.import_role:
+    name: nerd-fonts
+
+- tags: [terminal, git]
+  ansible.builtin.import_role:
+    name: git
+
+- tags: [terminal, ssh]
+  ansible.builtin.import_role:
+    name: ssh
+
+- tags: [terminal, bin]
+  ansible.builtin.import_role:
+    name: bin
+
+- tags: [terminal, zsh]
+  ansible.builtin.import_role:
+    name: zsh
+
+- tags: [terminal, bash]
+  ansible.builtin.import_role:
+    name: bash
+
+- tags: [terminal, neovim, nvim]
+  ansible.builtin.import_role:
+    name: neovim
+
+- tags: [terminal, kitty]
+  ansible.builtin.import_role:
+    name: kitty
+
+- tags: [desktop, kde-plasma]
+  ansible.builtin.import_role:
+    name: kde-plasma
+  when: ansible_env.XDG_CURRENT_DESKTOP == 'KDE'
+
+# TODO setup flatpak (user) and install flatpaks
+# TODO install normal apps
