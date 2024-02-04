@@ -1,0 +1,16 @@
+---
+- name: Ensure steam proton directory exists
+  ansible.builtin.file:
+    path: '{{ steam_proton_ge_install_dir }}'
+    state: directory
+
+- name: Install Proton GE (Steam)
+  loop: '{{ steam_proton_ge_versions }}'
+  ansible.builtin.include_tasks:
+    file: '{{ role_path }}/tasks/install-proton-ge-steam.yml'
+    apply:
+      vars:
+        release: '{{ item }}'
+        install_dir: '{{ steam_proton_ge_install_dir }}'
+  when: steam_proton_ge_versions is defined
+

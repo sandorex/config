@@ -1,0 +1,31 @@
+---
+# NOTE: this should work on most package managers right?
+- name: Install flatpak
+  ansible.builtin.package:
+    name: flatpak
+    state: present
+  become: yes # TODO pretty sure this is required?
+
+- name: Add the flathub repository (user)
+  community.general.flatpak_remote:
+    name: flathub
+    state: present
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+    method: user
+
+# NOTE: im gonna leave this here, but flatpak as system is kinda cumbersome
+- name: Add the flathub repository (system)
+  community.general.flatpak_remote:
+    name: flathub-system
+    state: present
+    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+    method: user
+  become: yes
+
+- name: Install flatpak apps
+  community.general.flatpak:
+    name: '{{ flatpak_apps }}'
+    method: user
+    state: present
+  when: flatpak_apps is defined
+

@@ -1,0 +1,12 @@
+---
+# defaults for all devices
+
+nerdfonts_version: 'v3.1.1'
+
+nerdfonts_fonts:
+  - Hack
+  - FiraCode
+  - Noto
+
+kde_night_mode_filter: true
+

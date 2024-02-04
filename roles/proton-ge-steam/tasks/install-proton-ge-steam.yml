@@ -1,0 +1,28 @@
+---
+# installs single steam proton-ge into install_dir
+
+- name: Check if already installed ({{ release }})
+  stat:
+    path: '{{ install_dir }}/{{ release }}/'
+  register: installed
+
+- name: Download proton-ge ({{ release }})
+  ansible.builtin.get_url:
+    url: 'https://github.com/GloriousEggroll/proton-ge-custom/releases/download/{{ release }}/{{ release }}.tar.gz'
+    checksum: 'sha512:https://github.com/GloriousEggroll/proton-ge-custom/releases/download/{{ release }}/{{ release }}.sha512sum'
+    dest: '{{ ansible_env.HOME }}/.steam/root/compatibilitytools.d/{{ release }}.tar.gz'
+  when: not installed.stat.exists
+
+- name: Install proton-ge ({{ release }})
+  ansible.builtin.unarchive:
+    src: '{{ install_dir }}/{{ release }}.tar.gz'
+    dest: '{{ install_dir }}/'
+    remote_src: true
+  when: not installed.stat.exists
+
+- name: Delete proton-ge archive ({{ release }})
+  ansible.builtin.file:
+    path: '{{ install_dir }}/{{ release }}.tar.gz'
+    state: absent
+  when: not installed.stat.exists
+

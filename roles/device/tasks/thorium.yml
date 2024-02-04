@@ -36,5 +36,11 @@
     name: kde-plasma
   when: ansible_env.XDG_CURRENT_DESKTOP == 'KDE'
 
-# TODO setup flatpak (user) and install flatpaks
-# TODO install normal apps
+- tags: [flatpak, software, never] # currently very experimental
+  ansible.builtin.import_role:
+    name: flatpak
+
+# TODO
+# - tags: [apps, software]
+#   ansible.builtin.import_role:
+#     name: apps
