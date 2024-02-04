@@ -13,4 +13,5 @@
         font_version: '{{ nerdfonts_version }}'
         font_name: '{{ item }}'
         install_dir: '{{ nerdfonts_install_dir }}'
+  when: nerdfonts_fonts is defined and nerdfonts_version is defined
 

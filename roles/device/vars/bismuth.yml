@@ -1,18 +1,7 @@
 ---
+# bismuth laptop
+
 neovim_install: true
 
-nerdfonts_version: 'v3.1.1'
-nerdfonts_fonts:
-  - Hack
-  - FiraCode
-  - Noto
-
-kde_mouse_settings: []
-
-kde_wacom_settings:
-  - name: 'Wacom One by Wacom S Pen'
-    pid: '1386'
-    vid: '890'
-    leftHanded: false
-    outputArea: '0,0,1,1'
+kde_default_terminal: kitty
 

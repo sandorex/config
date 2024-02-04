@@ -1,11 +1,7 @@
 ---
-neovim_install: true
+# thorium desktop
 
-nerdfonts_version: 'v3.1.1'
-nerdfonts_fonts:
-  - Hack
-  - FiraCode
-  - Noto
+neovim_install: true
 
 kde_mouse_settings:
   - name: 'E-Signal USB Gaming Mouse'
@@ -25,4 +21,7 @@ kde_wacom_settings:
     vid: '890'
     leftHanded: false
     outputArea: '0,0,1,1'
+
+kde_default_terminal: kitty
+kde_default_browser: vivaldi-stable
 

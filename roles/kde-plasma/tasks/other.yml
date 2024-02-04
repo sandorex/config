@@ -1,0 +1,42 @@
+---
+# everything that does not fit in the rest of files
+
+- name: Enable night mode fitler
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kwinrc'
+    values:
+      - group: NightColor
+        key: Active
+        bool_value: true
+      - group: NightColor
+        key: EveningBeginFixed
+        value: 2000
+      - group: NightColor
+        key: Mode
+        value: Times
+  when: kde_night_mode_filter is defined and kde_night_mode_filter
+  notify: 'Restart KWin'
+
+- name: Set default browser
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kdeglobals'
+    values:
+      - group: General
+        key: BrowserApplication
+        value: '{{ kde_default_browser }}.desktop'
+  when: kde_default_browser is defined
+  notify: 'Restart KWin'
+
+- name: Set default terminal
+  community.general.kdeconfig:
+    path: '{{ ansible_env.HOME }}/.config/kdeglobals'
+    values:
+      - group: General
+        key: TerminalApplication
+        value: '{{ kde_default_terminal }}'
+      - group: General
+        key: TerminalService
+        value: '{{ kde_default_terminal }}.desktop' # TODO idk if this is correct?
+  when: kde_default_terminal is defined
+  notify: 'Restart KWin'
+
