@@ -40,3 +40,16 @@
   when: kde_default_terminal is defined
   notify: 'Restart KWin'
 
+- name: Disable baloo file indexer
+  ansible.builtin.command:
+    cmd: balooctl disable
+  register: disable_baloo
+  changed_when: disable_baloo.rc != 0
+  tags: [baloo, fixes]
+
+- name: Purge baloo database
+  ansible.builtin.command:
+    cmd: balooctl purge
+  when: disable_baloo.changed
+  tags: [baloo, fixes]
+

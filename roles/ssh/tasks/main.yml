@@ -11,3 +11,11 @@
     dest: '{{ ansible_env.HOME }}/.ssh/config'
     mode: 0600
 
+- name: Generate new ssh keys
+  loop:
+    - '@github.com'
+    - '@gitlab.com'
+  ansible.builtin.command:
+    cmd: ssh-keygen -N '' -t ed25519 -f '{{ ansible_env.HOME }}/.ssh/{{ item }}'
+    creates: '{{ ansible_env.HOME }}/.ssh/{{ item }}'
+

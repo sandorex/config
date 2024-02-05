@@ -1,0 +1,118 @@
+---
+- name: Gaming container setup (host)
+  hosts: localhost
+  connection: local
+  vars:
+    container_name: gaming-arch2
+    container_image: archlinux
+    container_image_tag: latest
+
+  tasks:
+    - name: Fail if ran inside a container
+      ansible.builtin.fail:
+        msg: This playbook should only be ran on the host not the container
+      when: ansible_env.container is defined
+
+    # TODO start / create container
+
+    # TODO this may also be templated?
+    - name: Check if steam was exported
+      ansible.builtin.stat:
+        path: '{{ ansible_env.HOME }}/.local/share/applications/{{ container_name }}-steam.desktop'
+      failed_when: no
+      register: steam_exported
+
+    - name: Check if lutris was exported
+      ansible.builtin.stat:
+        path: '{{ ansible_env.HOME }}/.local/share/applications/{{ container_name }}-lutris.desktop'
+      failed_when: no
+      register: lutris_exported
+
+    - name: Add container as host
+      ansible.builtin.add_host:
+        name: gaming-container
+        ansible_connection: podman
+        ansible_host: ae89bef756b0
+
+        steam_exported: '{{ steam_exported.stat.exists }}'
+        lutris_exported: '{{ lutris_exported.stat.exists }}'
+
+- name: Gaming container setup (container)
+  hosts: gaming-container
+  vars:
+    proton_ge_versions:
+      - GE-Proton8-30
+      - GE-Proton8-29
+    pacman_packages:
+      - vulkan-radeon
+      - lib32-vulkan-radeon
+        #- amdvlk # i do not know if this is needed
+      - ttf-liberation # used by steam to replace ariel font
+      - gamemode # might slightly boost performance
+      - steam
+
+      - lutris
+
+      # core utils
+      - perl
+      - coreutils
+      - inetutils # hostname command
+
+      # editor so i dont have to use vim
+      - nano
+
+      # for terminal usage
+      - kitty-terminfo
+
+  tasks:
+    - ansible.builtin.debug:
+        msg: '{{ ansible_nodename }} {{ ansible_distribution }} {{ steam_exported }}'
+
+    # - name: Uncomment en_US.UTF-8 locale
+    #   become: yes
+    #   ansible.builtin.lineinfile:
+    #     path: /etc/locale.gen
+    #     regexp: '^#en_US.UTF-8 UTF-8'
+    #     line: 'en_US.UTF-8 UTF-8'
+    #   register: commentline
+    #
+    # - name: Regenerate locale
+    #   become: yes
+    #   ansible.builtin.command:
+    #     cmd: locale-gen
+    #   when: commentline.changed
+    #
+    # - name: Enable multilib
+    #   become: yes
+    #   ansible.builtin.blockinfile:
+    #     path: /etc/pacman.conf
+    #     insertafter: EOF
+    #     marker: "## {mark} managed by ansible (enable multilib)"
+    #     block: |
+    #       [multilib]
+    #       Include = /etc/pacman.d/mirrorlist
+    #   register: multilib_enable
+    #
+    # - name: Update packages
+    #   become: yes
+    #   ansible.builtin.command:
+    #     cmd: pacman -Syuu --noconfirm
+    #   when: multilib_enable.changed
+    #
+    # # - name: Installing extra packages # TODO use the pacman community module for this
+    # #   become: yes
+    # #   ansible.builtin.command:
+    # #     cmd: 'pacman -S --noconfirm {{ pacman_packages | join(" ") }}'
+    # - name: Install required packages
+    #   community.general.pacman:
+    #     name: '{{ pacman_packages }}'
+    #     state: present
+    #
+    # - ansible.builtin.import_role:
+    #     name: proton-ge-steam
+    #
+    # # TODO do this only once somehow
+    # - name: Export Steam to host
+    #   ansible.builtin.command:
+    #     cmd: distrobox-export --app 'Steam'
+

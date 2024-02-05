@@ -1,0 +1,74 @@
+---
+# debian 12 bookworm
+
+- name: Bismuth laptop setup
+  hosts: localhost
+  connection: local
+  pre_tasks:
+    - ansible.builtin.pause:
+        prompt: 'This machine does not appear to be bismuth, if you want to continue type "yes" and press enter'
+      when: ansible_nodename | lower != 'bismuth' or ansible_env.container is defined
+      tags: always
+      register: answer
+      failed_when: answer.user_input | lower != 'yes'
+
+    - name: Ensure ~/.config directory exists
+      ansible.builtin.file:
+        path: '{{ ansible_env.HOME }}/.config'
+        state: directory
+      tags: always
+
+    - name: Load defaults
+      ansible.builtin.include_vars:
+        file: '{{ playbook_dir }}/../vars/default.yml'
+      tags: always
+
+    - name: Load vars
+      ansible.builtin.include_vars:
+        file: '{{ playbook_dir }}/../vars/thorium.yml'
+      tags: always
+  roles:
+    ## terminal ##
+
+    - role: git
+      tags:
+        - git
+        - terminal
+
+    - role: ssh
+      tags:
+        - ssh
+        - terminal
+
+    - role: zsh
+      tags:
+        - zsh
+        - terminal
+
+    - role: bash
+      tags:
+        - bash
+        - terminal
+
+    ## apps ##
+
+    - role: neovim
+      tags:
+        - neovim
+        - nvim
+        - editor
+        - terminal
+
+    - role: kitty
+      tags:
+        - kitty
+        - terminal
+
+    ## system ##
+    - role: kde-plasma
+      tags:
+        - kde-plasma
+        - kde
+        - desktop
+      when: ansible_env.XDG_CURRENT_DESKTOP == 'KDE' or desktop_check_ignore is defined
+
