@@ -1,14 +1,15 @@
 ---
 # all host specific code is in /roles/device/tasks/<hostname>.yml
 
-- name: Baremetal system setup
+- name: Workstation setup
   hosts: localhost
   connection: local
+  gather_facts: true
   tasks:
     - name: Ensure not running in a container
       ansible.builtin.fail:
         msg: This playbook is not made to be ran in a container!
-      when: ansible_env.container is not defined
+      when: ansible_env.container is defined
 
     - name: Ensure directory ~/.config exists
       ansible.builtin.file:
@@ -17,10 +18,10 @@
       tags: always
 
     # this delegates the whole setup to another file
-    - name: Setting up device {{ ansible_nodename }}
+    - name: Setting up device {{ ansible_hostname }}
       ansible.builtin.include_role:
         name: device
-        tasks_from: '{{ ansible_nodename }}'
-        vars_from: '{{ ansible_nodename }}'
+        tasks_from: '{{ ansible_hostname }}'
+        vars_from: '{{ ansible_hostname }}'
       tags: always
 
