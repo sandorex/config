@@ -3,46 +3,66 @@
   hosts: localhost
   connection: local
   vars:
-    container_name: gaming-arch2
+    container_name: gaming-arch
+    container_home: '/mnt/slowmf/GamingContainer2' # TODO move this to a var
     container_image: archlinux
     container_image_tag: latest
-
   tasks:
-    - name: Fail if ran inside a container
-      ansible.builtin.fail:
-        msg: This playbook should only be ran on the host not the container
-      when: ansible_env.container is defined
+    - ansible.builtin.set_fact:
+        container_name: '{{ container_name }}'
 
-    # TODO start / create container
+    - name: Check if container already exists
+      containers.podman.podman_container_info:
+        name: '{{ container_name }}'
+      register: container_info
 
-    # TODO this may also be templated?
+    - when: container_info.containers | length == 0
+      block:
+        - name: Create container using distrobox
+          ansible.builtin.command:
+            cmd: >-
+              distrobox create --yes --no-entry --pull
+              --image '{{ container_image }}:{{ container_image_tag }}'
+              --name '{{ container_name }}'
+              --home '{{ container_home }}'
+              --init-hooks '''sudo hostname "$(cat /run/host/etc/hostname || printf localhost)" || true'''
+
+        - name: Run distrobox init
+          ansible.builtin.command:
+            # install ansible and inetutils (hostname command)
+            cmd: 'distrobox enter {{ container_name }} -- sh -c ''sudo pacman -Syu --noconfirm && sudo pacman -S --noconfirm ansible inetutils'''
+
+          # TODO restart the container so hostname is set properly
+
+    # TODO start the container if necessary
+
     - name: Check if steam was exported
       ansible.builtin.stat:
         path: '{{ ansible_env.HOME }}/.local/share/applications/{{ container_name }}-steam.desktop'
-      failed_when: no
       register: steam_exported
 
     - name: Check if lutris was exported
       ansible.builtin.stat:
-        path: '{{ ansible_env.HOME }}/.local/share/applications/{{ container_name }}-lutris.desktop'
-      failed_when: no
+        path: '{{ ansible_env.HOME }}/.local/share/applications/{{ container_name }}-net.lutris.Lutris.desktop'
       register: lutris_exported
 
     - name: Add container as host
+      changed_when: no
       ansible.builtin.add_host:
         name: gaming-container
-        ansible_connection: podman
-        ansible_host: ae89bef756b0
+        ansible_connection: distrobox
+        ansible_host: '{{ container_name }}'
 
         steam_exported: '{{ steam_exported.stat.exists }}'
         lutris_exported: '{{ lutris_exported.stat.exists }}'
 
 - name: Gaming container setup (container)
   hosts: gaming-container
+  environment:
+    CONTAINER_ID: '{{ hostvars["localhost"]["container_name"] }}'
   vars:
-    proton_ge_versions:
+    steam_proton_ge_versions:
       - GE-Proton8-30
-      - GE-Proton8-29
     pacman_packages:
       - vulkan-radeon
       - lib32-vulkan-radeon
@@ -65,54 +85,62 @@
       - kitty-terminfo
 
   tasks:
-    - ansible.builtin.debug:
-        msg: '{{ ansible_nodename }} {{ ansible_distribution }} {{ steam_exported }}'
+    # TODO investigate as some commands are root by default some are not
 
-    # - name: Uncomment en_US.UTF-8 locale
-    #   become: yes
-    #   ansible.builtin.lineinfile:
-    #     path: /etc/locale.gen
-    #     regexp: '^#en_US.UTF-8 UTF-8'
-    #     line: 'en_US.UTF-8 UTF-8'
-    #   register: commentline
-    #
-    # - name: Regenerate locale
-    #   become: yes
-    #   ansible.builtin.command:
-    #     cmd: locale-gen
-    #   when: commentline.changed
-    #
-    # - name: Enable multilib
-    #   become: yes
-    #   ansible.builtin.blockinfile:
-    #     path: /etc/pacman.conf
-    #     insertafter: EOF
-    #     marker: "## {mark} managed by ansible (enable multilib)"
-    #     block: |
-    #       [multilib]
-    #       Include = /etc/pacman.d/mirrorlist
-    #   register: multilib_enable
-    #
-    # - name: Update packages
-    #   become: yes
-    #   ansible.builtin.command:
-    #     cmd: pacman -Syuu --noconfirm
-    #   when: multilib_enable.changed
-    #
-    # # - name: Installing extra packages # TODO use the pacman community module for this
-    # #   become: yes
-    # #   ansible.builtin.command:
-    # #     cmd: 'pacman -S --noconfirm {{ pacman_packages | join(" ") }}'
-    # - name: Install required packages
-    #   community.general.pacman:
-    #     name: '{{ pacman_packages }}'
-    #     state: present
-    #
-    # - ansible.builtin.import_role:
-    #     name: proton-ge-steam
-    #
-    # # TODO do this only once somehow
+    - name: Enable en_US.UTF-8 locale in /etc/locale.gen
+      become: yes
+      ansible.builtin.lineinfile:
+        path: /etc/locale.gen
+        regexp: '^#en_US.UTF-8 UTF-8'
+        line: 'en_US.UTF-8 UTF-8'
+      register: commentline
+
+    - name: Regenerate locale
+      become: yes
+      ansible.builtin.command:
+        cmd: locale-gen
+      when: commentline.changed
+
+    - name: Enable pacman multilib
+      become: yes
+      ansible.builtin.blockinfile:
+        path: /etc/pacman.conf
+        insertafter: EOF
+        marker: "## {mark} managed by ansible"
+        block: |
+          [multilib]
+          Include = /etc/pacman.d/mirrorlist
+      register: multilib_enable
+
+    - name: Update packages
+      become: yes
+      ansible.builtin.command:
+        cmd: pacman -Syuu --noconfirm
+      when: multilib_enable.changed
+
+    - name: Install required packages
+      become: yes
+      community.general.pacman:
+        name: '{{ pacman_packages }}'
+        state: present
+
+    - become_user: sandorex
+      become: yes
+      ansible.builtin.import_role:
+        name: proton-ge-steam
+
+    # TODO these do not work for some reason
     # - name: Export Steam to host
+    #   become_user: sandorex
+    #   become: yes
     #   ansible.builtin.command:
     #     cmd: distrobox-export --app 'Steam'
+    #   when: not steam_exported
+    #
+    # - name: Export Lutris to host
+    #   become_user: sandorex
+    #   become: yes
+    #   ansible.builtin.command:
+    #     cmd: distrobox-export --app 'net.lutris.Lutris'
+    #   when: not lutris_exported
 
