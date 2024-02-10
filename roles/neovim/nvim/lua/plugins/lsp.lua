@@ -1,39 +1,5 @@
 -- lazy.vim configuration for lsp, for server configs go to core.lsp_configs
 
-local function on_attach()
-    -- TODO add keybindings for listing all diagnostics in whole file, all buffers etc
-    -- TODO add global function for creating toggle functions and binding keys to them
-    -- add toggle for floating diagnostics
-    local group_name = 'core_float_diagnostics'
-    local set_floating_diagnostics = function(value)
-        if value == nil then
-            value = not vim.b.float_diagnostics_enabled
-        end
-
-        local group = vim.api.nvim_create_augroup(group_name, { clear = true })
-        if value then
-            vim.api.nvim_create_autocmd('CursorHold', {
-                desc = 'Open diagnostics floating window automatically',
-                group = group,
-                callback = function()
-                    vim.diagnostic.open_float(nil, { focus = false })
-                end
-            })
-        end
-
-        vim.b.float_diagnostics_enabled = value
-    end
-
-    -- default to true
-    set_floating_diagnostics(true)
-
-    -- toggles
-    vim.keymap.set({ 'n' }, '<F2>f', function() set_floating_diagnostics(nil) end, { desc = 'Toggle between floating and inline diagnostics', buffer = true, silent = true })
-
-    -- other
-    vim.keymap.set({ 'n', 'v' }, '<F3>f', vim.lsp.buf.format, { desc = 'Format selection or whole buffer' })
-end
-
 return {
     {
         'neovim/nvim-lspconfig',
@@ -44,6 +10,9 @@ return {
 
             -- adds neovim api completion
             'folke/neodev.nvim',
+
+            -- adds status for LSP
+            { 'j-hui/fidget.nvim', opts = {} },
 
             -- autocompletion and snippets
             'hrsh7th/nvim-cmp',
@@ -67,7 +36,7 @@ return {
             -- used on all servers
             local default_server_config = {
                 capabilities = capabilities,
-                on_attach = on_attach,
+                -- on_attach = on_attach,
             }
 
             -- autoconfigure servers
@@ -86,7 +55,7 @@ return {
 
             -- load snippets lazily
             require("luasnip.loaders.from_snipmate").lazy_load()
-            require("luasnip.loaders.from_lua").lazy_load({ paths = "~/.config/nvim/LuaSnip/" })
+            require("luasnip.loaders.from_lua").lazy_load({ paths = "~/.config/nvim/LuaSnip/" }) -- TODO get current lua path so it APP_NAME can be used
 
             cmp.setup {
                 snippet = {
@@ -96,18 +65,18 @@ return {
                 },
                 -- i changed many things so it does not automatically focus
                 mapping = cmp.mapping {
-                    ['<S-Down>'] = {
-                        i = cmp.mapping.select_next_item {
-                            behavior = cmp.SelectBehavior.Select
-                        },
-                    },
-                    ['<S-Up>'] = {
+                    ['<C-k>'] = {
                         i = cmp.mapping.select_prev_item {
                             behavior = cmp.SelectBehavior.Select
                         },
                     },
-                    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-                    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+                    ['<C-j>'] = {
+                        i = cmp.mapping.select_next_item {
+                            behavior = cmp.SelectBehavior.Select
+                        },
+                    },
+                    ['<S-j>'] = cmp.mapping.scroll_docs(-4),
+                    ['<S-k>'] = cmp.mapping.scroll_docs(4),
                     ['<C-Space>'] = cmp.mapping.complete {},
                     ['<CR>'] = cmp.mapping.confirm {
                         behavior = cmp.ConfirmBehavior.Replace,
@@ -143,6 +112,79 @@ return {
             })
         end,
     },
+
+    -- add git status signs
+    {
+        'lewis6991/gitsigns.nvim',
+        opts = {
+            signs = {
+                add = { text = '+' },
+                change = { text = '~' },
+                delete = { text = '_' },
+                topdelete = { text = '‾' },
+                changedelete = { text = '~' },
+            },
+            on_attach = function(bufnr)
+                local gs = package.loaded.gitsigns
+
+                local function map(mode, l, r, opts)
+                    opts = opts or {}
+                    opts.buffer = bufnr
+                    vim.keymap.set(mode, l, r, opts)
+                end
+
+                -- Navigation
+                -- map({ 'n', 'v' }, ']c', function()
+                --     if vim.wo.diff then
+                --         return ']c'
+                --     end
+                --     vim.schedule(function()
+                --         gs.next_hunk()
+                --     end)
+                --     return '<Ignore>'
+                -- end, { expr = true, desc = 'Jump to next hunk' })
+                --
+                -- map({ 'n', 'v' }, '[c', function()
+                --     if vim.wo.diff then
+                --         return '[c'
+                --     end
+                --     vim.schedule(function()
+                --         gs.prev_hunk()
+                --     end)
+                --     return '<Ignore>'
+                -- end, { expr = true, desc = 'Jump to previous hunk' })
+
+                -- Actions
+                -- visual mode
+                -- map('v', '<leader>hs', function()
+                --     gs.stage_hunk { vim.fn.line '.', vim.fn.line 'v' }
+                -- end, { desc = 'Stage git hunk' })
+                -- map('v', '<leader>hr', function()
+                --     gs.reset_hunk { vim.fn.line '.', vim.fn.line 'v' }
+                -- end, { desc = 'Reset git hunk' })
+                -- normal mode
+                -- map('n', '<leader>vs', gs.stage_hunk, { desc = 'Git stage hunk' })
+                -- map('n', '<leader>vr', gs.reset_hunk, { desc = 'Git reset hunk' })
+                -- map('n', '<leader>vS', gs.stage_buffer, { desc = 'Git stage buffer' })
+                -- map('n', '<leader>vu', gs.undo_stage_hunk, { desc = 'Undo stage hunk' })
+                -- map('n', '<leader>vR', gs.reset_buffer, { desc = 'Git reset buffer' })
+                map('n', '<leader>vb', function()
+                    gs.blame_line { full = false }
+                end, { desc = 'git blame line' })
+                -- TODO idk how to exit these
+                -- map('n', '<leader>vd', gs.diffthis, { desc = 'git diff against index' })
+                -- map('n', '<leader>vD', function()
+                --     gs.diffthis '~'
+                -- end, { desc = 'git diff against last commit' })
+
+                -- Toggles
+                map('n', '<leader>td', gs.toggle_deleted, { desc = 'toggle git show deleted' })
+            end,
+        },
+    },
+
+    -- adds indent guide lines
+    { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
 
     'NoahTheDuke/vim-just',
 }

@@ -43,9 +43,7 @@ local options = {
     timeout = true,
     timeoutlen = 300,
 
-    foldmethod = 'marker',
-    foldmarker = '--/,/--',
-    foldtext = 'v:lua.CustomFoldText()',
+    foldmethod = 'syntax',
     fillchars = 'fold: ',
 
     -- default to everything unfolded
@@ -53,24 +51,10 @@ local options = {
 
     -- guide lines
     colorcolumn = '80,100',
+
+    -- TODO comment
+    breakindent = true,
 }
-
-function CustomFoldText()
-    local line = vim.fn.getline(vim.v.foldstart)
-    local _, index = string.find(line, '--/', 1, true)
-
-    line = string.sub(line, index + 1)
-
-    if string.sub(line, 1, 1) == ' ' then
-        line = string.sub(line, 2)
-    end
-
-    if line == '' then
-        return '+' .. vim.v.folddashes .. ' ' .. (vim.v.foldend - vim.v.foldstart) .. ' lines ' .. vim.v.folddashes .. '+'
-    end
-
-    return '+' .. vim.v.folddashes .. '/ ' .. line .. ' /' .. vim.v.folddashes .. '+'
-end
 
 for k, v in pairs(options) do
     vim.opt[k] = v
@@ -99,23 +83,23 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     command = [[%s/\s\+$//e]],
 })
 
-local function toggle_cursor_centering(value)
-    if value == nil then
-        value = not vim.g.cursor_centering
-    end
+-- local function toggle_cursor_centering(value)
+--     if value == nil then
+--         value = not vim.g.cursor_centering
+--     end
+--
+--     group = vim.api.nvim_create_augroup('cursor-center', {})
+--     if value then
+--         vim.api.nvim_create_autocmd("CursorMoved", {
+--             group = group,
+--             command = 'norm! zz',
+--         })
+--     end
+--
+--     vim.g.cursor_centering = value
+-- end
 
-    group = vim.api.nvim_create_augroup('cursor-center', {})
-    if value then
-        vim.api.nvim_create_autocmd("CursorMoved", {
-            group = group,
-            command = 'norm! zz',
-        })
-    end
-
-    vim.g.cursor_centering = value
-end
-
-toggle_cursor_centering(false)
+-- toggle_cursor_centering(false)
 
 vim.api.nvim_create_user_command('CoreHealth', 'checkhealth core', {})
 
