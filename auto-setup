@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# automatically run correct ansible playbook
+
+set -eu
+
+host="$(hostname)"
+
+if [[ -v container ]]; then
+    echo "This command is not meant to be ran in a container"
+    exit 99
+fi
+
+if [[ ! -f "playbooks/$host.yml" ]]; then
+    echo "Playbook for host '$host' does not exist!"
+    exit 1
+fi
+
+./ansible-playbook "$@" "playbooks/$host.yml"
+

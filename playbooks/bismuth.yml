@@ -1,13 +1,14 @@
 ---
 # debian 12 bookworm
 
-- name: Bismuth laptop setup
+- name: bismuth
   hosts: localhost
   connection: local
   pre_tasks:
-    - ansible.builtin.pause:
-        prompt: 'This machine does not appear to be bismuth, if you want to continue type "yes" and press enter'
-      when: ansible_nodename | lower != 'bismuth' or ansible_env.container is defined
+    - name: Check if running on correct machine
+      ansible.builtin.pause:
+        prompt: 'This machine does not appear to be {{ ansible_play_name }}, if you want to continue type "yes" and press enter'
+      when: ansible_nodename | lower != ansible_play_name or ansible_env.container is defined
       tags: always
       register: answer
       failed_when: answer.user_input | lower != 'yes'
@@ -25,7 +26,7 @@
 
     - name: Load vars
       ansible.builtin.include_vars:
-        file: '{{ playbook_dir }}/../vars/thorium.yml'
+        file: '{{ playbook_dir }}/../vars/{{ ansible_play_name }}.yml'
       tags: always
   roles:
     ## terminal ##

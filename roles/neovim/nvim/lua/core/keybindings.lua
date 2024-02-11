@@ -9,6 +9,10 @@ for key, arrow in pairs({h='Left', j='Down', k='Up', l='Right'}) do
     vim.keymap.set({'n', 'v'}, '<C-' .. arrow .. '>', '<C-' .. key .. '>', { remap = true, silent = true })
 end
 
+-- remap shift left/right to be word based
+vim.keymap.set({'n', 'v'}, '<S-h>', 'b', { remap = true, silent = true })
+vim.keymap.set({'n', 'v'}, '<S-l>', 'w', { remap = true, silent = true })
+
 ---- KEYBINDINGS ----
 -- treat word wrap as lines when moving up/down
 vim.keymap.set('n', 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
