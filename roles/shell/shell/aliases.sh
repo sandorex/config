@@ -3,6 +3,9 @@
 # https://github.com/sandorex/config
 # contains aliases for bash/zsh shells
 
+# many scripts in /etc/profile.d/ set aliases and they interfere
+unalias -a
+
 # make compdef a noop on bash
 if [[ ! -v ZSH_VERSION ]]; then
     compdef() { :; }
@@ -31,8 +34,8 @@ if command -v lsd &>/dev/null; then
     function ll() { lsd -alF "$@"; }
 else
     function ls() { command ls -F --color=auto "$@"; }
-    function l() { ls -aF --color=auto "$@"; }
-    function ll() { ls -alFh --color=auto "$@"; }
+    function l() { command ls -aF --color=auto "$@"; }
+    function ll() { command ls -alFh --color=auto "$@"; }
 fi
 
 if command -v zellij &>/dev/null; then

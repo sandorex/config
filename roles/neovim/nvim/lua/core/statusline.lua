@@ -1,3 +1,5 @@
+-- TODO set static colors for this
+
 local modes = {
     ["n"] = "NORMAL",
     ["no"] = "NORMAL",

@@ -21,6 +21,9 @@ local options = {
     -- enable clipboard syncing, works with tmux without any additional config
     clipboard = 'unnamedplus',
 
+    -- do not move cursor on right mouse click
+    mousemodel = 'popup',
+
     ignorecase = true,
     smartcase = true,
 
@@ -107,6 +110,7 @@ vim.api.nvim_create_user_command('CoreHealth', 'checkhealth core', {})
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
+require('core.right_click_menu')
 require('core.theming')
 require('core.statusline')
 require('core.netrw')

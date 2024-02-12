@@ -27,8 +27,8 @@ vim.keymap.set('n', '[t', '<cmd>tabp<cr>', { desc = 'Previous tab', silent = tru
 vim.keymap.set('n', ']t', '<cmd>tabn<cr>', { desc = 'Next tab', silent = true })
 
 -- remap shift up down to be half page not full page and center cursor
-vim.keymap.set('n', '<S-k>', '<C-u>zz', { desc = 'Half page up' })
-vim.keymap.set('n', '<S-j>', '<C-d>zz', { desc = 'Half page down' })
+vim.keymap.set({'n', 'v'}, '<S-k>', '<C-u>zz', { desc = 'Half page up' })
+vim.keymap.set({'n', 'v'}, '<S-j>', '<C-d>zz', { desc = 'Half page down' })
 
 -- often used
 vim.keymap.set('n', '<leader>q', '<cmd>q<cr>', { silent = true })
