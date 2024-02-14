@@ -30,16 +30,6 @@ function M.get_theme_variant(appearance)
     end
 end
 
-function M.config_reload(window, _)
-    local overrides = window:get_config_overrides() or {}
-    local appearance = window:get_appearance()
-    local scheme = M.get_theme_variant(appearance)
-    if overrides.color_scheme ~= scheme then
-        overrides.color_scheme = scheme
-        window:set_config_overrides(overrides)
-    end
-end
-
 function M.window_resize(window, _)
     local window_dims = window:get_dimensions()
     local overrides = window:get_config_overrides() or {}
@@ -66,6 +56,7 @@ end
 function M.apply(config)
     -- load theme
     M.THEME.apply(config)
+    config.color_scheme = M.get_theme_variant(wezterm.gui.get_appearance())
 
     config.font = wezterm.font_with_fallback({
         'FiraCode Nerd Font',
@@ -149,7 +140,7 @@ function M.apply(config)
         border_top_color = COLORS.BG,
     }
 
-    wezterm.on('window-config-reloaded', M.config_reload)
+    -- wezterm.on('window-config-reloaded', M.config_reload)
     wezterm.on('window-resized', M.window_resize)
     wezterm.on('format-tab-title', M.tab_format)
 end
