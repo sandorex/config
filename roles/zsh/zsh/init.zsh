@@ -8,9 +8,6 @@ export SHELLDIR="$HOME/.config/zsh"
 # the rest is only if it's an interactive shell
 [[ -o interactive ]] || return
 
-alias reload-shell="source '$SHELLDIR/init.zsh'; compinit"
-alias reload-zsh="source '$SHELLDIR/init.zsh'; compinit"
-
 # prevent duplicated hooks on reload
 precmd_functions=( )
 preexec_functions=( )
@@ -102,6 +99,10 @@ typeset -U path
 
 # aliases must be loaded after compinit because compdef
 source "$AGSHELLDIR/aliases.sh"
+
+# aliases.sh clears aliases so i moved this here
+alias reload-shell="source '$SHELLDIR/init.zsh'; compinit"
+alias reload-zsh="source '$SHELLDIR/init.zsh'; compinit"
 
 # list files on dir change
 function chpwd() {

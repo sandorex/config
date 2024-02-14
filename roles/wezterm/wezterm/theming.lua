@@ -7,7 +7,11 @@ COLORS.BG_DIM = '#333333'
 
 local M = {}
 
-wezterm.on('format-tab-title', function (tab, _, _, _, _)
+-- load the theme
+M.THEME = require('themes.synth_midnight')
+
+-- simple tab format with just the tab number
+function M.tab_format(tab, _, _, _, _)
     -- i could forget i've zoomed in and forget about a pane in a tab
     local is_zoomed = ' '
     if tab.active_pane.is_zoomed then
@@ -16,15 +20,59 @@ wezterm.on('format-tab-title', function (tab, _, _, _, _)
 
     -- colors are set in config.colors.tab_bar
     return '  ' .. tab.tab_index + 1 .. is_zoomed .. ' '
-end)
+end
+
+function M.get_theme_variant(appearance)
+    if appearance:find 'Dark' then
+        return M.THEME.DARK
+    else
+        return M.THEME.LIGHT
+    end
+end
+
+function M.config_reload(window, _)
+    local overrides = window:get_config_overrides() or {}
+    local appearance = window:get_appearance()
+    local scheme = M.get_theme_variant(appearance)
+    if overrides.color_scheme ~= scheme then
+        overrides.color_scheme = scheme
+        window:set_config_overrides(overrides)
+    end
+end
+
+function M.window_resize(window, _)
+    local window_dims = window:get_dimensions()
+    local overrides = window:get_config_overrides() or {}
+
+    if window_dims.is_full_screen then
+        if not overrides.window_frame then
+            -- override the border
+            overrides.window_frame = {}
+        else
+            return
+        end
+    else
+        if overrides.window_frame then
+            -- remove border override
+            overrides.window_frame = nil
+        else
+            return
+        end
+    end
+
+    window:set_config_overrides(overrides)
+end
 
 function M.apply(config)
-    config.color_scheme = 'carbonfox'
+    -- load theme
+    M.THEME.apply(config)
+
     config.font = wezterm.font_with_fallback({
         'FiraCode Nerd Font',
-        'Hack',
+        'Hack Nerd Font',
         'Noto Sans',
     })
+
     config.font_size = 15
 
     config.window_padding = {
@@ -91,14 +139,19 @@ function M.apply(config)
     config.use_fancy_tab_bar = false;
 
     config.window_frame = {
+        border_top_height = '4px',
+        border_bottom_height = '4px',
         border_left_width = '4px',
         border_right_width = '4px',
-        border_bottom_height = '4px',
         border_left_color = COLORS.BG,
         border_right_color = COLORS.BG,
         border_bottom_color = COLORS.BG,
         border_top_color = COLORS.BG,
     }
+
+    wezterm.on('window-config-reloaded', M.config_reload)
+    wezterm.on('window-resized', M.window_resize)
+    wezterm.on('format-tab-title', M.tab_format)
 end
 
 return M

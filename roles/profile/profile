@@ -69,7 +69,7 @@ eval "$(dircolors --sh "$AGSHELLDIR/util/gruvbox.dircolors")"
 "$AGSHELLDIR/util/console-theming.sh"
 
 # sets env var based on distro its running on
-"$AGSHELLDIR/util/distro-icon.sh"
+source "$AGSHELLDIR/util/distro-icon.sh"
 
 # check if sourced again needlessly
 [ -n "$__PROFILE_RAN" ] && echo "This unefficiency is unacceptable, ~/.profile was sourced twice!"

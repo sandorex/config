@@ -22,6 +22,8 @@ KEYS[C_BACKSPACE]=${terminfo[cub1]} # !!
 KEYS[DELETE]=${terminfo[kdch1]}
 KEYS[C_DELETE]=${terminfo[kDC5]} # !!
 
+# TODO add ALT + , and ALT + .
+
 # ctr + left / right arrow keys
 bindkey "${KEYS[C_LEFT]}" backward-word
 bindkey "${KEYS[C_RIGHT]}" forward-word
@@ -107,4 +109,32 @@ _go_up() {
 }
 zle -N _go_up
 bindkey '\x1b<' _go_up
+
+_go_back() {
+    # save buffer
+    zle push-input
+
+    # change command
+    BUFFER="cd .."
+
+    # run command and automatically the buffer is restored
+    zle accept-line
+    zle redisplay
+}
+zle -N _go_back
+bindkey '^[,' _go_back
+
+_go_forward() {
+    # save buffer
+    zle push-input
+
+    # change command
+    BUFFER="cd -"
+
+    # run command and automatically the buffer is restored
+    zle accept-line
+    zle redisplay
+}
+zle -N _go_forward
+bindkey '^[.' _go_forward
 
