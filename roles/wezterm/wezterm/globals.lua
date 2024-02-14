@@ -15,17 +15,13 @@ if M.FLATPAK or not M.SHELL then
     M.SHELL = '/usr/bin/zsh'
 end
 
--- default that overrides config.default_prog
-M.MENU_DEFAULT = {
-    label = 'Daily',
-    args = { 'distrobox-enter-wrapper', 'daily' },
-}
-
 -- runs system shell, overrides so no unecessary login shells
 M.MENU_SYSTEM_SHELL = {
     label = 'System Shell',
     args = { M.SHELL },
 }
+
+M.MENU_DEFAULT = M.MENU_SYSTEM_SHELL
 
 function M.set_window_global(window, key, value)
     if not wezterm.GLOBAL.windows then

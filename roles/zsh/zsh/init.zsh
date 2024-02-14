@@ -77,8 +77,8 @@ if [[ -v container ]]; then
     _prompt_container_indicator="°"
 fi
 
-# define color and distro icon
-source "$AGSHELLDIR/util/distro-icon.sh"
+# define color and distro icon (MOVED TO ~/.profile)
+# source "$AGSHELLDIR/util/distro-icon.sh"
 
 # prompt expansion https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
 PROMPT="[%F{magenta}%n%f@%F{blue}%m%F{${PROMPT_ICON_COLOR}} ${PROMPT_ICON}${_prompt_container_indicator:- }%f] %F{$PROMPT_ICON_COLOR}%(1j.%U.)%%%u%f "
@@ -112,4 +112,12 @@ function precmd() {
     # update the title
     printf "\033]0;%s\007" "$(pwd)"
 }
+
+# set kitty theme on startup (it should be dark theme by default)
+if [[ "$TERM" == *"kitty"* ]]; then
+    hour=$(date +%H)
+    if [[ "$hour" -ge 6 ]] && [[ "$hour" -lt 18 ]]; then
+        kitty @ set-colors --all --configured ~/.config/kitty/light.conf
+    fi
+fi
 

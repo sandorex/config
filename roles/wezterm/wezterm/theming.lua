@@ -7,27 +7,6 @@ COLORS.BG_DIM = '#333333'
 
 local M = {}
 
-wezterm.on('update-right-status', function(window, pane)
-    local user_vars = pane:get_user_vars()
-
-    local icon = user_vars.tab_icon or ''
-    local icon_color = user_vars.tab_color or 'white'
-
-    window:set_left_status(wezterm.format {
-        { Background = { Color = icon_color } },
-        { Foreground = { Color = COLORS.BG } },
-        { Text = '  ' .. wezterm.pad_right(icon, 2) .. ' '  },
-        { Background = { Color = COLORS.BG } },
-        { Text = ' ' },
-    })
-
-    window:set_right_status(wezterm.format {
-        { Foreground = { Color = COLORS.BG } },
-        { Background = { Color = COLORS.TEXT } },
-        { Text = ' ' .. wezterm.strftime('%H:%M %d-%m-%Y') .. ' ' },
-    })
-end)
-
 wezterm.on('format-tab-title', function (tab, _, _, _, _)
     -- i could forget i've zoomed in and forget about a pane in a tab
     local is_zoomed = ' '
@@ -46,7 +25,7 @@ function M.apply(config)
         'Hack',
         'Noto Sans',
     })
-    config.font_size = 16
+    config.font_size = 15
 
     config.window_padding = {
         left = '6px',
