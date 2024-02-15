@@ -1,62 +1,14 @@
 return {
     {
-        'stevearc/resession.nvim',
-        enabled = false,
-        config = function(plugin)
-            local resession = require('resession')
-            resession.setup({
-                buf_filter = function(bufnr)
-                    if not resession.default_buf_filter(bufnr) then
-                        return false
-                    end
-
-                    if vim.fn.expand('#' .. bufnr .. ':t') == 'COMMIT_EDITMSG' then
-                        return false
-                    end
-
-                    return true
-                end
-            })
-
-            vim.keymap.set('n', '<space>ss', resession.save, { desc = 'Session Save' })
-            vim.keymap.set('n', '<space>sl', resession.load, { desc = 'Session Load' })
-            vim.keymap.set('n', '<space>sd', resession.delete, { desc ='Session Delete' })
-
-            -- TODO do not load session if it already loaded and running
-            vim.api.nvim_create_autocmd('VimEnter', {
-                callback = function()
-                    if vim.fn.argc(-1) == 0 then
-                        local session_name = vim.fn.getcwd()
-                        local session_dir = 'dirsession'
-
-                        -- delete the session after loading so its not started twice
-                        local function on_load()
-                            resession.delete(session_name, { dir = session_dir })
-
-                            resession.remove_hook('post_load', on_load)
-                        end
-
-                        resession.add_hook('post_load', on_load)
-                        resession.load(session_name, { dir = session_dir, silence_errors = true })
-                    end
-                end
-            })
-
-            vim.api.nvim_create_autocmd('VimLeavePre', {
-                callback = function()
-                    resession.save(vim.fn.getcwd(), { dir = 'dirsession', notify = false })
-                end
-            })
-        end
-    },
-
-    {
         'Shatur/neovim-session-manager',
         dependencies = { 'nvim-lua/plenary.nvim' },
         config = function()
-            require('session_manager').setup({})
+            require('session_manager').setup({
+                -- automatically load last session in the directory
+                autoload_mode = require('session_manager.config').AutoloadMode.CurrentDir
+            })
 
-            -- Auto save session
+            -- automatically save session
             vim.api.nvim_create_autocmd({ 'BufWritePre' }, {
                 callback = function ()
                     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
@@ -65,7 +17,7 @@ return {
                             return
                         end
                     end
-                    session_manager.save_current_session()
+                    require('session_manager').save_current_session()
                 end
             })
         end
