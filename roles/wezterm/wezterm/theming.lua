@@ -8,7 +8,32 @@ COLORS.BG_DIM = '#333333'
 local M = {}
 
 -- load the theme
-M.THEME = require('themes.synth_midnight')
+M.THEME = require('themes.darklight')
+
+function M.set_light_theme(config)
+    config.color_scheme = M.THEME.LIGHT
+end
+
+function M.set_dark_theme(config)
+    config.color_scheme = M.THEME.DARK
+end
+
+function M.set_auto_theme(config)
+    if M.get_appearance() == 'Dark' then
+        M.set_dark_theme(config)
+    else
+        M.set_light_theme(config)
+    end
+end
+
+function M.get_appearance()
+    if wezterm.gui then
+        return wezterm.gui.get_appearance()
+    end
+
+    -- default to dark
+    return 'Dark'
+end
 
 -- simple tab format with just the tab number
 function M.tab_format(tab, _, _, _, _)
@@ -20,14 +45,6 @@ function M.tab_format(tab, _, _, _, _)
 
     -- colors are set in config.colors.tab_bar
     return '  ' .. tab.tab_index + 1 .. is_zoomed .. ' '
-end
-
-function M.get_theme_variant(appearance)
-    if appearance:find 'Dark' then
-        return M.THEME.DARK
-    else
-        return M.THEME.LIGHT
-    end
 end
 
 function M.window_resize(window, _)
@@ -56,15 +73,16 @@ end
 function M.apply(config)
     -- load theme
     M.THEME.apply(config)
-    config.color_scheme = M.get_theme_variant(wezterm.gui.get_appearance())
+
+    M.set_auto_theme(config)
 
     config.font = wezterm.font_with_fallback({
         'FiraCode Nerd Font',
-        'Hack Nerd Font',
-        'Noto Sans',
+        'Noto Sans Mono',
     })
 
     config.font_size = 15
+    config.line_height = 0.9
 
     config.window_padding = {
         left = '6px',
@@ -112,7 +130,7 @@ function M.apply(config)
     local window_max = ' 󰖯 '
     local window_close = ' 󰅖 '
 
-    config.window_decorations = 'INTEGRATED_BUTTONS | RESIZE'
+    -- config.window_decorations = 'INTEGRATED_BUTTONS | RESIZE'
     config.integrated_title_buttons = { 'Hide', 'Maximize', 'Close' }
     config.tab_bar_style = {
         window_hide = window_min,
@@ -128,6 +146,8 @@ function M.apply(config)
 
     -- makes the tabbar look more like TUI
     config.use_fancy_tab_bar = false;
+
+    config.hide_tab_bar_if_only_one_tab = true;
 
     config.window_frame = {
         border_top_height = '4px',

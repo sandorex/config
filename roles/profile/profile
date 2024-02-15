@@ -60,6 +60,9 @@ export TASK_PAGER=glow
 # FRX is git default, adding mouse for mousewheel scrolling
 export LESS='FRX --mouse'
 
+# use ansi based theme so terminal theme does not make it unreadable
+export BAT_THEME='ansi'
+
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # set ls colors
