@@ -1,5 +1,6 @@
 -- wezterm configuration
 local wezterm = require('wezterm')
+local util = require('util')
 
 local config = {}
 if wezterm.config_builder then
@@ -10,10 +11,16 @@ end
 config.check_for_updates = true
 -- config.window_close_confirmation = 'NeverPrompt'
 
+local appearance = util.get_appearance()
+
+-- let apps know which theme to use
+config.set_environment_variables = {}
+config.set_environment_variables['THEME_VARIANT'] = appearance
+
 config.launch_menu = {
     {
         label = 'System Shell',
-        args = { os.getenv('SHELL') },
+        args = { os.getenv('SHELL') }
     },
 }
 

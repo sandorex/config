@@ -113,12 +113,3 @@ function precmd() {
     # update the title
     printf "\033]0;%s\007" "$(pwd)"
 }
-
-# set kitty theme on startup (it should be dark theme by default)
-if [[ "$TERM" == *"kitty"* ]]; then
-    hour=$(date +%H)
-    if [[ "$hour" -ge 6 ]] && [[ "$hour" -lt 18 ]]; then
-        kitty @ set-colors --all --configured ~/.config/kitty/light.conf
-    fi
-fi
-

@@ -1,4 +1,5 @@
 local wezterm = require('wezterm')
+local util = require('util')
 
 local COLORS = {}
 COLORS.TEXT = '#FFFFFF'
@@ -19,20 +20,11 @@ function M.set_dark_theme(config)
 end
 
 function M.set_auto_theme(config)
-    if M.get_appearance() == 'Dark' then
+    if util.get_appearance() == 'Dark' then
         M.set_dark_theme(config)
     else
         M.set_light_theme(config)
     end
-end
-
-function M.get_appearance()
-    if wezterm.gui then
-        return wezterm.gui.get_appearance()
-    end
-
-    -- default to dark
-    return 'Dark'
 end
 
 -- simple tab format with just the tab number

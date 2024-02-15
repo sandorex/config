@@ -14,7 +14,12 @@ return {
                 }
             })
 
-            vim.cmd('colorscheme carbonfox')
+            local variant = os.getenv('THEME_VARIANT') or 'Dark'
+            if variant == 'Dark' then
+                vim.cmd('colorscheme carbonfox')
+            else
+                vim.cmd('colorscheme dawnfox')
+            end
         end,
     },
 
@@ -26,7 +31,7 @@ return {
             require('lualine').setup {
                 options = {
                     icons_enabled = true,
-                    theme = 'nightfly',
+                    -- theme = 'base16', -- use base16?
                     component_separators = { left = '', right = '' },
                     section_separators = { left = '', right = '' },
                 }
