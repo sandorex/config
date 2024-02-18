@@ -28,24 +28,6 @@ KEYS[C_DELETE]=${terminfo[kDC5]} # !!
 bindkey "${KEYS[C_LEFT]}" backward-word
 bindkey "${KEYS[C_RIGHT]}" forward-word
 
-# make tab on empty buffer autocomplete like cd
-_first-tab() {
-    emulate -LR zsh
-
-    if [[ $#BUFFER == 0 ]]; then
-        fcd
-        # BUFFER="fcd"
-        # CURSOR=3
-        # zle list-choices
-    else
-        zle expand-or-complete
-    fi
-
-    zle redisplay
-}
-zle -N _first-tab
-bindkey "${KEYS[TAB]}" _first-tab
-
 # deletes first word to allow quick switch of command
 _quick-cmd-edit() {
     zle beginning-of-line
@@ -94,21 +76,6 @@ _job-switch() {
 }
 zle -N _job-switch
 bindkey '^Z' _job-switch
-
-# NOTE: this may not work on all terminals, the key is Alt+ISO_KEY (one left of z)
-_go_up() {
-    # save buffer
-    zle push-input
-
-    # change command
-    BUFFER="cd .."
-
-    # run command and automatically the buffer is restored
-    zle accept-line
-    zle redisplay
-}
-zle -N _go_up
-bindkey '\x1b<' _go_up
 
 _go_back() {
     # save buffer

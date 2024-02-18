@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+awk -v cols="$(tput cols)" 'BEGIN{
+    for (colnum = 0; colnum<cols; colnum++) {
+        r = 255-(colnum*255/cols);
+        g = (colnum*510/cols);
+        b = (colnum*255/cols);
+        if (g>255) g = 510-g;
+        printf "\033[48;2;%d;%d;%dm", r,g,b;
+        printf "\033[38;2;%d;%d;%dm", 255-r,255-g,255-b;
+	char=(colnum%2==0)?"/":"\\";
+        printf "%s\033[0m", char;
+    }
+    printf "\n";
+}'
+

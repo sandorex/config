@@ -1,3 +1,6 @@
 [submodule "roles/zsh/zsh/plugins/zsh-syntax-highlighting"]
 	path = roles/zsh/zsh/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
+[submodule "distrobox-ansible"]
+	path = distrobox-ansible
+	url = https://github.com/sandorex/distrobox-ansible

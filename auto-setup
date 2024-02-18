@@ -5,17 +5,25 @@
 
 set -eu
 
-host="$(hostname)"
+DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
+
+host="$(uname -n)"
 
 if [[ -v container ]]; then
     echo "This command is not meant to be ran in a container"
     exit 99
 fi
 
-if [[ ! -f "playbooks/$host.yml" ]]; then
+cd "$DIR"
+
+if [[ ! -f "$DIR/playbooks/$host.yml" ]]; then
     echo "Playbook for host '$host' does not exist!"
     exit 1
 fi
+
+# bit of a delay in case wrong hostname is set or something
+echo "Running playbook $host.yml (in 5 seconds)"
+sleep 5s
 
 ./ansible-playbook "$@" "playbooks/$host.yml"
 
