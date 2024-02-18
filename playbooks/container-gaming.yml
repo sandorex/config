@@ -3,8 +3,8 @@
   hosts: localhost
   connection: local
   vars:
-    container_name: gaming-arch
-    container_home: '/mnt/slowmf/GamingContainer2' # TODO move this to a var
+    container_name: gaming-arch2
+    container_home: '/mnt/slowmf/GamingContainer2'
     container_image: archlinux
     container_image_tag: latest
   tasks:
@@ -85,7 +85,9 @@
       - kitty-terminfo
 
   tasks:
-    # TODO investigate as some commands are root by default some are not
+    - name: Debug
+      ansible.builtin.debug:
+        msg: '{{ ansible_nodename }} {{ ansible_distribution }}'
 
     - name: Enable en_US.UTF-8 locale in /etc/locale.gen
       become: yes
@@ -128,7 +130,7 @@
       become: yes
       ansible.builtin.import_role:
         name: proton-ge-steam
-
+    #
     # TODO these do not work for some reason
     # - name: Export Steam to host
     #   become_user: sandorex

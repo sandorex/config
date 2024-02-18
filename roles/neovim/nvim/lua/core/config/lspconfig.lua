@@ -25,6 +25,7 @@ M.configs.mason_lsp = {
         'clangd',
         'cmake',
         'html',
+        'rust_analyzer', -- NOTE remember to install rust-src or it wont work properly
 
         -- ts
         -- 'denols', -- its not great and clashes with tsserver

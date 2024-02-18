@@ -41,12 +41,10 @@ DOCUMENTATION = '''
 '''
 
 import subprocess
-import shlex
-import base64
 
 from ansible.module_utils.common.process import get_bin_path
 from ansible.errors import AnsibleError
-from ansible.module_utils._text import to_bytes, to_native
+from ansible.module_utils._text import to_bytes
 from ansible.plugins.connection import ConnectionBase, ensure_connect
 from ansible.utils.display import Display
 
@@ -73,13 +71,9 @@ class Connection(ConnectionBase):
         """
         run podman executable
 
-        TODO OUTDATED
-
-
         :param cmd: podman's command to execute (str or list)
         :param cmd_args: list of arguments to pass to the command (list of str/bytes)
         :param in_data: data passed to podman's stdin
-        :param use_container_id: whether to append the container ID to the command
         :return: return code, stdout, stderr
         """
 
@@ -142,18 +136,10 @@ class Connection(ConnectionBase):
         return p.returncode, stdout, stderr
 
     def _distrobox_exec(self, cmd, distrobox_args=[]):
-        """
-        TODO
-        """
-        # NOTE: distrobox does something weird with the input, so ansible shell scripts fail
-        # i am just piping the actual command here into sh
-        return self._distrobox('enter', ['--name', self._container_id] + distrobox_args + ['--', 'sh', '-'], in_data=cmd.encode('utf-8'))
+        return self._distrobox('enter', ['--name', self._container_id] + distrobox_args + ['--', cmd])
 
     @ensure_connect
     def exec_command(self, cmd, in_data=None, sudoable=True):
-        """
-        TODO
-        """
         super(Connection, self).exec_command(cmd, in_data=in_data, sudoable=sudoable)
 
         # NOTE: it must run as root otherwise permissions are messed up and it fails
