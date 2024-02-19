@@ -1,42 +1,53 @@
 ---
-- name: Add apt repository (main)
-  ansible.builtin.apt_repository:
-    repo: 'deb http://deb.debian.org/debian {{ debian_release }} main contrib non-free non-free-firmware'
-    state: present
+# TODO user is not in sudo by default on debian, figure out a way to automate this without
+# requiring same password for root and user
+# for now run: su - root adduser <user> sudo
+# - name: Add user to sudoers
+#   ansible.builtin.user:
+#     name: '{{ ansible_user_id }}'
+#     append: true
+#     groups:
+#       - sudo
+#   become: yes
+#   become_method: su
+#   become_flags: '-s /bin/bash -c'
 
-- name: Add apt repository (updates)
-  ansible.builtin.apt_repository:
-    repo: 'deb http://deb.debian.org/debian {{ debian_release }}-updates main contrib non-free non-free-firmware'
-    state: present
+- become: yes
+  notify: 'Update APT Cache'
+  block:
+    - name: Add apt repository (main)
+      ansible.builtin.apt_repository:
+        repo: 'deb http://deb.debian.org/debian {{ ansible_distribution_release }} main contrib non-free non-free-firmware'
+        state: present
 
-- name: Add apt repository (backports)
-  ansible.builtin.apt_repository:
-    repo: 'deb http://deb.debian.org/debian {{ debian_release }}-backports main contrib non-free non-free-firmware'
-    state: present
+    - name: Add apt repository (updates)
+      ansible.builtin.apt_repository:
+        repo: 'deb http://deb.debian.org/debian {{ ansible_distribution_release }}-updates main contrib non-free non-free-firmware'
+        state: present
 
-- name: Add apt repository (security)
-  ansible.builtin.apt_repository:
-    repo: 'deb http://deb.debian.org/debian-security {{ debian_release }}-security main contrib non-free non-free-firmware'
-    state: present
+    - name: Add apt repository (backports)
+      ansible.builtin.apt_repository:
+        repo: 'deb http://deb.debian.org/debian {{ ansible_distribution_release }}-backports main contrib non-free non-free-firmware'
+        state: present
 
-- name: Update apt cache
-  ansible.builtin.apt:
-    update_cache: yes
+    - name: Add apt repository (security)
+      ansible.builtin.apt_repository:
+        repo: 'deb http://deb.debian.org/debian-security {{ ansible_distribution_release }}-security main contrib non-free non-free-firmware'
+        state: present
 
-- name: Configure apt automation
-  ansible.builtin.copy:
-    content: |
-      // updates the package cache every day
-      APT::Periodic::Update-Package-Lists "1";
+    - name: Configure apt automation
+      ansible.builtin.copy:
+        content: |
+          // updates the package cache every day
+          APT::Periodic::Update-Package-Lists "1";
 
-      // pre-download the updates every day
-      APT::Periodic::Download-Upgradeable-Packages "1";
+          // pre-download the updates every day
+          APT::Periodic::Download-Upgradeable-Packages "1";
 
-      // automatic cleaning every 3 days
-      APT::Periodic::AutocleanInterval "3";
+          // automatic cleaning every 3 days
+          APT::Periodic::AutocleanInterval "3";
 
-    dest: /etc/apt/apt.conf.d/10-periodic-update-cache
-    mode: 0644
-    owner: root
-  become: yes
+        dest: /etc/apt/apt.conf.d/10-periodic-update-cache
+        mode: 0644
+        owner: root
 

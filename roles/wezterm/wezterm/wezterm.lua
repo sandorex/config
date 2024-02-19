@@ -13,6 +13,14 @@ config.check_for_updates = true
 
 local appearance = util.get_appearance()
 
+local function get_shell()
+    if os.getenv("container") ~= nil then
+        return '/bin/zsh'
+    end
+
+    return os.getenv("SHELL") or '/bin/zsh'
+end
+
 -- let apps know which theme to use
 config.set_environment_variables = {}
 config.set_environment_variables['THEME_VARIANT'] = appearance
@@ -20,7 +28,7 @@ config.set_environment_variables['THEME_VARIANT'] = appearance
 config.launch_menu = {
     {
         label = 'System Shell',
-        args = { os.getenv('SHELL') }
+        args = { get_shell() }
     },
 }
 

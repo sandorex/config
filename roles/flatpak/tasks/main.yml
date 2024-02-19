@@ -4,7 +4,7 @@
   ansible.builtin.package:
     name: flatpak
     state: present
-  become: yes # TODO pretty sure this is required?
+  become: yes
 
 - name: Add the flathub repository (user)
   community.general.flatpak_remote:
@@ -13,13 +13,13 @@
     flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
     method: user
 
-- name: Add the flathub repository (system)
-  community.general.flatpak_remote:
-    name: flathub-system
-    state: present
-    flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
-    method: system
-  become: yes
+# - name: Add the flathub repository (system)
+#   community.general.flatpak_remote:
+#     name: flathub-system
+#     state: present
+#     flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+#     method: system
+#   become: yes
 
 - name: Install flatpak apps
   community.general.flatpak:

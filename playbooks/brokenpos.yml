@@ -2,8 +2,8 @@
 # debian 12 bookworm
 
 - name: brokenpos
-  hosts: localhost
-  connection: local
+  hosts: all
+  gather_facts: true
   pre_tasks:
     - name: Check if running on correct machine
       ansible.builtin.pause:
@@ -40,7 +40,6 @@
         - kde-plasma
         - kde
         - desktop
-      when: ansible_env.XDG_CURRENT_DESKTOP == 'KDE' or desktop_check_ignore is defined
 
     - role: fixes
       tags:

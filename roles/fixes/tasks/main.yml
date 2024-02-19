@@ -2,26 +2,18 @@
 - become: yes
   block:
     - name: Set vm.max_map_count
-      ansible.builtin.command:
-        cmd: 'vm.max_map_count = 2147483642'
-
-    - name: Set vm.max_map_count (permanently)
       ansible.builtin.copy:
         content: |
-          vm.max_map_count = 2147483642
+          vm.max_map_count=2147483642
 
         dest: /etc/sysctl.d/90-gamecompatability.conf
         mode: 0644
         owner: root
 
     - name: Set swappiness
-      ansible.builtin.command:
-        cmd: 'sysctl vm.swappiness = 5'
-
-    - name: Set swappiness (permanently)
-      ansible.builtin.template:
+      ansible.builtin.copy:
         content: |
-          vm.swappiness = 5
+          vm.swappiness=5
 
         dest: /etc/sysctl.d/99-swappiness.conf
         mode: 0644

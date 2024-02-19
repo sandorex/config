@@ -2,8 +2,7 @@
 # debian 12 bookworm
 
 - name: bismuth
-  hosts: localhost
-  connection: local
+  hosts: all
   pre_tasks:
     - name: Check if running on correct machine
       ansible.builtin.pause:
@@ -29,8 +28,24 @@
         file: '{{ playbook_dir }}/../vars/{{ ansible_play_name }}.yml'
       tags: always
   roles:
-    ## terminal ##
+    ## system ##
+    - role: debian
+      tags:
+        - debian
+        - distro
 
+    - role: kde-plasma
+      tags:
+        - kde-plasma
+        - kde
+        - desktop
+
+    - role: fixes
+      tags:
+        - distro
+        - fixes
+
+    ## terminal ##
     - role: git
       tags:
         - git
@@ -63,24 +78,6 @@
       tags:
         - kitty
         - terminal
-
-    ## system ##
-    - role: debian
-      tags:
-        - debian
-        - distro
-
-    - role: kde-plasma
-      tags:
-        - kde-plasma
-        - kde
-        - desktop
-      when: ansible_env.XDG_CURRENT_DESKTOP == 'KDE' or desktop_check_ignore is defined
-
-    - role: fixes
-      tags:
-        - distro
-        - fixes
 
     ## apps ##
     - role: flatpak
