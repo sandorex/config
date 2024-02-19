@@ -73,14 +73,13 @@
         - desktop
       when: ansible_env.XDG_CURRENT_DESKTOP == 'KDE' or desktop_check_ignore is defined
 
-    # TODO these are not yet done
-    # - role: flatpak
-    #   tags:
-    #     - flatpak
-    #     - suite
+    - role: debian
+      tags:
+        - debian
+        - distro
 
-    # - role: apps
-    #   tags:
-    #     - apps
-    #     - apps
+    - role: fixes
+      tags:
+        - distro
+        - fixes
 

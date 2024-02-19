@@ -1,0 +1,7 @@
+---
+# brokenpos laptop
+
+flatpak_apps:
+  - com.brave.Browser
+  - com.stremio.Stremio
+

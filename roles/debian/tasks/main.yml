@@ -1,0 +1,42 @@
+---
+- name: Add apt repository (main)
+  ansible.builtin.apt_repository:
+    repo: 'deb http://deb.debian.org/debian {{ debian_release }} main contrib non-free non-free-firmware'
+    state: present
+
+- name: Add apt repository (updates)
+  ansible.builtin.apt_repository:
+    repo: 'deb http://deb.debian.org/debian {{ debian_release }}-updates main contrib non-free non-free-firmware'
+    state: present
+
+- name: Add apt repository (backports)
+  ansible.builtin.apt_repository:
+    repo: 'deb http://deb.debian.org/debian {{ debian_release }}-backports main contrib non-free non-free-firmware'
+    state: present
+
+- name: Add apt repository (security)
+  ansible.builtin.apt_repository:
+    repo: 'deb http://deb.debian.org/debian-security {{ debian_release }}-security main contrib non-free non-free-firmware'
+    state: present
+
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: yes
+
+- name: Configure apt automation
+  ansible.builtin.copy:
+    content: |
+      // updates the package cache every day
+      APT::Periodic::Update-Package-Lists "1";
+
+      // pre-download the updates every day
+      APT::Periodic::Download-Upgradeable-Packages "1";
+
+      // automatic cleaning every 3 days
+      APT::Periodic::AutocleanInterval "3";
+
+    dest: /etc/apt/apt.conf.d/10-periodic-update-cache
+    mode: 0644
+    owner: root
+  become: yes
+
