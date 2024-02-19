@@ -13,13 +13,12 @@
     flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
     method: user
 
-# NOTE: im gonna leave this here, but flatpak as system is kinda cumbersome
 - name: Add the flathub repository (system)
   community.general.flatpak_remote:
     name: flathub-system
     state: present
     flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
-    method: user
+    method: system
   become: yes
 
 - name: Install flatpak apps
