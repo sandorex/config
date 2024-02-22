@@ -14,8 +14,8 @@ return {
                 }
             })
 
-            local variant = os.getenv('THEME_VARIANT') or 'Dark'
-            if variant == 'Dark' then
+            local variant = os.getenv('THEME_VARIANT'):lower() or 'dark'
+            if variant == 'dark' then
                 vim.cmd('colorscheme carbonfox')
             else
                 vim.cmd('colorscheme dawnfox')

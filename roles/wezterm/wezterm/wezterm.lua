@@ -8,7 +8,7 @@ if wezterm.config_builder then
     config = wezterm.config_builder()
 end
 
-config.check_for_updates = true
+-- config.check_for_updates = true
 -- config.window_close_confirmation = 'NeverPrompt'
 
 local appearance = util.get_appearance()
@@ -23,7 +23,7 @@ end
 
 -- let apps know which theme to use
 config.set_environment_variables = {}
-config.set_environment_variables['THEME_VARIANT'] = appearance
+config.set_environment_variables['THEME_VARIANT'] = appearance:lower()
 
 config.launch_menu = {
     {

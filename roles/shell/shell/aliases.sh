@@ -73,6 +73,8 @@ alias m='monb'
 alias day='monb day'
 alias night='monb night'
 
+alias theme-switch='source "$AGSHELLDIR"/theme-switch'
+
 # function aliases
 rcp() {
     # -a = -rlptgoD

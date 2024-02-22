@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# switch theme from terminal
+#
+# use `plasma-apply-colorscheme -l` to list themes
+#
+# this file has to be sourced!
+
+PLASMA_COLOR_DARK='BreezeDark'
+PLASMA_COLOR_LIGHT='BreezeClassicModified'
+
+if [[ -n "$1" ]]; then
+    theme_target="$1"
+else
+    case "${THEME_VARIANT}" in
+        [Dd]ark)
+            theme_target=light
+            ;;
+        *) # default to dark
+            theme_target=dark
+            ;;
+    esac
+fi
+
+if command -v plasma-apply-colorscheme &>/dev/null; then
+    if [[ "$theme_target" = "light" ]]; then
+        plasma-apply-colorscheme "$PLASMA_COLOR_LIGHT" &>/dev/null
+    else
+        plasma-apply-colorscheme "$PLASMA_COLOR_DARK" &>/dev/null
+    fi
+fi
+
+export THEME_VARIANT="$theme_target"
+
+# cleanup it will all be left in the shell
+unset theme_target
+unset PLASMA_COLOR_LIGHT
+unset PLASMA_COLOR_DARK
+
