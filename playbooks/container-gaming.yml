@@ -3,66 +3,53 @@
   hosts: localhost
   connection: local
   vars:
-    container_name: gaming-arch2
-    container_home: '/mnt/slowmf/GamingContainer2'
+    container_name: gaming
+    container_home: '/mnt/slowmf/GamingContainer'
     container_image: archlinux
     container_image_tag: latest
   tasks:
-    - ansible.builtin.set_fact:
-        container_name: '{{ container_name }}'
-
     - name: Check if container already exists
       containers.podman.podman_container_info:
         name: '{{ container_name }}'
       register: container_info
 
-    - when: container_info.containers | length == 0
-      block:
-        - name: Create container using distrobox
-          ansible.builtin.command:
-            cmd: >-
-              distrobox create --yes --no-entry --pull
-              --image '{{ container_image }}:{{ container_image_tag }}'
-              --name '{{ container_name }}'
-              --home '{{ container_home }}'
-              --init-hooks '''sudo hostname "$(cat /run/host/etc/hostname || printf localhost)" || true'''
+    - name: Create container using distrobox
+      ansible.builtin.command:
+        # --hostname requires distrobox version 1.6
+        # --unshare-netns fixes games not launching after suspend
+        # add python3 to allow ansible to wrok
+        cmd: >-
+          distrobox create --yes --no-entry --pull
+          --image '{{ container_image }}:{{ container_image_tag }}'
+          --name '{{ container_name }}'
+          --home '{{ container_home }}'
+          --hostname '{{ ansible_hostname }}'
+          --unshare-netns
+          --additional-packages 'python3'
+      when: container_info.containers | length == 0
 
-        - name: Run distrobox init
-          ansible.builtin.command:
-            # install ansible and inetutils (hostname command)
-            cmd: 'distrobox enter {{ container_name }} -- sh -c ''sudo pacman -Syu --noconfirm && sudo pacman -S --noconfirm ansible inetutils'''
-
-          # TODO restart the container so hostname is set properly
-
-    # TODO start the container if necessary
-
-    - name: Check if steam was exported
-      ansible.builtin.stat:
-        path: '{{ ansible_env.HOME }}/.local/share/applications/{{ container_name }}-steam.desktop'
-      register: steam_exported
-
-    - name: Check if lutris was exported
-      ansible.builtin.stat:
-        path: '{{ ansible_env.HOME }}/.local/share/applications/{{ container_name }}-net.lutris.Lutris.desktop'
-      register: lutris_exported
+    - name: Start the container
+      ansible.builtin.command:
+        cmd: 'distrobox enter --name {{ container_name }} -- sh -c ''exit'''
+      # start if not running or if not defined
+      when: not (container_info.containers[0].State.Running | default(false))
 
     - name: Add container as host
       changed_when: no
       ansible.builtin.add_host:
-        name: gaming-container
+        name: container
         ansible_connection: distrobox
         ansible_host: '{{ container_name }}'
-
-        steam_exported: '{{ steam_exported.stat.exists }}'
-        lutris_exported: '{{ lutris_exported.stat.exists }}'
+        ansible_user: '{{ ansible_user_id }}'
 
 - name: Gaming container setup (container)
-  hosts: gaming-container
+  hosts: container
   environment:
-    CONTAINER_ID: '{{ hostvars["localhost"]["container_name"] }}'
+    CONTAINER_ID: '{{ ansible_host }}'
   vars:
     steam_proton_ge_versions:
       - GE-Proton8-30
+      - GE-Proton8-32
     pacman_packages:
       - vulkan-radeon
       - lib32-vulkan-radeon
@@ -81,14 +68,7 @@
       # editor so i dont have to use vim
       - nano
 
-      # for terminal usage
-      - kitty-terminfo
-
   tasks:
-    - name: Debug
-      ansible.builtin.debug:
-        msg: '{{ ansible_nodename }} {{ ansible_distribution }}'
-
     - name: Enable en_US.UTF-8 locale in /etc/locale.gen
       become: yes
       ansible.builtin.lineinfile:
@@ -126,23 +106,28 @@
         name: '{{ pacman_packages }}'
         state: present
 
-    - become_user: sandorex
-      become: yes
-      ansible.builtin.import_role:
+    - ansible.builtin.import_role:
         name: proton-ge-steam
-    #
-    # TODO these do not work for some reason
-    # - name: Export Steam to host
-    #   become_user: sandorex
-    #   become: yes
-    #   ansible.builtin.command:
-    #     cmd: distrobox-export --app 'Steam'
-    #   when: not steam_exported
-    #
-    # - name: Export Lutris to host
-    #   become_user: sandorex
-    #   become: yes
-    #   ansible.builtin.command:
-    #     cmd: distrobox-export --app 'net.lutris.Lutris'
-    #   when: not lutris_exported
+
+    ## export apps to host ##
+    # TODO this does not work for some reason
+    # - name: Check if steam was exported
+    #   ansible.builtin.stat:
+    #     path: '/home/{{ ansible_user_id }}/.local/share/applications/{{ ansible_host }}-steam.desktop'
+    #   register: steam_exported
+
+    - name: Export Steam to host
+      ansible.builtin.command:
+        cmd: distrobox-export --app 'steam'
+      # when: steam_exported.stat.exists | default(false)
+
+    # - name: Check if lutris was exported
+    #   ansible.builtin.stat:
+    #     path: '/home/{{ ansible_user_id }}/.local/share/applications/{{ ansible_host }}-net.lutris.Lutris.desktop'
+    #   register: lutris_exported
+
+    - name: Export Lutris to host
+      ansible.builtin.command:
+        cmd: distrobox-export --app 'lutris'
+      # when: lutris_wxported.stat.exists | default(false)
 
