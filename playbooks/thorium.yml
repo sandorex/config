@@ -2,7 +2,7 @@
 # debian 12 bookworm
 
 - name: thorium
-  hosts: all
+  hosts: '{{ "localhost" if play_hosts | length == 0 else "all" }}'
   pre_tasks:
     - name: Check if running on correct machine
       ansible.builtin.pause:

@@ -12,9 +12,15 @@ function M.apply(config)
     config.leader = { key = '<', mods = "NONE" }
 
     config.mouse_bindings = {
-        -- disable middle click paste and selects command output in shell (using wezterm escape sequences)
+        -- disable middle click paste
         {
             event = { Down = { streak = 1, button = 'Middle' } },
+            mods = 'NONE',
+            action = wezterm.action.DisableDefaultAssignment,
+        },
+        -- right click select output in shell (using semantic zones)
+        {
+            event = { Down = { streak = 1, button = 'Right' } },
             mods = 'NONE',
             action = wezterm.action.SelectTextAtMouseCursor 'SemanticZone',
         },
