@@ -15,6 +15,7 @@ vim.keymap.set({'n', 'v'}, '<S-l>', 'w', { remap = true, silent = true })
 
 ---- KEYBINDINGS ----
 -- treat word wrap as lines when moving up/down
+-- TODO figure out how to do this in insert mode too!
 vim.keymap.set({'n', 'v'}, 'k', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set({'n', 'v'}, 'j', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 

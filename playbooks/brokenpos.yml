@@ -2,7 +2,8 @@
 # debian 12 bookworm
 
 - name: brokenpos
-  hosts: '{{ "localhost" if play_hosts | length == 0 else "all" }}'
+  hosts: localhost
+  connection: local
   pre_tasks:
     - name: Check if running on correct machine
       ansible.builtin.pause:
