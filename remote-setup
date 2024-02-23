@@ -4,18 +4,15 @@
 # automatically copies dotfiles to remote host and opens a shell, made to simplify running
 # playbooks on remote machines
 
-shopt -s extglob
+set -e
 
-DIR=$(realpath "$(dirname "${BASH_SOURCE[0]}")")
+cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
-cd "$DIR" | exit 99
-
-# TODO automate ssh key exchange, maybe include a known public ssh key
 if [[ -z "$1" ]]; then
     cat <<EOF
 Usage: $0 <user@host>
 
-You will be asked for a password twice if SSH key authentication is not setup
+Connects to remote device clones this repository (dirty) and starts a shell
 
 EOF
     exit 1
@@ -24,17 +21,39 @@ fi
 ip="$1"
 shift
 
+# transfer key if needed
+./scripts/setup-ssh-key "$ip"
+
 rm -f archive.tar
 
+# TODO experiment with piping tar output to the ssh command
 # archive repository everything but the tar itself and venv
-tar -cf archive.tar --exclude='venv/*' \
-                    --exclude='*.tar' \
+tar -cf archive.tar --exclude='venv/*'      \
+                    --exclude='*.tar'       \
+                    --exclude='ssh_key'     \
+                    --exclude='ssh_key.pub' \
                     ./* ./.*
 
 echo "$(tput bold):: Transfering dotfiles from $(uname -n) to target ($ip)$(tput sgr0)"
 
 # the host is unknown and i just dont want to deal with this
-SSH_FLAGS=(-q -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null")
+SSH_FLAGS=(
+    # quiet
+    -q
+
+    # ignore changed host
+    -o "StrictHostKeyChecking=no"
+
+    # do not save host
+    -o "UserKnownHostsFile=/dev/null"
+
+    # do not use password
+    -o "PasswordAuthentication=no"
+    -o "ChallengeResponseAuthentication=no"
+
+    # use local key
+    -i "ssh_key"
+)
 
 # transfer archive to home of user
 scp "${SSH_FLAGS[@]}" archive.tar scp://"$ip"/
@@ -45,6 +64,10 @@ ssh "${SSH_FLAGS[@]}" "$ip" -t 'mkdir -p .dotfiles \
     && tar -C .dotfiles -xf archive.tar \
     && rm -f archive.tar \
     && cd .dotfiles \
-    && printf "\n%s\n%s\n%s\n%s\n\n%s\n\n" "$(tput bold)Options:" "- For automated setup use ./auto-setup" "- For manual use, use ./ansible-playbook" "- Or use ansible directly by sourcing ./scripts/activate$(tput sgr0)" "If you wish to reset git to last commit run git reset --hard HEAD" \
+    && printf "$(tput bold)\n%s\n%s\n%s$(tput sgr0)\n\n%s\n\n" \
+        "Options:" \
+        "- For automated setup use ./auto-setup" \
+        "- For manual setup use either the wrapper ./ansible-playbook or directly by sourcing ./scripts/activate" \
+        "If you wish to restore git repository to last commited state run git reset --hard HEAD" \
     && $SHELL -i'
 

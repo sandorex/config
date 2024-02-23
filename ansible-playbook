@@ -3,10 +3,10 @@
 # https://github.com/sandorex/config
 # wrapper to call ansible-playbook from the virtualenv
 
-DIR="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
+cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 # activate the virtualenv
-source "$DIR/scripts/activate"
+source ./scripts/activate
 
 ansible-playbook "$@"
 

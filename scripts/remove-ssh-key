@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# automate removal of temporary ssh key
+
+# comment used when creating the ssh key, must be same as in setup-ssh-key
+# used in sed verbatim, beware!
+SSH_COMMENT='ansible-temp-key'
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
+
+ssh_options=( -q -o "StrictHostKeyChecking=no" -o "UserKnownHostsFile=/dev/null" )
+
+if [[ -z "$1" ]]; then
+    cat <<EOF
+Usage: $0 <[user@]host>
+
+Removes all temporary keys from host, if key is not generated it will try to
+connect using the password
+EOF
+    exit 1
+fi
+
+host="$1"
+
+# add they key if it exists
+if [[ -f ssh_key ]]; then
+    ssh_options+=( -i "ssh_key" )
+fi
+
+ssh "${ssh_options[@]}" "$host" -t "sed -i.bak '/$SSH_COMMENT/d' ~/.ssh/authorized_keys"
+

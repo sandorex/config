@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+#
+# https://github.com/sandorex/config
+# automatically add / remove ssh key to particular device
+
+# has to be same as in remove-ssh-key
+SSH_COMMENT='ansible-temp-key'
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
+
+if [[ ! -f ssh_key ]]; then
+    echo ":: Generating ssh key"
+    ssh-keygen -q -t ed25519 -f ssh_key -P '' -C "$SSH_COMMENT"
+else
+    echo ":: SSH key already generated"
+fi
+
+# if no arguments just quit after generating the key
+if [[ -z "$1" ]]; then
+    exit
+fi
+
+host="$1"
+shift
+
+echo ":: Copying ssh key to $host"
+ssh-copy-id -i ssh_key "$@" "$host"
+
