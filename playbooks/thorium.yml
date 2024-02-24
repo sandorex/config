@@ -72,11 +72,14 @@
       tags:
         - neovim
         - nvim
-        - editor
         - terminal
 
     - role: kitty
       tags:
         - kitty
         - terminal
+
+    - role: qalculate
+      tags:
+        - qalculate
 

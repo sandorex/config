@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<QALCULATE version="4.9.0">
+  <function>
+    <title>Gear Module</title>
+    <names>gearModule</names>
+    <description>Calculate gear module (mm) from outer gear diameter (mm) and number of teeth</description>
+    <expression>\x / (2 + \y)</expression>
+    <argument type="number" index="1">
+      <title>OD</title>
+      <zero_forbidden>true</zero_forbidden>
+    </argument>
+    <argument type="number" index="2">
+      <title>Teeth</title>
+      <zero_forbidden>true</zero_forbidden>
+    </argument>
+  </function>
+  <function>
+    <title>Gear Root Diameter</title>
+    <names>r:gearRootDiameter</names>
+    <description>Calculate gear root diameter from module (mm) and number of teeth, can be used to see if the math is correct and everything checks out</description>
+    <expression>(\x * \y) - 2.5 * \x</expression>
+    <argument type="number" index="1">
+      <title>Module</title>
+      <zero_forbidden>true</zero_forbidden>
+    </argument>
+    <argument type="number" index="2">
+      <title>Teeth</title>
+      <zero_forbidden>true</zero_forbidden>
+    </argument>
+  </function>
+</QALCULATE>
