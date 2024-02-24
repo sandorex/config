@@ -1,0 +1,9 @@
+---
+# TODO i think this config file is reduntant just add alias to disable telemetry
+- name: Link glow configuration file
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.config/glow'
+    dest: '{{ ansible_env.HOME }}/.config/glow'
+    state: link
+    force: true
+

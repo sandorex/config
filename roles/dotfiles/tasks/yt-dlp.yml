@@ -1,0 +1,8 @@
+---
+- name: Link yt-dlp configuration
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.config/yt-dlp'
+    dest: '{{ ansible_env.HOME }}/.config/yt-dlp'
+    state: link
+    force: true
+

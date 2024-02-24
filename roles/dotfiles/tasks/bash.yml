@@ -1,0 +1,31 @@
+---
+- ansible.builtin.import_tasks: bin.yml
+- ansible.builtin.import_tasks: profile.yml
+- ansible.builtin.import_tasks: shell.yml
+
+- name: Link bash configuration directory
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.config/bash'
+    dest: '{{ ansible_env.HOME }}/.config/bash'
+    state: link
+    force: true
+
+- name: Link inputrc configuration
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.inputrc'
+    dest: '{{ ansible_env.HOME }}/.inputrc'
+    state: link
+    force: true
+
+- name: Link bashrc to bash init
+  ansible.builtin.file:
+    src: '{{ ansible_env.HOME }}/.config/bash/init.bash'
+    dest: '{{ ansible_env.HOME }}/.bashrc'
+    state: link
+    force: true
+
+- name: Remove bash profile to force it to load profile
+  ansible.builtin.file:
+    path: '{{ ansible_env.HOME }}/.bash_profile'
+    state: absent
+

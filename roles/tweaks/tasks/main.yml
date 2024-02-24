@@ -1,0 +1,24 @@
+---
+# TODO run this from distro specific role!
+- become: yes
+  block:
+    - name: Set vm.max_map_count
+      ansible.builtin.copy:
+        content: |
+          vm.max_map_count=2147483642
+
+        dest: /etc/sysctl.d/90-gamecompatability.conf
+        mode: 0644
+        owner: root
+
+    - name: Set swappiness
+      ansible.builtin.copy:
+        content: |
+          vm.swappiness=5
+
+        dest: /etc/sysctl.d/99-swappiness.conf
+        mode: 0644
+        owner: root
+
+# TODO add ' ' to wl-clipboard to reduce issues
+# TODO add udev rule template

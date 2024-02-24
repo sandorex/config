@@ -1,0 +1,17 @@
+---
+- name: Template git configuration file
+  vars:
+    git_email: 'rzhw3h@gmail.com'
+    git_username: 'sandorex'
+  ansible.builtin.template:
+    src: '{{ role_path }}/files/.gitconfig'
+    dest: '{{ ansible_env.HOME }}/.gitconfig'
+    force: true
+
+- name: Link git template directory
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.git-template'
+    dest: '{{ ansible_env.HOME }}/.git-template'
+    state: link
+    force: true
+

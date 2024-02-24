@@ -1,7 +1,0 @@
----
-- name: Link WezTerm configuration directory
-  ansible.builtin.file:
-    src: '{{ role_path }}/wezterm'
-    dest: '{{ ansible_env.HOME }}/.config/wezterm'
-    state: link
-

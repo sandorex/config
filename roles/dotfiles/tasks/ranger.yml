@@ -1,0 +1,15 @@
+---
+- name: Install ranger file manager using pipx
+  community.general.pipx:
+    executable: 'pipx'
+    name: ranger-fm
+    state: present
+  when: 'rangerfm' in install
+
+- name: Link ranger configuration directory
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.config/ranger'
+    dest: '{{ ansible_env.HOME }}/.config/ranger'
+    state: link
+    force: true
+

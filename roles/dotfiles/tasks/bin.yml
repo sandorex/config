@@ -1,0 +1,8 @@
+---
+- name: Link bin directory
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.bin'
+    dest: '{{ ansible_env.HOME }}/.bin'
+    state: link
+    force: true
+

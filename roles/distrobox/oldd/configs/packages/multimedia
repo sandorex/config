@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-#
-# multimedia package
-
-DNF=( "${DNF[@]}" ffmpeg )
-

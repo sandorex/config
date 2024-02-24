@@ -1,0 +1,8 @@
+---
+- name: Link nano config directory
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.config/nano'
+    dest: '{{ ansible_env.HOME }}/.config/nano'
+    state: link
+    force: true
+

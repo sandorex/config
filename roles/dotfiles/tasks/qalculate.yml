@@ -1,0 +1,32 @@
+---
+- name: Ensure directory exists
+  ansible.builtin.file:
+    path: '{{ item }}'
+    state: directory
+  loop:
+    - '{{ ansible_env.HOME }}/.local/share/qalculate/definitions'
+    - '{{ ansible_env.HOME }}/.var/app/io.github.Qalculate.qalculate-qt/data/qalculate/definitions'
+
+- name: Link qalculate config (native)
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.local/share/qalculate/definitions'
+    dest: '{{ ansible_env.HOME }}/.local/share/qalculate/definitions'
+    state: link
+    force: true
+
+- name: Link qalculate config (flatpak)
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.local/share/qalculate/definitions'
+    dest: '{{ ansible_env.HOME }}/.var/app/io.github.Qalculate.qalculate-qt/data/qalculate/definitions'
+    state: link
+    force: true
+  register: link
+
+- name: Allow qalculate flatpak to share native config
+  ansible.builtin.command:
+    cmd: 'flatpak override io.github.Qalculate.qalculate-qt --filesystem="{{ role_path }}/files/.local/share/qalculate"'
+  register: flatpak_override
+  # ignore errors if permission failure
+  ignore_errors: 'Permission denied' in flatpak_override.stderr
+  when: link.changed
+

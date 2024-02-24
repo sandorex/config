@@ -1,0 +1,5 @@
+- [ ] i want right click mouse menu with mason lazy and checkhealth?
+- [ ] i want shorter keybinding for executing a macro
+- [ ] i want to set keybindings per plugin, and optionally if the plugin is disabled or not installed then use other set of keybindings to replace its functionality (e.g. fzf)
+
+<!-- vim: set ft=markdown syntax=markdown: -->

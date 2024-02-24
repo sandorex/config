@@ -1,7 +1,0 @@
----
-- name: Link common shell directory
-  ansible.builtin.file:
-    src: '{{ role_path }}/shell'
-    dest: '{{ ansible_env.HOME }}/.config/shell'
-    state: link
-

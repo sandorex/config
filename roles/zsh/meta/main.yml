@@ -1,6 +1,0 @@
----
-dependencies:
-  - role: profile
-  - role: shell
-  - role: bin
-

@@ -1,0 +1,34 @@
+---
+- ansible.builtin.import_tasks: bin.yml
+- ansible.builtin.import_tasks: profile.yml
+- ansible.builtin.import_tasks: shell.yml
+
+- name: Link ZSH config directory
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.config/zsh'
+    dest: '{{ ansible_env.HOME }}/.config/zsh'
+    state: link
+    force: true
+
+- name: Link ZSH init file
+  ansible.builtin.file:
+    src: '.config/zsh/init.zsh'
+    dest: '{{ ansible_env.HOME }}/.zshrc'
+    state: link
+    force: true
+
+- name: Link zprofile to profile
+  ansible.builtin.file:
+    src: '.profile'
+    dest: '{{ ansible_env.HOME }}/.zprofile'
+    state: link
+    force: true
+
+- name: Delete files to force zsh to load zprofile
+  ansible.builtin.file:
+    path: '{{ ansible_env.HOME }}/{{ item }}'
+    state: absent
+  loop:
+    - '.zshenv'
+    - '.zlogin'
+

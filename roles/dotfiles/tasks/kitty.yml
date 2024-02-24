@@ -1,0 +1,8 @@
+---
+- name: Link kitty configuration directory
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.config/kitty'
+    dest: '{{ ansible_env.HOME }}/.config/kitty'
+    state: link
+    force: true
+

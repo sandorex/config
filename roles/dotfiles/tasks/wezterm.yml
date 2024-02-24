@@ -1,0 +1,9 @@
+---
+- name: Link WezTerm configuration directory (linux)
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.config/wezterm'
+    dest: '{{ ansible_env.HOME }}/.config/wezterm'
+    state: link
+    force: true
+  when: ansible_system == 'Linux'
+

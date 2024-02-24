@@ -1,5 +1,0 @@
-plugin/
-
-# nvim dirs dont need to be pushed
-.nvim-cache/
-.nvim-data/
