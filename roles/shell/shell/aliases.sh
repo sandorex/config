@@ -21,6 +21,7 @@ alias t='task'
 alias g='git'
 alias cg="git --git-dir $DOTFILES/.git --work-tree $DOTFILES"
 alias f="$FILE_MANAGER";
+alias dbx='distrobox'
 
 # use bat if available
 if command -v bat &>/dev/null; then
