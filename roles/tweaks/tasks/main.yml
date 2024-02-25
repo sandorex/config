@@ -19,6 +19,7 @@
         dest: /etc/sysctl.d/99-swappiness.conf
         mode: 0644
         owner: root
+  tags: [root, never]
 
 # TODO add ' ' to wl-clipboard to reduce issues
 # TODO add udev rule template

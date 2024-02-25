@@ -1,0 +1,43 @@
+---
+## cli ##
+- ansible.builtin.import_tasks: bash.yml
+  when: "'bash' in configure"
+
+- ansible.builtin.import_tasks: zsh.yml
+  when: "'zsh' in configure"
+
+- ansible.builtin.import_tasks: git.yml
+  when: "'git' in configure"
+
+- ansible.builtin.import_tasks: ssh.yml
+  when: "'ssh' in configure"
+
+- ansible.builtin.import_tasks: nano.yml
+  when: "'nano' in configure"
+
+- ansible.builtin.import_tasks: rangerfm.yml
+  when: "'rangerfm' in configure"
+
+- ansible.builtin.import_tasks: glow.yml
+  when: "'glow' in configure"
+
+- ansible.builtin.import_tasks: tmux.yml
+  when: "'tmux' in configure"
+
+- ansible.builtin.import_tasks: zellij.yml
+  when: "'zellij' in configure"
+
+## apps ##
+- ansible.builtin.import_tasks: qalculate.yml
+  when: "'qalculate' in configure"
+
+- ansible.builtin.import_tasks: yt-dlp.yml
+  when: "'yt-dlp' in configure"
+
+## terminals ##
+- ansible.builtin.import_tasks: kitty.yml
+  when: "'kitty' in configure"
+
+- ansible.builtin.import_tasks: wezterm.yml
+  when: "'wezterm' in configure"
+

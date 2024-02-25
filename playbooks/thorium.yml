@@ -4,6 +4,62 @@
 - name: thorium
   hosts: localhost
   connection: local
+  vars:
+    kde_mouse_settings:
+      - name: 'E-Signal USB Gaming Mouse'
+        pid: '1241'
+        vid: '41119'
+        accel: ' -0.200'
+        accelProfile: 1
+
+      - name: 'Logitech Wireless Mouse PID:4022'
+        pid: '1133'
+        vid: '16418'
+        accel: '0.200'
+        accelProfile: 1
+
+    kde_wacom_settings:
+      - name: 'Wacom One by Wacom S Pen'
+        pid: '1386'
+        vid: '890'
+        leftHanded: false
+        outputArea: '0,0,1,1'
+
+    kde_default_terminal: kitty
+    kde_default_browser: vivaldi-stable
+
+    ## other ##
+    configure:
+      - bash
+      - zsh
+      - git
+      - ssh
+      - neovim
+      - nano
+      - glow
+      - zellij
+      - qalculate
+      - kitty
+      - wezterm
+
+    install:
+      - neovim
+
+    flatpak_install:
+      - com.brave.Browser
+      - md.obsidian.Obsidian
+      - io.github.Qalculate.qalculate-qt
+      - com.stremio.Stremio
+      - com.github.tchx84.Flatseal
+      - com.usebottles.bottles
+      - com.github.wwmm.easyeffects
+      - org.kde.filelight
+      - org.libreoffice.LibreOffice
+      - com.obsproject.Studio
+      - org.mozilla.Thunderbird
+      - org.kde.krita
+      - org.freecadweb.FreeCAD
+
   pre_tasks:
     - name: Check if running on correct machine
       ansible.builtin.pause:
@@ -23,63 +79,22 @@
       ansible.builtin.include_vars:
         file: '{{ playbook_dir }}/../vars/default.yml'
       tags: always
-
-    - name: Load vars
-      ansible.builtin.include_vars:
-        file: '{{ playbook_dir }}/../vars/{{ ansible_play_name }}.yml'
-      tags: always
   roles:
-    ## system ##
+    - role: linux
+      tags: [linux, distro]
+
+    - role: nerd-fonts
+      tags: [nerd-fonts]
+
     - role: kde-plasma
-      tags:
-        - kde-plasma
-        - kde
-        - desktop
+      tags: [kde-plasma, kde, desktop]
 
-    - role: debian
-      tags:
-        - debian
-        - distro
+    - role: tweaks
+      tags: [distro, tweaks, fixes]
 
-    - role: fixes
-      tags:
-        - distro
-        - fixes
+    - role: dotfiles
+      tags: [dotfiles]
 
-    ## terminal ##
-    - role: git
-      tags:
-        - git
-        - terminal
-
-    - role: ssh
-      tags:
-        - ssh
-        - terminal
-
-    - role: zsh
-      tags:
-        - zsh
-        - terminal
-
-    - role: bash
-      tags:
-        - bash
-        - terminal
-
-    ## apps ##
-    - role: neovim
-      tags:
-        - neovim
-        - nvim
-        - terminal
-
-    - role: kitty
-      tags:
-        - kitty
-        - terminal
-
-    - role: qalculate
-      tags:
-        - qalculate
+    - role: flatpak
+      tags: [flatpak, apps]
 

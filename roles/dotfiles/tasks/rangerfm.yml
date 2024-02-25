@@ -4,7 +4,7 @@
     executable: 'pipx'
     name: ranger-fm
     state: present
-  when: 'rangerfm' in install
+  when: "'rangerfm' in install"
 
 - name: Link ranger configuration directory
   ansible.builtin.file:

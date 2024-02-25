@@ -27,6 +27,6 @@
     cmd: 'flatpak override io.github.Qalculate.qalculate-qt --filesystem="{{ role_path }}/files/.local/share/qalculate"'
   register: flatpak_override
   # ignore errors if permission failure
-  ignore_errors: 'Permission denied' in flatpak_override.stderr
+  ignore_errors: "'Permission denied' in flatpak_override.stderr"
   when: link.changed
 
