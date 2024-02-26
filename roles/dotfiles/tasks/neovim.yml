@@ -8,8 +8,8 @@
     # TODO switch to the archived one as appimage requires libfuse
     - name: Download neovim
       vars:
-        neovim_release: 'v0.9.5'
-        neovim_checksum: '0c82e5702af7a11fbb916a11b4a82e98928abf8266c74b2030ea740340437bf9'
+        neovim_release: '{{ neovim_version }}'
+        neovim_checksum: '{{ neovim_checksum }}'
       ansible.builtin.get_url:
         url: 'https://github.com/neovim/neovim/releases/download/{{ neovim_release }}/nvim.appimage'
         checksum: 'sha256:{{ neovim_checksum }}'

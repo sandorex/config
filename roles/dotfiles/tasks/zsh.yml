@@ -1,8 +1,4 @@
 ---
-- ansible.builtin.import_tasks: bin.yml
-- ansible.builtin.import_tasks: profile.yml
-- ansible.builtin.import_tasks: shell.yml
-
 - name: Link ZSH config directory
   ansible.builtin.file:
     src: '{{ role_path }}/files/.config/zsh'

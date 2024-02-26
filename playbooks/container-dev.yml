@@ -1,0 +1,88 @@
+---
+- name: Development container setup (host)
+  hosts: localhost
+  connection: local
+  vars:
+    container_name: dev
+    container_image: fedora
+    container_image_tag: 39
+  tasks:
+    - name: Check if container already exists
+      containers.podman.podman_container_info:
+        name: '{{ container_name }}'
+      register: container_info
+
+    - name: Create container using distrobox
+      ansible.builtin.command:
+        # --hostname requires distrobox version 1.6
+        # add python3 to allow ansible to wrok
+        cmd: >-
+          distrobox create --yes --no-entry --pull
+          --image '{{ container_image }}:{{ container_image_tag }}'
+          --name '{{ container_name }}'
+          --hostname '{{ ansible_hostname }}'
+          --additional-packages 'python3'
+      when: container_info.containers | length == 0
+
+    - name: Start the container
+      ansible.builtin.command:
+        cmd: 'distrobox enter --name {{ container_name }} -- sh -c ''exit'''
+      # start if not running or if not defined
+      when: not (container_info.containers[0].State.Running | default(false))
+
+    - name: Add container as host
+      changed_when: no
+      ansible.builtin.add_host:
+        name: container
+        ansible_connection: distrobox
+        ansible_host: '{{ container_name }}'
+        ansible_user: '{{ ansible_user_id }}'
+
+        fedora_version: '{{ container_image_tag }}'
+
+- name: Development container setup (container)
+  hosts: container
+  environment:
+    CONTAINER_ID: '{{ ansible_host }}'
+  vars:
+    dnf_packages:
+      - nano
+      - neovim
+      - gcc
+      - make
+      - cmake
+      - rust
+      - shellcheck
+
+  tasks:
+    - name: Configure DNF5
+      become: yes
+      ansible.builtin.blockinfile:
+        path: /etc/dnf/dnf.conf
+        block: |
+          max_parallel_downloads=10
+          defaultyes=True
+          fastestmirror=True
+
+    - name: Enable rpmfusion
+      become: yes
+      ansible.builtin.dnf:
+        name:
+          - 'https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ fedora_version }}.noarch.rpm'
+          - 'https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ fedora_version }}.noarch.rpm'
+        state: present
+        disable_gpg_check: true
+      register: rpmfusion
+
+    - name: Update container
+      become: yes
+      ansible.builtin.command:
+        cmd: 'dnf -y update'
+      when: rpmfusion.changed
+
+    - name: Install DNF packages
+      become: yes
+      ansible.builtin.dnf:
+        name: '{{ dnf_packages }}'
+        state: present
+

@@ -6,7 +6,9 @@ nerdfonts_version: 'v3.1.1'
 nerdfonts_fonts:
   - Hack
   - FiraCode
-  - Noto
+  - NotoSans
 
 kde_night_mode_filter: true
 
+neovim_version: 'v0.9.5'
+neovim_checksum: '0c82e5702af7a11fbb916a11b4a82e98928abf8266c74b2030ea740340437bf9'

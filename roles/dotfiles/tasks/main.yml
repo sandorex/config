@@ -1,4 +1,13 @@
 ---
+- ansible.builtin.import_tasks: bin.yml
+  when: "'bin' in configure"
+
+- ansible.builtin.import_tasks: profile.yml
+  when: "'profile' in configure"
+
+- ansible.builtin.import_tasks: shell.yml
+  when: "'shell' in configure"
+
 ## cli ##
 - ansible.builtin.import_tasks: bash.yml
   when: "'bash' in configure"

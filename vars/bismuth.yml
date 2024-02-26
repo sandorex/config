@@ -1,7 +1,0 @@
----
-# bismuth laptop
-
-neovim_install: true
-
-kde_default_terminal: kitty
-

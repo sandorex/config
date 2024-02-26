@@ -6,7 +6,7 @@
 # be installed again
 
 - name: Check is font {{ font_name }} installed
-  shell: 'ls {{ install_dir }}/{{ font_name }}NerdFont*'
+  shell: 'ls {{ install_dir }}/{{ font_name }}*NerdFont*'
   ignore_errors: yes
   changed_when: false
   failed_when: false
