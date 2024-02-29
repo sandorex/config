@@ -1,7 +1,11 @@
 return {
     {
+        enabled = false,
         'Shatur/neovim-session-manager',
         dependencies = { 'nvim-lua/plenary.nvim' },
+        init = function()
+            vim.g.fuck = true
+        end,
         config = function()
             require('session_manager').setup({
                 -- automatically load last session in the directory

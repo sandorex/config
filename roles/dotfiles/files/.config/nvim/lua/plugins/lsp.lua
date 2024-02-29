@@ -11,7 +11,7 @@ local function lsp_config()
     local mason_lspconfig = require('mason-lspconfig')
 
     -- load configs from separate file
-    local configs = require('core.config.lspconfig');
+    local configs = require('core.lspconfig');
 
     -- used on all servers
     local default_server_config = {
