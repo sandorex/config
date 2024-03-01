@@ -23,7 +23,7 @@ vim.keymap.set('n', '<leader>B', '<cmd>bd<cr>', { desc = 'Drop buffer', silent =
 vim.keymap.set('n', '[b', '<cmd>bprev<cr>', { desc = 'Previous buffer', silent = true })
 vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next buffer', silent = true })
 
---vim.keymap.set('n', '<leader>q', '<cmd>q<cr>', { silent = true })
+vim.keymap.set('n', '<leader>q', '<cmd>q<cr>', { silent = true })
 vim.keymap.set('n', '<leader>Q', '<cmd>qall<cr>', { silent = true })
 vim.keymap.set('n', '<leader>w', '<cmd>w<cr>', { silent = true })
 

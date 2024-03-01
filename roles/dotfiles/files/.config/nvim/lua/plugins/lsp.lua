@@ -1,4 +1,22 @@
--- lazy.vim configuration for lsp, for server configs go to core.config.lsp_configs
+-- lazy.vim configuration for lsp
+
+-- this function contains all keybindings for language servers
+local function on_attach(ev)
+    local function map(mode, lhs, rhs, desc)
+        vim.keymap.set(mode, lhs, rhs, { buffer = ev.buf, desc = desc })
+    end
+
+    map('n', '<leader>lR', vim.lsp.buf.rename, 'LSP Rename')
+    map({ 'n', 'v' }, '<leader>la', vim.lsp.buf.code_action, 'LSP Code Action')
+    map('n', '<leader>ld', vim.lsp.buf.definition, 'LSP Definition')
+    map('n', '<leader>lr', vim.lsp.buf.references, 'LSP References')
+    map('n', '<C-k>', vim.lsp.buf.hover, 'LSP Hover')
+    map({'n', 'i'}, '<2-LeftMouse>', vim.lsp.buf.hover) -- i'm a heretic
+    map('n', '<leader>lf', function()
+        vim.lsp.buf.format { async = true }
+    end, 'LSP Format')
+    map('i', '<C-c>', vim.lsp.buf.completion, 'LSP Completion')
+end
 
 local function lsp_config()
     -- has to be loaded before lspconfig
@@ -16,7 +34,7 @@ local function lsp_config()
     -- used on all servers
     local default_server_config = {
         capabilities = capabilities,
-        -- on_attach = on_attach,
+        on_attach = on_attach,
     }
 
     -- autoconfigure servers
@@ -43,26 +61,37 @@ local function lsp_config()
                 luasnip.lsp_expand(args.body)
             end,
         },
-        -- i changed many things so it does not automatically focus
+        -- these mappings are meant to be as unintrusive as possible, cause i really hate when
+        -- it focuses the popup and i cannot move around
         mapping = cmp.mapping {
-            ['<C-k>'] = {
+            ['<C-Up>'] = {
                 i = cmp.mapping.select_prev_item {
                     behavior = cmp.SelectBehavior.Select
                 },
             },
-            ['<C-j>'] = {
+            ['<C-Down>'] = {
                 i = cmp.mapping.select_next_item {
                     behavior = cmp.SelectBehavior.Select
                 },
             },
-            ['<S-j>'] = cmp.mapping.scroll_docs(-4),
-            ['<S-k>'] = cmp.mapping.scroll_docs(4),
+            -- more heresy
+            ['<ScrollWheelUp>'] = {
+                i = cmp.mapping.select_prev_item {
+                    behavior = cmp.SelectBehavior.Select
+                },
+            },
+            ['<ScrollWheelDown>'] = {
+                i = cmp.mapping.select_next_item {
+                    behavior = cmp.SelectBehavior.Select
+                },
+            },
+            ['<C-f>'] = cmp.mapping.scroll_docs(-4),
+            ['<C-d>'] = cmp.mapping.scroll_docs(4),
             ['<C-Space>'] = cmp.mapping.complete {},
             ['<CR>'] = cmp.mapping.confirm {
                 behavior = cmp.ConfirmBehavior.Replace,
                 select = false,
             },
-            -- the suggestions keep annoying me when i want to indent
             ['<S-Tab>'] = cmp.mapping(function(fallback)
                 if cmp.visible() then
                     cmp.select_next_item()
