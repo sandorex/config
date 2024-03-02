@@ -17,12 +17,26 @@ require('core.netrw')
 require('core.auto')
 require('core.lazy')
 
--- automatically set dark / light theme
-local variant = vim.env.THEME_VARIANT:lower() or 'dark'
-if variant == 'dark' then
-    vim.cmd('colorscheme ' .. vim.g.colorscheme_dark)
-else
-    vim.cmd('colorscheme ' .. vim.g.colorscheme_light)
+local function set_theme()
+    -- automatically set dark / light theme
+    local hour = tonumber(os.date('%H')) or '20'
+
+    -- set dark theme from 18 00 to 05 59
+    if hour < 6 or hour >= 18 then
+        if vim.g.colors_name ~= vim.g.colorscheme_dark then
+            vim.cmd('colorscheme ' .. vim.g.colorscheme_dark)
+        end
+    else
+        if vim.g.colors_name ~= vim.g.colorscheme_light then
+            vim.cmd('colorscheme ' .. vim.g.colorscheme_light)
+        end
+    end
 end
 
--- TODO add toggle keybinding for the theme
+-- set theme every focus gain
+vim.api.nvim_create_autocmd('FocusGained', {
+    callback = set_theme,
+})
+
+-- set the theme initially
+set_theme()

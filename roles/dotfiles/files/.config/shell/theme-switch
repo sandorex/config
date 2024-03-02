@@ -37,4 +37,3 @@ export THEME_VARIANT="$theme_target"
 unset theme_target
 unset PLASMA_COLOR_LIGHT
 unset PLASMA_COLOR_DARK
-

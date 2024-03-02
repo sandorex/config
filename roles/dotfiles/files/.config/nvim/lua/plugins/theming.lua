@@ -34,8 +34,8 @@ return {
                     lualine_a = {
                         {
                             -- this is defined in distro-icon.sh in dotfiles
-                            'vim.env.PROMPT_ICON',
-                            color = { fg = 'white', bg = vim.env.PROMPT_ICON_COLOR_HEX },
+                            function() return vim.env.PROMPT_ICON or '?' end,
+                            color = { fg = 'white', bg = vim.env.PROMPT_ICON_COLOR_HEX or '#FFFFFF' },
                             cond = function()
                                 -- check if defined
                                 return vim.env.PROMPT_ICON ~= nil
