@@ -10,6 +10,14 @@ return {
     -- smart indent
     'tpope/vim-sleuth',
 
+    -- smart parentheses
+    {
+        'tpope/vim-surround',
+        config = function()
+            vim.keymap.set('n', '{', 'ysiw', { remap = true, silent = true, desc = 'Surround' })
+        end
+    },
+
     -- add git status signs
     {
         'lewis6991/gitsigns.nvim',
