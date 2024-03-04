@@ -23,7 +23,7 @@ set multibuffer
 set stateflags
 
 # theming
-set stripecolor cyan,yellow
+set stripecolor cyan,gray
 set numbercolor white,normal
 
 # allows ^S and ^Q

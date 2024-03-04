@@ -26,7 +26,7 @@ case "$id" in
         PROMPT_ICON_UTF8=''
         PROMPT_ICON_ASCII='Deb'
         PROMPT_ICON_COLOR=1
-        PROMPT_ICON_COLOR_HEX='A80030'
+        PROMPT_ICON_COLOR_HEX='D0074F'
         ;;
     *suse*)
         PROMPT_ICON_UTF8=''
