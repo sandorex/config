@@ -4,6 +4,35 @@
 - name: bismuth
   hosts: localhost
   connection: local
+  vars:
+    kde_default_terminal: kitty
+
+    configure:
+      - bin
+      - profile
+      - shell
+
+      - bash
+      - zsh
+      - git
+      - ssh
+      - neovim
+      - nano
+      - glow
+      - yt-dlp
+      - zellij
+      - qalculate
+      - kitty
+
+    install:
+      - neovim
+
+    flatpak_install:
+      - com.brave.Browser
+      - io.github.Qalculate.qalculate-qt
+      - com.stremio.Stremio
+      - com.github.tchx84.Flatseal
+
   pre_tasks:
     - name: Check if running on correct machine
       ansible.builtin.pause:
@@ -21,68 +50,24 @@
 
     - name: Load defaults
       ansible.builtin.include_vars:
-        file: '{{ playbook_dir }}/../vars/default.yml'
-      tags: always
-
-    - name: Load vars
-      ansible.builtin.include_vars:
-        file: '{{ playbook_dir }}/../vars/{{ ansible_play_name }}.yml'
+        file: '{{ playbook_dir }}/../default.yml'
       tags: always
   roles:
-    ## system ##
-    - role: debian
-      tags:
-        - debian
-        - distro
+    - role: linux
+      tags: [linux, distro]
+
+    - role: nerd-fonts
+      tags: [nerd-fonts]
 
     - role: kde-plasma
-      tags:
-        - kde-plasma
-        - kde
-        - desktop
+      tags: [kde-plasma, kde, desktop]
 
-    - role: fixes
-      tags:
-        - distro
-        - fixes
+    - role: tweaks
+      tags: [distro, tweaks, fixes]
 
-    ## terminal ##
-    - role: git
-      tags:
-        - git
-        - terminal
+    - role: dotfiles
+      tags: [dotfiles]
 
-    - role: ssh
-      tags:
-        - ssh
-        - terminal
-
-    - role: zsh
-      tags:
-        - zsh
-        - terminal
-
-    - role: bash
-      tags:
-        - bash
-        - terminal
-
-    ## apps ##
-    - role: neovim
-      tags:
-        - neovim
-        - nvim
-        - editor
-        - terminal
-
-    - role: kitty
-      tags:
-        - kitty
-        - terminal
-
-    ## apps ##
     - role: flatpak
-      tags:
-        - flatpak
-        - apps
+      tags: [flatpak, apps]
 

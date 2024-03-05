@@ -21,7 +21,6 @@ alias t='task'
 alias g='git'
 alias cg="git --git-dir $DOTFILES/.git --work-tree $DOTFILES"
 alias f="$FILE_MANAGER";
-alias dbx='distrobox'
 
 # use bat if available
 if command -v bat &>/dev/null; then
@@ -103,3 +102,11 @@ fcd() {
     dir="$(test -n "$1" && cd "$1"; fd -td -tl --follow --max-depth 5 | fzf --exact)" && cd "${dir:?}"
 }
 
+# enter distrobox by default
+dbx() {
+    if [[ "$#" == 0 ]]; then
+        command distrobox enter
+    fi
+
+    command distrobox "$@"
+}

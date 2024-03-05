@@ -53,6 +53,7 @@
       - cmake
       - rust
       - shellcheck
+      - python3-pip
 
   tasks:
     - name: Configure DNF5

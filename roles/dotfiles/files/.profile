@@ -63,8 +63,9 @@ export LESS='FRX --mouse'
 # use ansi based theme so terminal theme does not make it unreadable
 export BAT_THEME='ansi'
 
-# set default distrobox hostname
+# set default distrobox defaults
 export DBX_CONTAINER_HOSTNAME="$(uname -n)"
+export DBX_CONTAINER_NAME=dev
 
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 

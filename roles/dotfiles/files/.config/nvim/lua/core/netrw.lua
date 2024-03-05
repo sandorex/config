@@ -24,8 +24,12 @@ end
 -- put netrw keybindings here
 function NetrwMapping()
     -- go to next or prev directory with arrow keys
-    vim.keymap.set('n', '<left>', '-', { desc = 'Go to parent', remap = true, buffer = true })
-    vim.keymap.set('n', '<right>', '<cr>', { desc = 'Enter', remap = true, buffer = true })
+    vim.keymap.set('n', '<Left>', '-', { desc = 'Go to parent', remap = true, buffer = true })
+    vim.keymap.set('n', '<Right>', '<CR>', { desc = 'Enter', remap = true, buffer = true })
+
+    -- move faster and stop annoying popup about shift arrow keys
+    vim.keymap.set('n', '<S-Up>', '<C-Up>', { remap = true, buffer = true })
+    vim.keymap.set('n', '<S-Down>', '<C-Down>', { remap = true, buffer = true })
 end
 
 vim.api.nvim_create_autocmd('FileType', {

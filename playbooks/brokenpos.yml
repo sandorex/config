@@ -4,6 +4,15 @@
 - name: brokenpos
   hosts: localhost
   connection: local
+  vars:
+    configure:
+      - nano
+      - kitty
+
+    flatpak_apps:
+      - com.brave.Browser
+      - com.stremio.Stremio
+
   pre_tasks:
     - name: Check if running on correct machine
       ansible.builtin.pause:
@@ -13,42 +22,27 @@
       register: answer
       failed_when: answer.user_input | lower != 'yes'
 
-    - name: Ensure ~/.config directory exists
-      ansible.builtin.file:
-        path: '{{ ansible_env.HOME }}/.config'
-        state: directory
-      tags: always
-
     - name: Load defaults
       ansible.builtin.include_vars:
-        file: '{{ playbook_dir }}/../vars/default.yml'
+        file: '{{ playbook_dir }}/../default.yml'
       tags: always
 
-    - name: Load vars
-      ansible.builtin.include_vars:
-        file: '{{ playbook_dir }}/../vars/{{ ansible_play_name }}.yml'
-      tags: always
   roles:
-    ## system ##
-    - role: debian
-      tags:
-        - debian
-        - distro
+    - role: linux
+      tags: [linux, distro]
+
+    - role: nerd-fonts
+      tags: [nerd-fonts]
 
     - role: kde-plasma
-      tags:
-        - kde-plasma
-        - kde
-        - desktop
+      tags: [kde-plasma, kde, desktop]
 
-    - role: fixes
-      tags:
-        - distro
-        - fixes
+    - role: tweaks
+      tags: [distro, tweaks, fixes]
 
-    ## apps ##
+    - role: dotfiles
+      tags: [dotfiles]
+
     - role: flatpak
-      tags:
-        - flatpak
-        - apps
+      tags: [flatpak, apps]
 
