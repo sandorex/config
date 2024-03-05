@@ -67,12 +67,15 @@ function kde() {
 
 case "$1" in
     on|true|1)
+        notify-send -u low -i monitor 'toggle-dual-monitor' "Turning on $OUTPUT"
         kde 0
         ;;
     off|false|0)
+        notify-send -u low -i monitor 'toggle-dual-monitor' "Turning off $OUTPUT"
         kde 1
         ;;
     t|toggle|'')
+        notify-send -u low -i monitor 'toggle-dual-monitor' "Toggling $OUTPUT"
         kde
         ;;
     *)
@@ -80,4 +83,3 @@ case "$1" in
         exit 1
         ;;
 esac
-

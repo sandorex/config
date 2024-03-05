@@ -18,12 +18,6 @@ PATH="$PATH:$GOPATH/bin"
 PATH="$PATH:$NPM_HOME/bin"
 PATH="$PATH:$HOME/.bin/polyfill"        # fallback path for optional software
 
-# if command -v fnm >/dev/null && [ -z "$FNM_DIR" ]; then
-#     eval "$(fnm env)"
-# fi
-
-# TODO add nix but make it work with the rest
-
 export PATH
 
 # this section basically select editor levels based on what is installed, it
