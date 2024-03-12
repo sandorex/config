@@ -60,6 +60,7 @@ export BAT_THEME='ansi'
 # set default distrobox defaults
 export DBX_CONTAINER_HOSTNAME="$(uname -n)"
 export DBX_CONTAINER_NAME=dev
+export DBX_CONTAINER_GENERATE_ENTRY=0
 
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 

@@ -21,6 +21,7 @@ alias t='task'
 alias g='git'
 alias cg="git --git-dir $DOTFILES/.git --work-tree $DOTFILES"
 alias f="$FILE_MANAGER";
+alias m='tmux'
 
 # use bat if available
 if command -v bat &>/dev/null; then
@@ -67,11 +68,6 @@ alias grep='grep --color=auto'
 alias rcat='cat -A' # safely read escape sequences
 alias isodate="date +'%Y%m%dT%H%M'"
 alias qr="qrencode -t UTF8"
-
-# quick monitor brightness control
-alias m='monb'
-alias day='monb day'
-alias night='monb night'
 
 alias theme-switch='source "$AGSHELLDIR"/theme-switch'
 
