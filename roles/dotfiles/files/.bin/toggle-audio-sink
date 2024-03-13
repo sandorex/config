@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+# script to toggle between two audio outputs
+#
+# requires wpctl
+
+import subprocess
+import re
+import click
+
+def set_default_sink_id(id: str):
+    subprocess.check_call(["wpctl", "set-default", id])
+
+ID_RE = re.compile(r"^id ([0-9]+)")
+def get_current_sink_id() -> str:
+    result = subprocess.run(["wpctl", "inspect", "@DEFAULT_SINK@"], capture_output=True, text=True)
+    result.check_returncode()
+
+    stdout = result.stdout.splitlines()
+    id = ID_RE.search(stdout[0])
+    if not id:
+        raise RuntimeError("Failed to parse id from wpctl output")
+
+    return id.group(1)
+
+@click.command()
+@click.argument("sink1")
+@click.argument("sink2")
+def main(sink1, sink2):
+    """
+    This script only works if you use pipwire (and wireplumber)
+
+    Switches between two audio outputs, defaults to sink1 if current sink is not either of them
+
+    To get ids of sinks run `wpctl status`
+
+    \b
+    Output is something like so:
+    ...
+    ├─ Sinks:
+    │  *   32. a [vol: 0.50]
+    │      57. b [vol: 1.00]
+    ...
+
+    Where 32 is id for sink "a", 57 for sink "b"
+    """
+    current = get_current_sink_id()
+    if current == sink1:
+        set_default_sink_id(sink2)
+    else: # default to sink1 if any unknown sink is used
+        set_default_sink_id(sink1)
+
+if __name__ == "__main__":
+    main()
+
