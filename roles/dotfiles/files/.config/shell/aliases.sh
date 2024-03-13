@@ -102,7 +102,7 @@ fcd() {
 dbx() {
     if [[ "$#" == 0 ]]; then
         command distrobox enter
+    else
+        command distrobox "$@"
     fi
-
-    command distrobox "$@"
 }

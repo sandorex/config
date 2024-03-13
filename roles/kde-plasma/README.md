@@ -1,11 +1,11 @@
-# Theming Setup
-Install the themes in `dracula-debian`
+# KDE Plasma
 
-## GTK Theming
-This will make the GTK apps look the same (even the ones that run as root like timeshift)
+## Keybindings
+The keybindings i use as i tend to forget to set them up until i need it
 
-Install `https://github.com/dracula/gtk` to `/usr/share/themes` and set it in `Appearance > Application Style > Configure GNOME/GTK Application Style
+- `Shift + Super + UP` Maximize window
 
-## Plymouth
-On debian install `plymouth-themes` and set it using `sudo plymouth-set-default-theme -R spinner`
+Custom scripts (prefix all commands with `systemd-cat --` so its debuggable from journal)
 
+- `Super + H` Headphones toggle (`~/.bin/toggle-audio-sink ...`)
+- `Super + M` Dual monitor toggle (`~/.bin/toggle-monitor-kscreen ...`)
