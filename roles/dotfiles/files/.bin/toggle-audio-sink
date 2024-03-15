@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 # script to toggle between two audio outputs
 #
-# requires wpctl
+# requires wpctl pw-dump
 
 import subprocess
 import re
 import click
+import json
+
+from typing import Optional, Any, List
 
 def set_default_sink_id(id: str):
     subprocess.check_call(["wpctl", "set-default", id])
@@ -22,7 +25,40 @@ def get_current_sink_id() -> str:
 
     return id.group(1)
 
+def get_pw_devices() -> List[Any]:
+    result = subprocess.run(["pw-dump", "-N"], capture_output=True, text=True)
+    result.check_returncode()
+
+    return json.loads(result.stdout)
+
+def find_sink_id_by_name(name: str) -> Optional[str]:
+    for device in get_pw_devices():
+        try:
+            if device["info"]["props"]["node.name"] == name:
+                return str(device["id"])
+        except KeyError:
+            continue
+
+    return None
+
+def cb_list(ctx, param, value):
+    """Lists all the available pipewire devices for easier setup"""
+    if not value or ctx.resilient_parsing:
+        return
+
+    # to not overcomplicate things i am not gonna filter them further
+    print("Named pipewire devices:")
+    for device in get_pw_devices():
+        try:
+            print("  {}. '{}'".format(device["id"], device["info"]["props"]["node.name"]))
+        except KeyError:
+            continue
+    print()
+
+    ctx.exit()
+
 @click.command()
+@click.option("--list", help="List all sinks", is_flag=True, is_eager=True, expose_value=False, callback=cb_list)
 @click.argument("sink1")
 @click.argument("sink2")
 def main(sink1, sink2):
@@ -31,23 +67,23 @@ def main(sink1, sink2):
 
     Switches between two audio outputs, defaults to sink1 if current sink is not either of them
 
-    To get ids of sinks run `wpctl status`
-
-    \b
-    Output is something like so:
-    ...
-    ├─ Sinks:
-    │  *   32. a [vol: 0.50]
-    │      57. b [vol: 1.00]
-    ...
-
-    Where 32 is id for sink "a", 57 for sink "b"
+    To get names of sinks run with `--list`
     """
+    id1 = find_sink_id_by_name(sink1)
+    if not id1:
+        print(f"Could not find sink '{sink1}'")
+        exit(1)
+
+    id2 = find_sink_id_by_name(sink2)
+    if not id2:
+        print(f"Could not find sink '{sink2}'")
+        exit(1)
+
     current = get_current_sink_id()
-    if current == sink1:
-        set_default_sink_id(sink2)
-    else: # default to sink1 if any unknown sink is used
-        set_default_sink_id(sink1)
+    if current == id1:
+        set_default_sink_id(id2)
+    else: # default to id1 if any unknown sink is set
+        set_default_sink_id(id1)
 
 if __name__ == "__main__":
     main()

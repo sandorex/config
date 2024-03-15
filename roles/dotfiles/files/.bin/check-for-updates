@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# checks for updates
+
+function log() {
+    echo "$(tput setaf 3):: $*$(tput sgr0)"
+}
+
+if command -v pkcon &>/dev/null; then
+    log "System updates"
+    pkcon get-updates
+    echo
+else
+    echo "Skipping system packages.. (pkcon command not found)"
+fi
+
+if command -v flatpak &>/dev/null; then
+    log "Flatpak updates"
+    flatpak remote-ls --updates
+else
+    echo "Skipping flatpak.. (flatpak command not found)"
+fi
+
+# TODO check if distrobox dev container is up to date as well
+

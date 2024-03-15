@@ -8,6 +8,9 @@
 - ansible.builtin.import_tasks: shell.yml
   when: "'shell' in configure"
 
+- ansible.builtin.import_tasks: swaywm.yml
+  when: "'swaywm' in configure"
+
 ## cli ##
 - ansible.builtin.import_tasks: bash.yml
   when: "'bash' in configure"

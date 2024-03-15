@@ -1,0 +1,11 @@
+---
+- name: Link swaywm configuration
+  ansible.builtin.file:
+    src: '{{ role_path }}/files/.config/sway'
+    dest: '{{ ansible_env.HOME }}/.config/sway'
+    state: link
+    force: true
+
+# TODO maybe install it automatically
+# light sway swaybg swayidle swayimg swaylock waybar wofi
+# light is for laptop brightness

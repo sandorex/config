@@ -11,6 +11,12 @@
     dest: '{{ ansible_env.HOME }}/.ssh/config'
     mode: 0600
 
+- name: Create connnections ssh directory
+  ansible.builtin.file:
+    path: '{{ ansible_env.HOME }}/.ssh/connections'
+    state: directory
+    mode: 0700
+
 - name: Generate new ssh keys
   loop:
     - '@github.com'
