@@ -1,0 +1,7 @@
+---
+- name: Install KDE widget
+  ansible.builtin.command:
+    cmd: 'kpackagetool5 -i {{ role_path }}/{{ item }}'
+  loop:
+    - 'widgets/execute_applet'
+    - 'widgets/slider-widget'

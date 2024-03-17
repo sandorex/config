@@ -15,6 +15,10 @@
   ansible.builtin.import_tasks:
     file: '{{ role_path }}/tasks/theming.yml'
 
+- tags: widgets
+  ansible.builtin.import_tasks:
+    file: '{{ role_path }}/tasks/widgets.yml'
+
 - ansible.builtin.import_tasks:
     file: '{{ role_path }}/tasks/other.yml'
 

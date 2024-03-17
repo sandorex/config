@@ -4,3 +4,9 @@
 [submodule "roles/dotfiles/files/.config/zsh/plugins/zsh-syntax-highlighting"]
 	path = roles/dotfiles/files/.config/zsh/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
+[submodule "roles/kde-plasma/widgets/execute_applet"]
+	path = roles/kde-plasma/widgets/execute_applet
+	url = https://github.com/sandorex/execute_applet
+[submodule "roles/kde-plasma/widgets/slider-widget"]
+	path = roles/kde-plasma/widgets/slider-widget
+	url = https://github.com/sandorex/slider-widget.git
