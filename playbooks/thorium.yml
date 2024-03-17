@@ -25,9 +25,6 @@
         leftHanded: false
         outputArea: '0,0,1,1'
 
-    kde_default_terminal: kitty
-    kde_default_browser: vivaldi-stable
-
     ## other ##
     configure:
       - bin
@@ -45,7 +42,6 @@
       - zellij
       - qalculate
       - kitty
-      - wezterm
 
     install:
       - neovim
@@ -59,11 +55,10 @@
       - com.usebottles.bottles
       - com.github.wwmm.easyeffects
       - org.kde.filelight
-      - org.libreoffice.LibreOffice
-      - com.obsproject.Studio
       - org.mozilla.Thunderbird
       - org.kde.krita
       - org.freecadweb.FreeCAD
+      - org.qbittorrent.qBittorrent
 
   pre_tasks:
     - name: Check if running on correct machine
@@ -85,7 +80,7 @@
         file: '{{ playbook_dir }}/../default.yml'
       tags: always
   roles:
-    - role: linux
+    - role: distro
       tags: [linux, distro]
 
     - role: nerd-fonts
@@ -94,13 +89,25 @@
     - role: kde-plasma
       tags: [kde-plasma, kde, desktop]
 
-    - role: tweaks
-      tags: [distro, tweaks, fixes]
-
     - role: dotfiles
       tags: [dotfiles]
 
-    # TODO bit broken
-    # - role: flatpak
-    #   tags: [flatpak, apps]
+    - role: flatpak
+      tags: [flatpak, apps]
+
+  tasks:
+    - name: Ensure ~/.config/containers exists
+      ansible.builtin.file:
+        path: '{{ ansible_env.HOME }}/.config/containers'
+        state: directory
+
+    # The SSD is small so i store podman images on the HDD
+    - name: Set podman image storage path
+      ansible.builtin.copy:
+        content: |
+          [storage]
+          driver = "overlay"
+          graphroot = "/media/slowmf/Podman"
+
+        dest: '{{ ansible_env.HOME }}/.config/containers/storage.conf'
 

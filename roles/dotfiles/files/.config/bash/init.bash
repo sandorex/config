@@ -2,13 +2,14 @@
 #
 # init.bash - init file for bash, either loaded from bashrc or ran directly
 
-export SHELLDIR="$HOME/.config/bash"
-
 # process further only if interactive
 case $- in
     *i*) ;;
       *) return;;
 esac
+
+export SHELLDIR="$HOME/.config/bash"
+[[ -z "$AGSHELLDIR" ]] && export AGSHELLDIR="$HOME/.config/shell"
 
 source "$AGSHELLDIR/aliases.sh"
 

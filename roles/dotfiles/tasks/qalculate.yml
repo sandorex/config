@@ -24,8 +24,6 @@
 
 - name: Allow qalculate flatpak to share native config
   ansible.builtin.command:
-    cmd: 'flatpak override io.github.Qalculate.qalculate-qt --filesystem="{{ role_path }}/files/.local/share/qalculate"'
-  # it will fail if installed in flatpak systemwide
-  ignore_errors: true
+    cmd: 'flatpak --user override io.github.Qalculate.qalculate-qt --filesystem="{{ role_path }}/files/.local/share/qalculate"'
   when: link.changed
 

@@ -13,6 +13,7 @@
 #   become_flags: '-s /bin/bash -c'
 
 - become: yes
+  tags: [never, root]
   block:
     - name: Add apt repository (main)
       ansible.builtin.apt_repository:
@@ -40,11 +41,9 @@
 
     # the original sources.list is preserved and the new sources are in sources.list.d and managed by ansible
     - name: Remove default sources.list
-      ansible.builtin.copy:
-        src: /apt/sources.list
-        dest: /apt/sources.list.backup
-        remote_src: true
-        mode: preserve
+      ansible.builtin.file:
+        path: /etc/apt/sources.list
+        state: absent
       notify: 'Update APT Cache'
 
     - name: Configure apt automation

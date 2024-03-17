@@ -3,10 +3,11 @@
 # https://github.com/sandorex/config
 # zsh initialization file, ~/.zshrc should link to this file
 
-export SHELLDIR="$HOME/.config/zsh"
-
 # the rest is only if it's an interactive shell
 [[ -o interactive ]] || return
+
+export SHELLDIR="$HOME/.config/zsh"
+[[ -z "$AGSHELLDIR" ]] && export AGSHELLDIR="$HOME/.config/shell"
 
 # prevent duplicated hooks on reload
 precmd_functions=( )
@@ -19,8 +20,9 @@ setopt extended_history
 setopt append_history
 setopt hist_ignore_dups
 setopt hist_ignore_space
-setopt share_history 	# share history between all sessions (load history on change)
-setopt inc_append_history # incrementally update history (after each command)
+# its annoying TODO
+#setopt share_history 	# share history between all sessions (load history on change)
+#setopt inc_append_history # incrementally update history (after each command)
 
 setopt no_beep          # no bell
 setopt no_clobber       # do not overwrite stuff with redirection

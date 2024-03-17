@@ -15,7 +15,7 @@
         checksum: 'sha256:{{ neovim_checksum }}'
         dest: '{{ ansible_env.HOME }}/.local/bin/nvim'
         mode: u+rwx # make sure its executable
-  when: neovim_install
+  when: "'neovim' in install"
 
 - name: Link neovim configuration directory
   ansible.builtin.file:
@@ -23,7 +23,7 @@
     dest: '{{ ansible_env.HOME }}/.config/nvim'
     state: link
     force: true
-  when: not neovim_flatpak
+  when: "'neovim' in configure"
 
 # TODO redo this when nvim wrapper is tested
 # TODO ensure flatpak directory exists

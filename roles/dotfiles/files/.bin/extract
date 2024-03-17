@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# automatically extracts archives
+
+# TODO maybe autodetect subfolder if no $2?
+
+FILE="$1"
+TARGET="${2:-.}"
+
+if [[ -z "$FILE" ]]; then
+        cat <<EOF
+Usage: $0 <file> [<extract path>]
+
+EOF
+        exit 1
+fi
+
+if [[ ! -f "$FILE" ]]; then
+    echo "File does not exist at '$FILE'"
+    exit 1
+fi
+
+if [[ -d "$FILE" ]]; then
+    echo "Path is directory"
+    exit 1
+fi
+
+case "$FILE" in
+    *.tar.gz|*.tar.xz|*.tar)
+        tar -xvf "$FILE" -C "$TARGET"
+        ;;
+    *.zip|*.jar)
+        unzip "$FILE" -d "$TARGET"
+        ;;
+    *.7z)
+        # TODO
+        if [[ "$TARGET" != "." ]]; then
+            echo "7z target not supported"
+            exit 2
+        fi
+
+        7z x "$FILE"
+        ;;
+    *)
+        echo "Unknown archive type for file '$FILE'"
+        exit 1
+        ;;
+esac
+

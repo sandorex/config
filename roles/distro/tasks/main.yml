@@ -1,0 +1,27 @@
+---
+## GENERIC ##
+- become: yes
+  block:
+    - name: Set vm.max_map_count
+      ansible.builtin.copy:
+        content: |
+          vm.max_map_count=2147483642
+
+        dest: /etc/sysctl.d/90-gamecompatability.conf
+        mode: 0644
+        owner: root
+
+    - name: Set swappiness
+      ansible.builtin.copy:
+        content: |
+          vm.swappiness=5
+
+        dest: /etc/sysctl.d/99-swappiness.conf
+        mode: 0644
+        owner: root
+  tags: [root, never]
+
+## DISTRO SPECIFIC ##
+
+- import_tasks: debian12.yml
+  when: ansible_distribution == 'Debian' and ansible_distribution_major_version == '12'

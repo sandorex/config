@@ -5,6 +5,7 @@
     name: flatpak
     state: present
   become: yes
+  tags: [never, root]
 
 - name: Add the flathub repository (user)
   community.general.flatpak_remote:
@@ -23,8 +24,8 @@
 
 - name: Install flatpak apps
   community.general.flatpak:
-    name: '{{ flatpak_apps }}'
+    name: '{{ flatpak_install }}'
     method: user
     state: present
-  when: flatpak_apps is defined
+  when: flatpak_install is defined
 

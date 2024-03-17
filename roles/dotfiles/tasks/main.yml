@@ -27,6 +27,9 @@
 - ansible.builtin.import_tasks: nano.yml
   when: "'nano' in configure"
 
+- ansible.builtin.import_tasks: neovim.yml
+  when: "'neovim' in configure"
+
 - ansible.builtin.import_tasks: rangerfm.yml
   when: "'rangerfm' in configure"
 
