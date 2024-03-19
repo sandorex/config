@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# toggles dark mode in kde plasma by switching a colorscheme
+
+set -e
+
+COLOR_DARK="BreezeDark"
+COLOR_LIGHT="BreezeClassic"
+
+current="$(plasma-apply-colorscheme -l | grep 'current color scheme')"
+case "$current" in
+    *"$COLOR_DARK"*)
+        plasma-apply-colorscheme "$COLOR_LIGHT"
+        ;;
+    *)
+        plasma-apply-colorscheme "$COLOR_DARK"
+        ;;
+esac

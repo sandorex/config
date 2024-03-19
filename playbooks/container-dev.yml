@@ -14,8 +14,8 @@
 
     - name: Create container using distrobox
       ansible.builtin.command:
-        # --hostname requires distrobox version 1.6
-        # add python3 to allow ansible to wrok
+        # requires distrobox version 1.7
+        # add python3 to allow ansible to work
         cmd: >-
           distrobox create --yes --no-entry --pull
           --image '{{ container_image }}:{{ container_image_tag }}'

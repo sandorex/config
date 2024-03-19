@@ -34,14 +34,21 @@ def set_output_state(output, state):
     state_str = "enable" if state else "disable"
     subprocess.check_call(["kscreen-doctor", "output.{}.{}".format(output, state_str)])
 
+def cb_list(ctx, param, value):
+    if not value or ctx.resilient_parsing:
+        return
+
+    subprocess.check_call(["kscreen-doctor", "-o"])
+
+    ctx.exit()
+
 @click.command()
+@click.option("--list", help="List all outputs", is_flag=True, is_eager=True, expose_value=False, callback=cb_list)
 @click.argument("output")
 @click.argument("state", required=False, type=bool)
 def main(output, state):
     """
     Sets monitor state using kscreen-doctor, if state is not passed then toggles it
-
-    To see output names run `kscreen-doctor -o`
     """
     current_state = get_output_state(output)
     if current_state is None:

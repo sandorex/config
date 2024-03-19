@@ -4,8 +4,8 @@
   connection: local
   vars:
     container_name: gaming
-    container_home: '/mnt/slowmf/GamingContainer'
-    container_image: archlinux
+    container_home: '/media/slowmf/GamingContainer'
+    container_image: 'docker.io/library/archlinux'
     container_image_tag: latest
   tasks:
     - name: Check if container already exists
@@ -15,9 +15,9 @@
 
     - name: Create container using distrobox
       ansible.builtin.command:
-        # --hostname requires distrobox version 1.6
+        # requires distrobox version 1.7
         # --unshare-netns fixes games not launching after suspend
-        # add python3 to allow ansible to wrok
+        # add python3 to allow ansible to work
         cmd: >-
           distrobox create --yes --no-entry --pull
           --image '{{ container_image }}:{{ container_image_tag }}'
@@ -50,24 +50,6 @@
     steam_proton_ge_versions:
       - GE-Proton8-30
       - GE-Proton8-32
-    pacman_packages:
-      - vulkan-radeon
-      - lib32-vulkan-radeon
-        #- amdvlk # i do not know if this is needed
-      - ttf-liberation # used by steam to replace ariel font
-      - gamemode # might slightly boost performance
-      - steam
-
-      - lutris
-
-      # core utils
-      - perl
-      - coreutils
-      - inetutils # hostname command
-
-      # editor so i dont have to use vim
-      - nano
-
   tasks:
     - name: Enable en_US.UTF-8 locale in /etc/locale.gen
       become: yes
@@ -100,12 +82,63 @@
         cmd: pacman -Syuu --noconfirm
       when: multilib_enable.changed
 
-    - name: Install required packages
+    - name: Install required dependencies
       become: yes
       community.general.pacman:
-        name: '{{ pacman_packages }}'
+        name:
+          # core utils
+          - perl
+          - coreutils
+
+          # taken from https://github.com/ublue-os/bazzite-arch/blob/91e9b3f1a9a9488d1bcd4a2e2c2286da0d37e49f/Containerfile#L6
+          - lib32-vulkan-radeon
+          - libva-mesa-driver
+          - intel-media-driver
+          - vulkan-mesa-layers
+          - lib32-vulkan-mesa-layers
+          - lib32-libnm
+          - openal
+          - pipewire
+          - pipewire-pulse
+          - pipewire-alsa
+          - pipewire-jack
+          - wireplumber
+          - lib32-pipewire
+          - lib32-pipewire-jack
+          - lib32-libpulse
+          - lib32-openal
+          - xdg-desktop-portal-kde
+          - yad
+          - xdg-user-dirs
+          - xdotool
+          - xorg-xwininfo
+          - wmctrl
+          - wxwidgets-gtk3
+          - rocm-opencl-runtime
+          - rocm-hip-runtime
+          - libbsd
+
+          # fonts
+          - noto-fonts-cjk
+          - ttf-liberation
+
+          # editor so i dont have to use vim
+          - nano
+
         state: present
 
+    # these are separated intentionally so it does not pull in different deps
+    # basically taken from bassite arch container
+    - name: Install steam and lutris
+      become: yes
+      community.general.pacman:
+        name:
+          - steam
+          - lutris
+          - mangohud
+          - lib32-mangohud
+
+    # TODO fix proton-ge-steam as ~/.steam/root is a symlink for some reason?
     - ansible.builtin.import_role:
         name: proton-ge-steam
 
@@ -119,6 +152,7 @@
     - name: Export Steam to host
       ansible.builtin.command:
         cmd: distrobox-export --app 'steam'
+    # TODO use creates
       # when: steam_exported.stat.exists | default(false)
 
     # - name: Check if lutris was exported
