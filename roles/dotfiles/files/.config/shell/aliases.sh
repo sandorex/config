@@ -69,8 +69,6 @@ alias rcat='cat -A' # safely read escape sequences
 alias isodate="date +'%Y%m%dT%H%M'"
 alias qr="qrencode -t UTF8"
 
-alias theme-switch='source "$AGSHELLDIR"/theme-switch'
-
 # function aliases
 rcp() {
     # -a = -rlptgoD
