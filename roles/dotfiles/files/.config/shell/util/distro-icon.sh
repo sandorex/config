@@ -1,12 +1,8 @@
 #!/bin/sh
-#
-# https://github.com/sandorex/config
 # finds distro icon and color for known distros using os-release
-#
-# requires nerdfonts
 
 # i do not want to source it
-id="$(perl -lne 'print $1 if /^ID=(.+)/' < /etc/os-release)"
+id="$(cat /etc/os-release | awk '/^ID=(.+)$/ { print substr($1, 4); exit(0); }')"
 
 # checked the ids with https://github.com/chef/os_release
 case "$id" in
