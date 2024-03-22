@@ -47,12 +47,20 @@
   vars:
     dnf_packages:
       - nano
+      - zsh
       - neovim
+      - git
+
+      - perl
+      - cargo
+      - npm
       - gcc
       - make
       - cmake
-      - rust
+      - latexmk
+
       - shellcheck
+
       - python3-pip
 
   tasks:
@@ -86,4 +94,25 @@
       ansible.builtin.dnf:
         name: '{{ dnf_packages }}'
         state: present
+
+    - name: Ensure ~/.config exists
+      ansible.builtin.file:
+        path: '{{ ansible_env.HOME }}/.config'
+        state: directory
+
+    - ansible.builtin.import_role:
+       name: dotfiles
+      vars:
+        configure:
+          - bin
+          - profile
+          - shell
+
+          - bash
+          - zsh
+          - neovim
+          - nano
+          - glow
+
+          - git
 
