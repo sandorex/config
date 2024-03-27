@@ -1,7 +1,5 @@
 -- lsp server configuration
 
-local lspconfig = require('lspconfig')
-
 local M = {}
 
 -- contains M.configs for lsp plugins
@@ -14,11 +12,12 @@ setmetatable(M.configs, {
     end
 })
 
--- TODO remind the user somehow:
--- these have to be installed manually in :Mason:
--- shellcheck
-M.configs.mason_lsp = {
-    ensure_installed = {
+M.configs.mason_lsp = {}
+
+-- install automatically only if npm is found
+if vim.fn.executable('npm') == 1 then
+    M.configs.mason_lsp.ensure_installed = {
+        -- SHELLHECK (has to be installed manually)
         'lua_ls',
         'bashls',
         'pylsp',
@@ -28,10 +27,9 @@ M.configs.mason_lsp = {
         'rust_analyzer', -- NOTE remember to install rust-src or it wont work properly
 
         -- ts
-        -- 'denols', -- its not great and clashes with tsserver
         'tsserver',
-    },
-}
+    }
+end
 
 M.configs.lua_ls = {
     settings = {
@@ -60,11 +58,5 @@ M.configs.pylsp = {
     },
 }
 
--- TODO setup root_dir for tsserver too? or just stop one from loading after other deno then tsserver
-
-M.configs.denols = {
-    root_dir = lspconfig.util.root_pattern('deno.json', 'deno.jsonc', 'import_map.json'),
-    single_file_support = false,
-}
-
 return M
+

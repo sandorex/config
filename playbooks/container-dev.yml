@@ -46,22 +46,30 @@
     CONTAINER_ID: '{{ ansible_host }}'
   vars:
     dnf_packages:
-      - nano
+      # better shell
       - zsh
-      - neovim
-      - git
 
+      # editors
+      - nano
+      - neovim
+
+      # base utilities
+      - git
       - perl
+      - just
+
+      # package managers / compilers
       - cargo
+      - rust-src # for lsp
       - npm
       - gcc
       - make
       - cmake
-      - latexmk
-
-      - shellcheck
-
       - python3-pip
+      - latexmk # latex support
+
+      # LSP
+      - shellcheck
 
   tasks:
     - name: Configure DNF5

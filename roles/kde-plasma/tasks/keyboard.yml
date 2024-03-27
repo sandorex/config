@@ -12,21 +12,22 @@
         value: '{{ keyboard_repeat_delay }}'
   notify: 'Restart KWin'
 
-- name: Disable meta app menu shortcut (clashes with Hyper)
-  community.general.kdeconfig:
-    path: '{{ ansible_env.HOME }}/.config/kwinrc'
-    values:
-      - group: ModifierOnlyShortcuts
-        key: Meta
-        value: ''
-  notify: 'Restart KWin'
+# as hyper is broken i dont use this but instead remap caps to ctrl+super+alt
+#- name: Disable meta app menu shortcut (clashes with Hyper)
+#  community.general.kdeconfig:
+#    path: '{{ ansible_env.HOME }}/.config/kwinrc'
+#    values:
+#      - group: ModifierOnlyShortcuts
+#        key: Meta
+#        value: ''
+#  notify: 'Restart KWin'
 
-- name: Replace capslock with hyper key
-  community.general.kdeconfig:
-    path: '{{ ansible_env.HOME }}/.config/kxkbrc'
-    values:
-      - group: Layout
-        key: Options
-        value: 'caps:hyper'
-  notify: 'Restart KWin'
+#- name: Replace capslock with hyper key
+#  community.general.kdeconfig:
+#    path: '{{ ansible_env.HOME }}/.config/kxkbrc'
+#    values:
+#      - group: Layout
+#        key: Options
+#        value: 'caps:hyper'
+#  notify: 'Restart KWin'
 
