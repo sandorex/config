@@ -17,20 +17,45 @@ require('core.netrw')
 require('core.auto')
 require('core.lazy')
 
--- Set theme to variant (dark or light) or automatically based on time
-function SetTheme(variant)
-    -- automatically set dark / light theme based on time
-    if variant == nil then
-        local hour = tonumber(os.date('%H'))
-
-        -- set dark theme from 18 00 to 05 59
-        if hour < 6 or hour >= 18 then
-            variant = 'dark'
+local function get_kitty_theme_variant()
+    -- works using -dark -light prefix in theme.conf link target
+    local result = vim.fn.system('readlink ~/.config/kitty/theme.conf')
+    if vim.v.shell_error == 0 then
+        local filename = vim.fn.fnamemodify(result, ':t')
+        -- this is very fragile but i dont want to do regex here
+        if string.find(filename, '-light') then
+            return 'light'
         else
-            variant = 'light'
+            return 'dark'
         end
     end
 
+    return nil
+end
+
+function SetTheme(variant)
+    -- if variant is not explicitly set
+    if variant == nil then
+        -- TODO Sometime in future replace this with OSC 11 escape, cannot get it to work currently
+        -- if running in kitty just try to get the theme its using
+        if vim.env.KITTY_PID ~= nil then
+            variant = get_kitty_theme_variant()
+        end
+
+        -- fallback to time based theme switching
+        if variant == nil then
+            local hour = tonumber(os.date('%H'))
+
+            -- set dark theme from 18 00 to 05 59
+            if hour < 6 or hour >= 18 then
+                variant = 'dark'
+            else
+                variant = 'light'
+            end
+        end
+    end
+
+    -- NOTE if you set colorscheme twice it flickers
     if variant == 'light' then
         if vim.g.colors_name ~= vim.g.colorscheme_light then
             vim.cmd('colorscheme ' .. vim.g.colorscheme_light)

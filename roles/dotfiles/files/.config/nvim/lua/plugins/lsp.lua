@@ -144,3 +144,4 @@ return {
         config = lsp_config,
     },
 }
+

@@ -20,6 +20,5 @@ fi
 stty $oldstty
 
 # print results
-echo $result
+echo "${result:4}"
 $success
-

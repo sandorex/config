@@ -1,6 +1,7 @@
 return {
     {
         'EdenEast/nightfox.nvim',
+        enabled = false,
         lazy = false,
         priority = 1000,
         config = function()
@@ -15,6 +16,16 @@ return {
 
             vim.g.colorscheme_dark = 'carbonfox'
             vim.g.colorscheme_light = 'dawnfox'
+        end,
+    },
+
+    {
+        "catppuccin/nvim",
+        name = "catppuccin",
+        priority = 1000,
+        config = function()
+            vim.g.colorscheme_dark = 'catppuccin-macchiato'
+            vim.g.colorscheme_light = 'catppuccin-latte'
         end,
     },
 
