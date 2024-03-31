@@ -17,45 +17,33 @@ require('core.netrw')
 require('core.auto')
 require('core.lazy')
 
-local function get_kitty_theme_variant()
-    -- works using -dark -light prefix in theme.conf link target
-    local result = vim.fn.system('readlink ~/.config/kitty/theme.conf')
-    if vim.v.shell_error == 0 then
-        local filename = vim.fn.fnamemodify(result, ':t')
-        -- this is very fragile but i dont want to do regex here
-        if string.find(filename, '-light') then
-            return 'light'
-        else
-            return 'dark'
-        end
-    end
+-- gets colorscheme from xdg desktop portal
+-- requires gdbus
+local function get_colorscheme()
+    local handle = io.popen('gdbus call --session'
+                         .. ' --dest=org.freedesktop.portal.Desktop'
+                         .. ' --object-path=/org/freedesktop/portal/desktop'
+                         .. ' --method=org.freedesktop.portal.Settings.Read'
+                         .. ' org.freedesktop.appearance color-scheme')
 
-    return nil
+    local result = handle:read('*a')
+    handle:close()
+
+    if result and string.match(result, ' %d') == ' 2' then
+        return 'light'
+    else
+        -- dark mode is default
+        return 'dark'
+    end
 end
 
 function SetTheme(variant)
-    -- if variant is not explicitly set
+    -- TODO Sometime in future use OSC 11 ANSI, cannot get it to work currently
     if variant == nil then
-        -- TODO Sometime in future replace this with OSC 11 escape, cannot get it to work currently
-        -- if running in kitty just try to get the theme its using
-        if vim.env.KITTY_PID ~= nil then
-            variant = get_kitty_theme_variant()
-        end
-
-        -- fallback to time based theme switching
-        if variant == nil then
-            local hour = tonumber(os.date('%H'))
-
-            -- set dark theme from 18 00 to 05 59
-            if hour < 6 or hour >= 18 then
-                variant = 'dark'
-            else
-                variant = 'light'
-            end
-        end
+        variant = get_colorscheme()
     end
 
-    -- NOTE if you set colorscheme twice it flickers
+    -- NOTE if you set the same colorscheme again it flickers
     if variant == 'light' then
         if vim.g.colors_name ~= vim.g.colorscheme_light then
             vim.cmd('colorscheme ' .. vim.g.colorscheme_light)
@@ -67,10 +55,18 @@ function SetTheme(variant)
     end
 end
 
--- set theme every focus gain
+-- set the theme on SIGUSR1 signal
+vim.api.nvim_create_autocmd({ 'Signal' }, {
+    pattern = { 'SIGUSR1' },
+    callback = function()
+        SetTheme()
+    end,
+})
+
+-- set theme when resuming
 vim.api.nvim_create_autocmd({ 'VimResume' }, {
     callback = function()
-        -- without this delay the theme is not set properly
+        -- set theme (without delay modeline plugin does not update colors properly)
         vim.fn.timer_start(100, function()
             SetTheme()
         end)

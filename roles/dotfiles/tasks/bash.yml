@@ -20,8 +20,11 @@
     state: link
     force: true
 
-- name: Remove bash profile to force it to load profile
-  ansible.builtin.file:
+- name: Create bash_profile to load profile and bashrc
+  ansible.builtin.copy:
     path: '{{ ansible_env.HOME }}/.bash_profile'
-    state: absent
+    content: |
+      # source the actual profile and bashrc (includes check for interactive shell)
+      source ~/.profile
+      source ~/.bashrc
 

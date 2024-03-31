@@ -8,7 +8,7 @@
 # these offsets are added to brightness value when a literal value is set, it
 # is used to make monitors the same apparent brightness as they usually are not
 # equal out of the box if they are different models
-monitor_offset=( '0' '-20' )
+monitor_offset=( '0' '-20' ) # 0  -20
 
 # adding padding to make the array start with index 1
 monitor_offset=( 'padding' "${monitor_offset[@]}" )
