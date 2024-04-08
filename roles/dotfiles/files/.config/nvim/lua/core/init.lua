@@ -10,9 +10,10 @@ vim.g.colorscheme_dark = 'habamax'
 vim.g.colorscheme_light = 'shine'
 
 require('core.languages')
+require('core.functions')
 require('core.keybindings')
 require('core.editor')
-require('core.right_click_menu').apply()
+require('core.right_click_menu')
 require('core.netrw')
 require('core.auto')
 require('core.lazy')

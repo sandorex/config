@@ -14,23 +14,6 @@ setmetatable(M.configs, {
 
 M.configs.mason_lsp = {}
 
--- install automatically only if npm is found
-if vim.fn.executable('npm') == 1 then
-    M.configs.mason_lsp.ensure_installed = {
-        -- SHELLHECK (has to be installed manually)
-        'lua_ls',
-        'bashls',
-        'pylsp',
-        'clangd',
-        'cmake',
-        'html',
-        'rust_analyzer', -- NOTE remember to install rust-src or it wont work properly
-
-        -- ts
-        'tsserver',
-    }
-end
-
 M.configs.lua_ls = {
     settings = {
         Lua = {

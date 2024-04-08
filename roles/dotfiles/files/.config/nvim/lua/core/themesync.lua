@@ -1,33 +1,4 @@
--- code for theme options
--- TODO Sometime in future use OSC 11 ANSI, cannot get it to work currently
-local function set_theme_variant(variant)
-    -- toggle by default
-    if variant == nil then
-        if vim.g.colors_name == vim.g.colorscheme_light then
-            variant = 'dark'
-        elseif vim.g.colors_name == vim.g.colorscheme_dark then
-            variant = 'light'
-        else
-            variant = 'dark'
-        end
-    end
-
-    -- NOTE if you set the same colorscheme again it flickers
-    if variant == 'light' then
-        if vim.g.colors_name ~= vim.g.colorscheme_light then
-            vim.cmd('colorscheme ' .. vim.g.colorscheme_light)
-        end
-    else -- default to dark mode if invalid variant is passed
-        if vim.g.colors_name ~= vim.g.colorscheme_dark then
-            vim.cmd('colorscheme ' .. vim.g.colorscheme_dark)
-        end
-    end
-end
-
--- TODO move this to keybindings
-vim.keymap.set('n', '<leader>tt', function()
-    set_theme_variant()
-end, { desc = 'Toggle dark/light theme', silent = true })
+-- plugin for perstant colorscheme
 
 -- reloads last set colorscheme
 local function get_last_colorscheme()

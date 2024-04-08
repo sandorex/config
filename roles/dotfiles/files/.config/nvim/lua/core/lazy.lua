@@ -14,3 +14,4 @@ require('lazy').setup('plugins', {
         notify = false,
     },
 })
+
