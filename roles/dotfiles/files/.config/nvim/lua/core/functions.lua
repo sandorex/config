@@ -10,6 +10,7 @@ M.mason_packages = {
     'rust-analyzer', -- NOTE requires rust source to be installed
     'html-lsp',
     'typescript-language-server',
+    'shellcheck',
 }
 
 M.neobrew_packages = {}
