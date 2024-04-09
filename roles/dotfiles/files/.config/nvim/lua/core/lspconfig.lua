@@ -17,8 +17,19 @@ M.configs.mason_lsp = {}
 M.configs.lua_ls = {
     settings = {
         Lua = {
-            workspace = { checkThirdParty = false },
-            telemetry = { enable = false },
+            diagnostics = {
+                -- Get the language server to recognize the `vim` global
+                globals = { "vim" },
+            },
+            workspace = {
+                -- Make the server aware of Neovim runtime files
+                library = vim.api.nvim_get_runtime_file("", true),
+                -- checkThirdParty = false
+            },
+            -- disable telemetry
+            telemetry = {
+                enable = false
+            },
         },
     }
 }

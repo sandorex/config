@@ -17,7 +17,5 @@ require('core.right_click_menu')
 require('core.netrw')
 require('core.auto')
 require('core.lazy')
-
--- has to be loaded last
 require('core.themesync')
 

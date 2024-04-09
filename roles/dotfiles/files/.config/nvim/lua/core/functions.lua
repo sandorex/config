@@ -13,10 +13,20 @@ M.mason_packages = {
     'shellcheck',
 }
 
+--- neobrew packages to install in bootstrap
 M.neobrew_packages = {}
 
--- this function should not be called twice
+--- installs lazy.nvim if missing and downloads LSPs and tools using mason and homebrew
 function M.bootstrap()
+    -- TODO this is untested
+    -- install lazy plugin manager
+    require('core.lazy').install_lazy()
+
+    if not pcall(require, 'lazy') then
+        -- lazy was just installed so load it
+        require('core.lazy').load_lazy()
+    end
+
     -- run only if plugin is enabled
     if pcall(require, 'neobrew') then
         vim.cmd('HomebrewSetup') -- initial setup of homebrew
@@ -30,45 +40,63 @@ function M.bootstrap()
         vim.cmd('MasonInstall ' .. i)
     end
 end
-vim.api.nvim_create_user_command("Bootstrap", M.bootstrap, { desc = 'Run bootstrap process to setup LSPs and other things' })
--- TODO define user command using bootstrap
+vim.api.nvim_create_user_command("Bootstrap", M.bootstrap)
 
--- update all packages (excluding lazy.nvim plugins)
-function M.update_all()
-    -- run only if plugin is enabled
-    if pcall(require, 'neobrew') then
-        vim.cmd('HomebrewUpdate')
-    end
 
-    vim.cmd('MasonUpdate')
-end
-vim.api.nvim_create_user_command("UpdateAll", M.update_all, { desc = 'Update all packages (excluding lazy.nvim)' })
-
+--- Sets theme variant or toggles it if its nil
+---@param variant string? can be 'dark', 'light' or nil
 function M.set_theme_variant(variant)
     -- TODO Sometime in future use OSC 11 ANSI, cannot get it to work currently
-    -- toggle by default
+    -- toggle if nil
     if variant == nil then
+        -- turn darkness into light and vice versa
         if vim.g.colors_name == vim.g.colorscheme_light then
             variant = 'dark'
         elseif vim.g.colors_name == vim.g.colorscheme_dark then
             variant = 'light'
         else
+            -- default to dark if unknown colorscheme was applied
             variant = 'dark'
         end
     end
 
-    -- NOTE if you set the same colorscheme again it flickers
+    -- if you set the same colorscheme twice it flickers
     if variant == 'light' then
         if vim.g.colors_name ~= vim.g.colorscheme_light then
             vim.cmd('colorscheme ' .. vim.g.colorscheme_light)
         end
-    else -- default to dark mode if invalid variant is passed
+    else -- default to dark mode
         if vim.g.colors_name ~= vim.g.colorscheme_dark then
             vim.cmd('colorscheme ' .. vim.g.colorscheme_dark)
         end
     end
 end
-vim.api.nvim_create_user_command("ThemeVariant", function() M.set_theme_variant() end, { desc = 'Toggle theme variant (dark/light)' })
+
+---Opens file as a note but only once, if it is already open it is focused
+---@param file string? path to the file
+function M.open_notes(file)
+    -- TODO make this work with sessions / projects?
+    -- default to global notes
+    if file == nil then
+        file = vim.fn.stdpath('data') .. '/global_notes.md'
+    end
+
+    -- find buffers with same file open
+    local note_bufs = vim.tbl_filter(function(buf)
+        return vim.api.nvim_buf_is_loaded(buf)
+            and vim.b[buf].is_notes == true
+            and vim.api.nvim_buf_get_name(buf) == file
+    end, vim.api.nvim_list_bufs())
+
+    if #note_bufs == 0 then
+        -- no buffers found then open it
+        vim.cmd('edit ' .. file)
+        vim.b.is_notes = true
+    else
+        -- focus the first one
+        vim.api.nvim_set_current_buf(note_bufs[1])
+    end
+end
 
 return M
 
