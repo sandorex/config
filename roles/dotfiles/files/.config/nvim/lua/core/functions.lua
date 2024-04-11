@@ -40,7 +40,7 @@ function M.bootstrap()
         vim.cmd('MasonInstall ' .. i)
     end
 end
-vim.api.nvim_create_user_command("Bootstrap", M.bootstrap)
+vim.api.nvim_create_user_command("Bootstrap", M.bootstrap, {})
 
 
 --- Sets theme variant or toggles it if its nil
