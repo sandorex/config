@@ -1,9 +1,8 @@
 -- contains events and things that run automatically
 
 -- remove trailing whitespaces
-local group = vim.api.nvim_create_augroup('whitespace-remover', {})
-vim.api.nvim_create_autocmd("BufWritePre", {
-    group = group,
-    pattern = { "*" },
+vim.api.nvim_create_autocmd('BufWritePre', {
+    group = vim.api.nvim_create_augroup('whitespace-remover', {}),
+    pattern = { '*' },
     command = [[%s/\s\+$//e]],
 })

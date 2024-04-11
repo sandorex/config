@@ -133,7 +133,7 @@ return {
             'folke/neodev.nvim',
 
             -- adds status for LSP
-            { 'j-hui/fidget.nvim', opts = {} },
+            'j-hui/fidget.nvim',
 
             -- autocompletion and snippets
             'hrsh7th/nvim-cmp',
@@ -142,6 +142,13 @@ return {
             'saadparwaiz1/cmp_luasnip',
         },
         config = lsp_config,
+    },
+    {
+        'j-hui/fidget.nvim',
+        config = function()
+            -- replace default notification with fidget
+            vim.notify = require('fidget.notification').notify
+        end,
     },
 }
 
