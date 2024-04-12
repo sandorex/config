@@ -31,6 +31,7 @@ local function restore_session(path)
     end
 end
 
+-- TODO close the netrw buffer when restoring session
 if vim.fn.argc() == 0 then
     -- there is no args so restore cwd session
     restore_session(vim.fn.getcwd())

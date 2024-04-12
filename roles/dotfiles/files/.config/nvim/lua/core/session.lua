@@ -8,7 +8,8 @@ M.autosave = true
 
 vim.o.sessionoptions = 'skiprtp,buffers,curdir,folds,help,tabpages,winsize,terminal'
 
--- TODO choose interactively the api
+-- TODO filter out some buffers like git commit and netrw
+-- TODO choose interactively
 
 local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
 
@@ -73,7 +74,7 @@ vim.api.nvim_create_user_command("SessionSave", function(args)
     M.save_session(args.arg)
 end, {
     desc = 'Save current session as new session, to save session even though it is loaded already use bang!',
-    nargs='1'
+    nargs=1
 })
 
 ---load session, the name can be an absolute path to load a directory session
@@ -136,10 +137,11 @@ function M.enable_auto_save()
     end
 
     -- start a timer and reset it each time CursorHold event triggers, this achieves effect like
-    -- OnIdle event with M.autosave_interval being the delay between last cursor hold
+    -- OnIdle event with M.autosave_interval being the idle time
     M.timer = M.timer or vim.loop.new_timer()
+    local augroup = vim.api.nvim_create_augroup('session_autosave', {})
     vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
-        group = vim.api.nvim_create_augroup('mksession_autosave', {}),
+        group = augroup,
         callback = function()
             -- schedule_wrap allows usage of vim api inside
             M.timer:start(M.autosave_interval, 0, vim.schedule_wrap(function()
@@ -147,6 +149,14 @@ function M.enable_auto_save()
 
                 vim.notify('Session automatically saved', vim.log.levels.INFO)
             end))
+        end
+    })
+
+    -- save session before quitting or suspending
+    vim.api.nvim_create_autocmd({ 'VimLeave', 'VimSuspend' }, {
+        group = augroup,
+        callback = function()
+            M.save_current_session()
         end
     })
 end
