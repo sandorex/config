@@ -42,7 +42,6 @@ function M.bootstrap()
 end
 vim.api.nvim_create_user_command("Bootstrap", M.bootstrap, {})
 
-
 --- Sets theme variant or toggles it if its nil
 ---@param variant string? can be 'dark', 'light' or nil
 function M.set_theme_variant(variant)
@@ -75,7 +74,6 @@ end
 ---Opens file as a note but only once, if it is already open it is focused
 ---@param file string? path to the file
 function M.open_notes(file)
-    -- TODO make this work with sessions / projects?
     -- default to global notes
     if file == nil then
         file = vim.fn.stdpath('data') .. '/global_notes.md'

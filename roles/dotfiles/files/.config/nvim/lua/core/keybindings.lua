@@ -57,6 +57,14 @@ vim.keymap.set('n', '<leader>D', vim.diagnostic.setloclist, { desc = 'Open diagn
 
 -- Notes (will be expanded later)
 vim.keymap.set('n', '<leader>gn', function() fun.open_notes() end, { desc = 'Open global notes', silent = true })
+vim.keymap.set('n', '<leader>n', function()
+    if vim.g.root_dir == nil then
+        vim.notify('Root directory has not been set, cannot open notes')
+        return
+    end
+
+    fun.open_notes(vim.g.root_dir .. '/vim_notes.md')
+end, { desc = 'Open project notes', silent = true })
 
 vim.keymap.set('n', '<leader>tt', function() fun.set_theme_variant() end, { desc = 'Toggle dark/light theme', silent = true })
 

@@ -25,6 +25,9 @@ local function restore_session(path)
         return
     end
 
+    -- save root dir so other macros and functionality can use it as project dir
+    vim.g.root_dir = path
+
     -- try to load the session
     if require('core.session').load_session(path) then
         vim.notify('Loaded directory session automatically')
