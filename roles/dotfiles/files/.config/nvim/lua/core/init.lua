@@ -19,3 +19,28 @@ require('core.auto')
 require('core.lazy')
 require('core.themesync')
 
+local function restore_session(path)
+    -- only care if its a directory
+    if vim.fn.isdirectory(path) ~= 1 then
+        return
+    end
+
+    -- try to load the session
+    if require('core.session').load_session(path) then
+        vim.notify('Loaded directory session automatically')
+    end
+end
+
+if vim.fn.argc() == 0 then
+    -- there is no args so restore cwd session
+    restore_session(vim.fn.getcwd())
+else
+    -- if first buffer is a directory then restore its session
+    vim.api.nvim_create_autocmd('BufEnter', {
+        once = true,
+        callback = vim.schedule_wrap(function(args)
+            restore_session(args.file)
+        end),
+    })
+end
+

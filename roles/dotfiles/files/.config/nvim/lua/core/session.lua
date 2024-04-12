@@ -6,7 +6,8 @@ M.sessions_dir = vim.fn.stdpath('data') .. '/mksessions'
 M.autosave_interval = 30000
 M.autosave = true
 
--- TODO list sessions api
+vim.o.sessionoptions = 'skiprtp,buffers,curdir,folds,help,tabpages,winsize,terminal'
+
 -- TODO choose interactively the api
 
 local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
@@ -50,18 +51,39 @@ function M.save_current_session()
     return false
 end
 
---- saves current session, the name can be an absolute path to save as a directory session
+---saves current session, the name can be an absolute path to save as a directory session
+---if session_name is '.' then uses cwd as session name
 ---@param session_name string
 function M.save_session(session_name)
     -- make sure the directory exists
     vim.fn.mkdir(M.sessions_dir, 'p')
 
+    if session_name == '.' or session_name == '' then
+        session_name = vim.fn.getcwd()
+    end
+
     vim.cmd('mksession! ' .. M.sessions_dir .. '/' .. vim.fn.fnameescape(b64_encode(session_name)) .. '.vim')
 end
+vim.api.nvim_create_user_command("SessionSave", function(args)
+    -- do not save again if its already loaded, prevents duplicate sessions
+    if not args.bang and vim.v.this_session ~= nil then
+        return
+    end
+
+    M.save_session(args.arg)
+end, {
+    desc = 'Save current session as new session, to save session even though it is loaded already use bang!',
+    nargs='1'
+})
 
 ---load session, the name can be an absolute path to load a directory session
+---if session_name is '.' then load cwd session
 ---@param session_name string
 function M.load_session(session_name)
+    if session_name == '.' or session_name == '' then
+        session_name = vim.fn.getcwd()
+    end
+
     -- check if it exists
     local path = M.sessions_dir .. '/' .. vim.fn.fnameescape(b64_encode(session_name)) .. '.vim'
     if vim.fn.filereadable(path) ~= 1 then
@@ -74,6 +96,36 @@ function M.load_session(session_name)
     if M.autosave then
         M.enable_auto_save()
     end
+
+    return true
+end
+vim.api.nvim_create_user_command("SessionLoad", function(args)
+    if not M.load_session(args.args) then
+        vim.notify('Could not find session: ' .. arg, vim.log.levels.WARN)
+    end
+end, {
+    desc = 'Load session',
+    complete = function(_, _, _)
+        return M.get_sessions()
+    end,
+    nargs='?'
+})
+
+---returns all known sessions
+---@return table
+function M.get_sessions()
+    local sessions = {}
+
+    local iter = vim.fs.dir(M.sessions_dir, {})
+    for name, type_ in iter do
+        -- ignore directories
+        if type_ == 'file' then
+            -- remove .vim extension and decode the name
+            table.insert(sessions, b64_decode(vim.fn.fnamemodify(name, ":t:r")))
+        end
+    end
+
+    return sessions
 end
 
 ---automatically save session at fixed interval M.autosave_interval
@@ -83,15 +135,17 @@ function M.enable_auto_save()
         return
     end
 
+    -- start a timer and reset it each time CursorHold event triggers, this achieves effect like
+    -- OnIdle event with M.autosave_interval being the delay between last cursor hold
     M.timer = M.timer or vim.loop.new_timer()
-    vim.api.nvim_create_autocmd("CursorHold", {
+    vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
         group = vim.api.nvim_create_augroup('mksession_autosave', {}),
         callback = function()
             -- schedule_wrap allows usage of vim api inside
             M.timer:start(M.autosave_interval, 0, vim.schedule_wrap(function()
                 M.save_current_session()
 
-                vim.notify('Session auto save', vim.log.levels.OFF)
+                vim.notify('Session automatically saved', vim.log.levels.INFO)
             end))
         end
     })
