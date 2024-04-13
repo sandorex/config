@@ -1,0 +1,9 @@
+---
+- name: 'Enable USB autosuspend for configured devices'
+  ansible.builtin.template:
+    src: '{{ role_path }}/files/ansible-usb-autosuspend.rules.j2'
+    dest: '/etc/udev/rules.d/ansible-usb-autosuspend.rules'
+    owner: root
+  tags: [never, root]
+  when: usb_autosuspend_rules is defined
+
