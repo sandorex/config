@@ -1,5 +1,34 @@
+local function telescope_formatter(_, path)
+    local tail = vim.fs.basename(path)
+    local parent = vim.fs.dirname(path)
+    if parent == "." then
+        return tail
+    end
+
+    return string.format("%s\t\t%s", tail, vim.fn.fnamemodify(parent, ":~:."))
+end
+
 return {
     {
+        'nvim-telescope/telescope.nvim',
+        branch = '0.1.x',
+        dependencies = { 'nvim-lua/plenary.nvim' },
+        config = function()
+            require('telescope').setup {
+                pickers = {
+                    buffers = {
+                        path_display = telescope_formatter,
+                    }
+                }
+            }
+
+            local telescope_fn = require('telescope.builtin')
+            vim.keymap.set('n', '<leader>b', telescope_fn.buffers, { desc = 'Search buffers using telescope', silent = true })
+        end,
+    },
+
+    {
+        enabled = false,
         'junegunn/fzf.vim',
         dependencies = { 'junegunn/fzf' },
         keys = {

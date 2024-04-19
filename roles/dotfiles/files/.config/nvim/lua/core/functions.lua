@@ -7,6 +7,7 @@ M.mason_packages = {
     'cmake-language-server',
     'lua-language-server',
     'python-lsp-server',
+    'jedi-language-server',
     'rust-analyzer', -- NOTE requires rust source to be installed
     'html-lsp',
     'typescript-language-server',
@@ -18,7 +19,6 @@ M.neobrew_packages = {}
 
 --- installs lazy.nvim if missing and downloads LSPs and tools using mason and homebrew
 function M.bootstrap()
-    -- TODO this is untested
     -- install lazy plugin manager
     require('core.lazy').install_lazy()
 

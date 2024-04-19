@@ -44,8 +44,8 @@ end
 ---saves current session, does nothing if no session is active
 ---@return boolean
 function M.save_current_session()
-    if vim.v.this_session ~= nil then
-        vim.cmd('mksession! ' .. vim.fn.fnameescape(vim.v.this_session))
+    if vim.v.this_session ~= '' then
+        vim.cmd.mksession { args = { vim.fn.fnameescape(vim.v.this_session) }, bang = true }
         return true
     end
 
@@ -63,18 +63,28 @@ function M.save_session(session_name)
         session_name = vim.fn.getcwd()
     end
 
-    vim.cmd('mksession! ' .. M.sessions_dir .. '/' .. vim.fn.fnameescape(b64_encode(session_name)) .. '.vim')
+    local path = M.sessions_dir .. '/' .. b64_encode(session_name) .. '.vim'
+    vim.cmd.mksession { args = { vim.fn.fnameescape(path) }, bang = true }
+
+    -- make it seem as if a session was loaded
+    vim.v.this_session = path
+
+    -- enable auto save if requested
+    if M.autosave then
+        M.enable_auto_save()
+    end
 end
 vim.api.nvim_create_user_command("SessionSave", function(args)
-    -- do not save again if its already loaded, prevents duplicate sessions
-    if not args.bang and vim.v.this_session ~= nil then
-        return
+    -- if not bang (!) and session was loaded already then overwrite it and ignore the argument
+    if not args.bang and vim.v.this_session ~= '' then
+        M.save_current_session()
     end
 
-    M.save_session(args.arg)
+    M.save_session(args.args)
 end, {
     desc = 'Save current session as new session, to save session even though it is loaded already use bang!',
-    nargs=1
+    nargs=1,
+    bang=true
 })
 
 ---load session, the name can be an absolute path to load a directory session
@@ -91,7 +101,7 @@ function M.load_session(session_name)
         return false
     end
 
-    vim.cmd('source ' .. path)
+    vim.cmd.source(path)
 
     -- enable autosaving if requested
     if M.autosave then

@@ -130,7 +130,7 @@ return {
             'williamboman/mason-lspconfig.nvim',
 
             -- adds neovim api completion
-            'folke/neodev.nvim',
+            'folke/neodev.nvim', -- TODO does not work
 
             -- adds status for LSP
             'j-hui/fidget.nvim',

@@ -38,6 +38,9 @@ M.configs.pylsp = {
     settings = {
         pylsp = {
             plugins = {
+                jedi = {
+                    environment = vim.fn.exepath('python3'),
+                },
                 pycodestyle = {
                     ignore = {
                         'E302', -- expected 2 blank lines..
