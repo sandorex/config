@@ -183,40 +183,59 @@ end
 
 ---automatically load session if directory is opened or for cwd if no argument is passed
 ---call this function at the end of your init.lua
----@param args { success_cb: function?, failure_cb: function?, error_cb: function? }
-function M.autoload_session(args)
+---@param args { session_loaded: function?, no_session_found: function?, session_load_error: function? }
+function M.autoload_directory_session(args)
     local function restore_session(path)
-
         -- try to load the session, using pcall prevents errors from loading the session
         local success, result = pcall(require('core.session').load_session, path)
 
         if success and result then
-            if args.success_cb then
-                args.success_cb(path)
+            -- there was a session and was sucessfully loaded
+            if args.session_loaded then
+                args.session_loaded(path)
             end
 
             return true
         elseif success then
-            if args.failure_cb then
-                args.failure_cb()
+            -- there was no session
+            if args.no_session_found then
+                args.no_session_found()
             end
         else
             -- TODO log somewhere why loading failed for debugging purpose
-            if args.error_cb then
+            -- there was an error while loading the session, it probably exists
+            if args.session_load_error then
                 -- result is err msg in this case cuz of pcall
-                args.error_cb(result)
+                args.session_load_error(result)
             end
         end
 
         return false
     end
 
-    if vim.fn.argc() == 0 then
-        -- there is no args so restore cwd session
-        restore_session(vim.fn.getcwd())
-    elseif vim.fn.argc() == 1 then
-        -- only run if single argument
+    local argc = vim.fn.argc()
+    if argc > 1 then
+        -- do not try to load session if more than one arg passed
+        return
+    end
 
+    -- if no arg then assume cwd, if one arg and is a directory then use that
+    if argc == 0 then
+        if vim.api.nvim_buf_get_name(0) == '' then
+            -- TODO dirty fix so the buffer is not left after loading session
+            -- i do not understand why it happens
+            vim.cmd('Explore')
+        end
+
+        -- find a way to check if current buf is a nofile
+        local buf = vim.api.nvim_get_current_buf()
+
+        -- try to load session
+        if restore_session(vim.fn.getcwd()) then
+            -- try to delete buffer if session was loaded
+            pcall(vim.api.nvim_buf_delete, buf, {})
+        end
+    else
         -- run on first buffer
         vim.api.nvim_create_autocmd('BufEnter', {
             callback = vim.schedule_wrap(function(autocmd_args)
@@ -226,12 +245,15 @@ function M.autoload_session(args)
                     return false
                 end
 
-                -- only care if its a directory and it exists
-                if vim.fn.isdirectory(autocmd_args.file) == 1 then
-                    if restore_session(autocmd_args.file) then
-                        -- delete netrw buffer if session was loaded
-                        vim.api.nvim_buf_delete(autocmd_args.buf, {})
-                    end
+                if vim.fn.isdirectory(autocmd_args.file) ~= 1 then
+                    -- not a directory abort
+                    return true
+                end
+
+                -- try to load session
+                if restore_session(autocmd_args.file) then
+                    -- delete netrw if session was loaded
+                    vim.api.nvim_buf_delete(autocmd_args.buf, {})
                 end
 
                 -- remove autocmd as it ran properly

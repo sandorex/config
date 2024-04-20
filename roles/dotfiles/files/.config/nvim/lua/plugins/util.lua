@@ -14,28 +14,32 @@ return {
         branch = '0.1.x',
         dependencies = { 'nvim-lua/plenary.nvim' },
         config = function()
+            local actions = require('telescope.actions')
+
             require('telescope').setup {
+                defaults = {
+                    preview = {
+                        filesize_limit = 0.1, -- MB
+                    },
+                },
                 pickers = {
                     buffers = {
+                        mappings = {
+                            i = {
+                                -- delete buffers using ALT + d
+                                ["<M-d>"] = actions.delete_buffer,
+                            }
+                        },
                         path_display = telescope_formatter,
+                        sort_lastused = true,
+                        -- ignore_current_buffer = true,
                     }
                 }
             }
 
             local telescope_fn = require('telescope.builtin')
-            vim.keymap.set('n', '<leader>b', telescope_fn.buffers, { desc = 'Search buffers using telescope', silent = true })
+            vim.keymap.set('n', '<leader>b', telescope_fn.buffers, { desc = 'Pick buffer using telescope', silent = true })
         end,
-    },
-
-    {
-        enabled = false,
-        'junegunn/fzf.vim',
-        dependencies = { 'junegunn/fzf' },
-        keys = {
-            { '<leader>b', '<cmd>Buffers<cr>', desc = 'Select buffer (fzf)', silent = true},
-            -- { '<leader>f', '<cmd>Files %:p:h<cr>', desc = 'Open fzf in current file dir (fzf)', silent = true},
-        },
-        build = ':call fzf#install()',
     },
 
     {

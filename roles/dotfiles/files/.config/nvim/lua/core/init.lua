@@ -21,14 +21,19 @@ require('core.auto')
 require('core.lazy')
 require('core.themesync')
 
-require('core.session').autoload_session({
-    success_cb = function(path)
+-- open netrw if no args passed
+if vim.fn.argc() == 0 then
+    vim.cmd.Explore()
+end
+
+require('core.session').autoload_directory_session({
+    session_loaded = function(path)
         -- kindof project root directory
         vim.g.root_dir = path
 
         vim.notify('Loaded directory session automatically')
     end,
-    error_cb = function()
+    session_load_error = function()
         vim.notify('Error while loading directory session automatically')
     end
 })
