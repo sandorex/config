@@ -3,7 +3,7 @@
 local M = {}
 
 M.sessions_dir = vim.fn.stdpath('data') .. '/mksessions'
-M.autosave_interval = 30000
+M.autosave_interval = 10000
 M.autosave = true
 
 vim.o.sessionoptions = 'skiprtp,buffers,curdir,folds,help,tabpages,winsize,terminal'
@@ -178,6 +178,66 @@ function M.disable_auto_save()
     if M.timer ~= nil then
         M.timer:stop()
         M.timer = nil
+    end
+end
+
+---automatically load session if directory is opened or for cwd if no argument is passed
+---call this function at the end of your init.lua
+---@param args { success_cb: function?, failure_cb: function?, error_cb: function? }
+function M.autoload_session(args)
+    local function restore_session(path)
+
+        -- try to load the session, using pcall prevents errors from loading the session
+        local success, result = pcall(require('core.session').load_session, path)
+
+        if success and result then
+            if args.success_cb then
+                args.success_cb(path)
+            end
+
+            return true
+        elseif success then
+            if args.failure_cb then
+                args.failure_cb()
+            end
+        else
+            -- TODO log somewhere why loading failed for debugging purpose
+            if args.error_cb then
+                -- result is err msg in this case cuz of pcall
+                args.error_cb(result)
+            end
+        end
+
+        return false
+    end
+
+    if vim.fn.argc() == 0 then
+        -- there is no args so restore cwd session
+        restore_session(vim.fn.getcwd())
+    elseif vim.fn.argc() == 1 then
+        -- only run if single argument
+
+        -- run on first buffer
+        vim.api.nvim_create_autocmd('BufEnter', {
+            callback = vim.schedule_wrap(function(autocmd_args)
+                -- if floating window (e.g. lazy.nvim) is shown then skip that buffer
+                if vim.api.nvim_win_get_config(0).zindex then
+                    -- do not remove autocmd so it triggers on next buffer
+                    return false
+                end
+
+                -- only care if its a directory and it exists
+                if vim.fn.isdirectory(autocmd_args.file) == 1 then
+                    if restore_session(autocmd_args.file) then
+                        -- delete netrw buffer if session was loaded
+                        vim.api.nvim_buf_delete(autocmd_args.buf, {})
+                    end
+                end
+
+                -- remove autocmd as it ran properly
+                return true
+            end),
+        })
     end
 end
 

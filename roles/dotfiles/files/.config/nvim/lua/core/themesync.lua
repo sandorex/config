@@ -18,7 +18,8 @@ local function reload_last_colorscheme()
     local last_colorscheme = get_last_colorscheme() or vim.g.colorscheme_dark
 
     if vim.g.colors_name ~= last_colorscheme then
-        vim.cmd('colorscheme ' .. last_colorscheme)
+        -- added silent! so if the colorscheme does not exist it is not an error
+        vim.cmd('silent! colorscheme ' .. last_colorscheme)
     end
 end
 

@@ -23,8 +23,8 @@ function M.bootstrap()
     require('core.lazy').install_lazy()
 
     if not pcall(require, 'lazy') then
-        -- lazy was just installed so load it
-        require('core.lazy').load_lazy()
+        print("Lazy.nvim was just installed please restart neovim and rerun :Bootstrap")
+        return
     end
 
     -- run only if plugin is enabled
