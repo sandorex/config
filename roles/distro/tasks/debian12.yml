@@ -13,7 +13,8 @@
 #   become_flags: '-s /bin/bash -c'
 
 - become: yes
-  tags: [never, root]
+  tags: root
+  when: run_root_tasks is defined
   block:
     - name: Add apt repository (main)
       ansible.builtin.apt_repository:
@@ -61,3 +62,14 @@
         dest: /etc/apt/apt.conf.d/10-periodic-update-cache
         mode: 0644
         owner: root
+
+    - name: Configure apt verbosity
+      ansible.builtin.copy:
+        content: |
+          // show verbose versioning
+          APT::Get::Show-Versions "1";
+
+        dest: /etc/apt/apt.conf.d/90-verbose-versions
+        mode: 0644
+        owner: root
+

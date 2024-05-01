@@ -69,6 +69,17 @@
       register: answer
       failed_when: answer.user_input | lower != 'yes'
 
+    - name: Test if password is given
+      ansible.builtin.command:
+        cmd: whoami
+      become: yes
+      register: output
+      ignore_errors: yes
+
+    - name: Enable root tasks
+      ansible.builtin.set_fact:
+        run_root_tasks: '{{ output.rc == 0 }}'
+
     - name: Ensure ~/.config directory exists
       ansible.builtin.file:
         path: '{{ ansible_env.HOME }}/.config'
