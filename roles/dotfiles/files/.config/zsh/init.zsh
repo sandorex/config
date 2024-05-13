@@ -22,7 +22,7 @@ setopt hist_ignore_dups
 setopt hist_ignore_space
 # its annoying TODO
 #setopt share_history 	# share history between all sessions (load history on change)
-#setopt inc_append_history # incrementally update history (after each command)
+setopt inc_append_history # incrementally update history (after each command)
 
 setopt no_beep          # no bell
 setopt no_clobber       # do not overwrite stuff with redirection
