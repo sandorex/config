@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+
+import click
+import subprocess
+import re
+
+from typing import List, Tuple, Optional
+
+def get_devices() -> List[Tuple[str, str]]:
+    result = subprocess.run(
+        ["bluetoothctl", "devices", "Connected"],
+        capture_output=True
+    )
+    result.check_returncode()
+
+    devices = []
+
+    for line in result.stdout.decode("utf-8").splitlines():
+        # extract name and address from 'Device XX:XX:XX:XX:XX:XX NAME'
+        re_results = re.search(r"([A-F0-9]{2}:[A-F0-9]{2}:[A-F0-9]{2}:[A-F0-9]{2}:[A-F0-9]{2}:[A-F0-9]{2}) (\w*)", line, re.IGNORECASE)
+        if not re_results:
+            continue
+
+        devices.append((re_results.group(1), re_results.group(2)))
+
+    return devices
+
+def get_device_rssi(device: str) -> Optional[int]:
+    result = subprocess.run(["hcitool", "rssi", device], capture_output=True)
+    result.check_returncode()
+
+    # extract value from 'RSSI return value: -21'
+    re_results = re.search(r"(-?\d+)", result.stdout.decode("utf-8"))
+    if not re_results:
+        return None
+
+    return int(re_results.group(1))
+
+@click.command()
+@click.argument("device", default="")
+def main(device: str):
+    """
+    Simple script that shows RSSI of connected bluetooth devices
+
+    Useful for debugging signal issues
+    """
+    if not device:
+        print("Listing bluetooth RSSI of connected devices:")
+        for d_addr, d_name in get_devices():
+            print(f"  {d_name} {d_addr} = {get_device_rssi(d_addr)}")
+    else:
+        print(get_device_rssi(device))
+
+if __name__ == "__main__":
+    main()
+
