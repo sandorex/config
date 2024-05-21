@@ -42,7 +42,7 @@
     insteadOf = https://gitlab.com/{{ git_username }}/
 
 [init]
-    defaultBranch = master
+    defaultBranch = main
     templateDir = ~/.git-template
 
 # vim: ft=gitconfig

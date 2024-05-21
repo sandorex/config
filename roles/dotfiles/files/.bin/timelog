@@ -78,8 +78,9 @@ def list_timelog(file=TIMELOG_FILE):
     print("\nTOTAL: " + humanize_time(last_time - start_time))
 
 @click.command()
-@click.option("--edit", is_flag=True, help="Edit today's timelog file with $EDITOR")
-@click.option("--list", "_list", is_flag=True, help="List last three days of logs")
+@click.option("-e", "--edit", is_flag=True, help="Edit today's timelog file with $EDITOR")
+@click.option("-l", "--list", "_list", is_flag=True, help="List logs created today")
+# @click.option("--list-week", "_list_week", is_flag=True, help="List logs created this week")
 @click.option("--new", "new", is_flag=True, help="Creates new fresh log (old one is renamed)")
 @click.argument("text", nargs=-1)
 def main(text: List[str], edit: bool, _list: bool, new: bool):
@@ -89,7 +90,8 @@ def main(text: List[str], edit: bool, _list: bool, new: bool):
 
     if new:
         print("Resetting log")
-        os.rename(TIMELOG_FILE, TIMELOG_FILE.removesuffix(TIMELOG_EXT) + datetime.now().strftime("T%H%M%S") + TIMELOG_EXT)
+        if os.path.exists(TIMELOG_FILE):
+            os.rename(TIMELOG_FILE, TIMELOG_FILE.removesuffix(TIMELOG_EXT) + datetime.now().strftime("T%H%M%S") + TIMELOG_EXT)
         return
 
     # edit the logfile
