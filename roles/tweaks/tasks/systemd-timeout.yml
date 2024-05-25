@@ -1,0 +1,21 @@
+---
+- name: Ensure /etc/systemd/user.conf.d exists
+  ansible.builtin.file:
+    path: /etc/systemd/user.conf.d
+    state: directory
+  become: yes
+  tags: root
+  when: run_root_tasks is defined and run_root_tasks
+
+- name: Set sane default timeout time for systemd
+  ansible.builtin.copy:
+    content: |
+      DefaultTimeoutStartSec=20s
+      DefaultTimeoutStopSec=10s
+    dest: /etc/systemd/user.conf.d/sane-timeout-time.conf
+    mode: 0644
+    owner: root
+  become: yes
+  tags: root
+  when: run_root_tasks is defined and run_root_tasks
+

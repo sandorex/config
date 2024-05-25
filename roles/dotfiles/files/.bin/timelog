@@ -68,7 +68,7 @@ def list_timelog(file=TIMELOG_FILE):
             last_time = time
             start_time = time
 
-            print(line_no_time + ": Beginning of timelog")
+            print(line_no_time)
             continue
 
         print(line_no_time + ": " + humanize_time(time - last_time))

@@ -187,7 +187,7 @@ end
 function M.autoload_directory_session(args)
     local function restore_session(path)
         -- try to load the session, using pcall prevents errors from loading the session
-        local success, result = pcall(require('core.session').load_session, path)
+        local success, result = pcall(M.load_session, path)
 
         if success and result then
             -- there was a session and was sucessfully loaded

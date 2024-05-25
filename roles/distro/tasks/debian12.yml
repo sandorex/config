@@ -14,7 +14,7 @@
 
 - become: yes
   tags: root
-  when: run_root_tasks is defined
+  when: run_root_tasks is defined and run_root_tasks
   block:
     - name: Add apt repository (main)
       ansible.builtin.apt_repository:

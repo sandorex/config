@@ -2,6 +2,12 @@
 - name: Install KDE widget
   ansible.builtin.command:
     cmd: 'kpackagetool5 -i {{ role_path }}/{{ item }}'
+  register: result
+  # NOTE: kpackagetool5 --list does not work and so this fails if the wdigets
+  # are already installed, this was the only way i could think of
+  failed_when: result.rc != 0 and not 'already exists' in result.stderr
+  changed_when: result.rc == 0
   loop:
     - 'widgets/execute_applet'
     - 'widgets/slider-widget'
+

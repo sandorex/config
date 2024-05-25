@@ -22,9 +22,9 @@
 
 - name: Create bash_profile to load profile and bashrc
   ansible.builtin.copy:
-    path: '{{ ansible_env.HOME }}/.bash_profile'
     content: |
       # source the actual profile and bashrc (includes check for interactive shell)
       source ~/.profile
       source ~/.bashrc
+    dest: '{{ ansible_env.HOME }}/.bash_profile'
 

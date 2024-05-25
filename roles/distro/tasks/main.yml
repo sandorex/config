@@ -20,7 +20,7 @@
         mode: 0644
         owner: root
   tags: root
-  when: run_root_tasks is defined
+  when: run_root_tasks is defined and run_root_tasks
 
 ## DISTRO SPECIFIC ##
 - import_tasks: debian12.yml
