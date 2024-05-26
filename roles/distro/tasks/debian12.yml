@@ -73,3 +73,12 @@
         mode: 0644
         owner: root
 
+    - name: Remove akonadi-based KDE apps
+      ansible.builtin.apt:
+        name:
+          - korganizer
+          - kaddressbook
+          - kmail
+          - akregator
+        state: absent
+
