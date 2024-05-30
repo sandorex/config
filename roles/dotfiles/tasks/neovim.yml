@@ -1,11 +1,12 @@
 ---
-- block:
+- when: "'neovim' in install"
+  block:
     - name: Ensure ~/.local/bin exists
       ansible.builtin.file:
-        path: '{{ ansible_env.HOME }}/.local/bin'
+        path: '{{ ansible_user_dir }}/.local/bin'
         state: directory
 
-    # TODO switch to the archived one as appimage requires libfuse
+    # TODO switch to the archived one as appimage requires libfuse or extract it
     - name: Download neovim
       vars:
         neovim_release: '{{ neovim_version }}'
@@ -13,23 +14,60 @@
       ansible.builtin.get_url:
         url: 'https://github.com/neovim/neovim/releases/download/{{ neovim_release }}/nvim.appimage'
         checksum: 'sha256:{{ neovim_checksum }}'
-        dest: '{{ ansible_env.HOME }}/.local/bin/nvim'
+        dest: '{{ ansible_user_dir }}/.local/bin/nvim'
         mode: u+rwx # make sure its executable
-  when: "'neovim' in install"
 
-- name: Link neovim configuration directory
-  ansible.builtin.file:
-    src: '{{ role_path }}/files/.config/nvim'
-    dest: '{{ ansible_env.HOME }}/.config/nvim'
-    state: link
-    force: true
-  when: "'neovim' in configure"
+- when: "'io.neovim.nvim' in flatpak_install"
+  block:
+    - name: Ensure directories exist
+      ansible.builtin.file:
+        path: "{{ ansible_user_dir }}/{{ item }}"
+        state: directory
+        recurse: true
+      loop:
+        - '.local/share/flatpak/overrides/'
+        - '.var/app/io.neovim.nvim/config/'
 
-# TODO redo this when nvim wrapper is tested
-# TODO ensure flatpak directory exists
-# - name: Link neovim configuration directory (flatpak)
-#   ansible.builtin.file:
-#     src: '{{ role_path }}/files/.config/nvim'
-#     dest: '{{ ansible_env.HOME }}/.var/app/io.neovim.nvim/config/nvim'
-#     state: link
-#   when: neovim_flatpak
+    # these SDKs are used inside the flatpak
+    - name: Install neovim flatpak SDKs
+      community.general.flatpak:
+        # NOTE these have to match below in ENABLE_SDK_EXT
+        name:
+          - org.freedesktop.Sdk.Extension.rust-stable
+          - org.freedesktop.Sdk.Extension.node20
+        state: present
+        method: user
+
+    - name: Sandbox neovim flatpak by overriding permissions
+      ansible.builtin.command:
+        # TODO this is not idempotent and may overwrite some things
+        cmd: >
+          flatpak override --user
+          --unshare=network
+          --nofilesystem=host
+          --nofilesystem=home
+          --nofilesystem=/var/tmp
+          --nofilesystem=/tmp
+          --filesystem=host-os
+          --filesystem=~/ws
+          --filesystem={{ role_path }}/files/.config/nvim
+          --env=TERMINFO_DIRS=/var/run/host/usr/share/terminfo:/var/run/host/usr/lib/terminfo:/var/run/host/etc/terminfo:/usr/share/terminfo
+          --env=FLATPAK_ENABLE_SDK_EXT=rust-stable,node20
+          io.neovim.nvim
+
+- when: "'neovim' in configure"
+  block:
+    - name: Link neovim configuration directory
+      ansible.builtin.file:
+        src: '{{ role_path }}/files/.config/nvim'
+        dest: '{{ ansible_user_dir }}/.config/nvim'
+        state: link
+        force: true
+
+    - name: Link neovim configuration directory (flatpak)
+      ansible.builtin.file:
+        src: '{{ role_path }}/files/.config/nvim'
+        dest: '{{ ansible_user_dir }}/.var/app/io.neovim.nvim/config/nvim'
+        state: link
+        force: true
+

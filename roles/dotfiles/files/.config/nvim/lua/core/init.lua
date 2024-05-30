@@ -29,6 +29,7 @@ end
 require('core.session').autoload_directory_session({
     session_loaded = function(path)
         -- kindof project root directory
+        -- TODO move this into sparate var like vim.g.session_dir so it can be included in core.session
         vim.g.root_dir = path
 
         vim.notify('Loaded directory session automatically')

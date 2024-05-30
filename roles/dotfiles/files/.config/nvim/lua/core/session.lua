@@ -52,6 +52,7 @@ function M.save_current_session()
     return false
 end
 
+-- TODO remove vim.notify or make it stop :h hit-enter
 ---saves current session, the name can be an absolute path to save as a directory session
 ---if session_name is '.' then uses cwd as session name
 ---@param session_name string
@@ -121,6 +122,8 @@ end, {
     end,
     nargs='?'
 })
+
+-- TODO add SessionDelete
 
 ---returns all known sessions
 ---@return table

@@ -47,6 +47,7 @@
       - neovim
 
     flatpak_install:
+      - io.neovim.nvim
       - com.brave.Browser
       - md.obsidian.Obsidian
       - io.github.Qalculate.qalculate-qt
