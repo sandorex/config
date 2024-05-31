@@ -21,6 +21,8 @@ vim.keymap.set('i', '<Down>', "v:count == 0 ? '<C-o>gj' : '<C-o>j'", { expr = tr
 vim.keymap.set({'n', 'v'}, '<Up>', "v:count == 0 ? 'gk' : 'k'", { expr = true, silent = true })
 vim.keymap.set({'n', 'v'}, '<Down>', "v:count == 0 ? 'gj' : 'j'", { expr = true, silent = true })
 
+vim.keymap.set('n', ',', '@@', { desc = 'Repeat last used macro', silent = true })
+
 ---- KEYBINDINGS ----
 -- buffer
 vim.keymap.set('n', '<leader>B', '<cmd>bd<cr>', { desc = 'Drop buffer', silent = true })

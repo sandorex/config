@@ -61,8 +61,6 @@ DOCUMENTATION = """---
 """
 
 import json
-import locale
-import os
 import re
 import textwrap
 import yaml
@@ -73,7 +71,7 @@ from ansible.module_utils._text import to_text
 from ansible.module_utils.common._collections_compat import Mapping
 from ansible.plugins.callback import CallbackBase
 from ansible.template import Templar
-from ansible.utils.color import colorize, hostcolor, stringc
+from ansible.utils.color import stringc
 from ansible.vars.clean import strip_internal_keys, module_response_deepcopy
 from collections import OrderedDict
 try:
