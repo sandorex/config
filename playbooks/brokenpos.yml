@@ -5,11 +5,18 @@
   hosts: localhost
   connection: local
   vars:
+    ## other ##
     configure:
+      - bin
+      - profile
+      - shell
+
+      - bash
+      - ssh
       - nano
       - kitty
 
-    flatpak_apps:
+    flatpak_install:
       - com.brave.Browser
       - com.stremio.Stremio
 
@@ -18,17 +25,36 @@
       ansible.builtin.pause:
         prompt: 'This machine does not appear to be {{ ansible_play_name }}, if you want to continue type "yes" and press enter'
       when: ansible_nodename | lower != ansible_play_name or ansible_env.container is defined
-      tags: always
       register: answer
       failed_when: answer.user_input | lower != 'yes'
+      tags: always
+
+    - name: Test if password is given
+      ansible.builtin.command:
+        cmd: whoami
+      become: yes
+      register: output
+      ignore_errors: yes
+      changed_when: false
+      tags: always
+
+    - name: Enable root tasks
+      ansible.builtin.set_fact:
+        run_root_tasks: '{{ output.rc == 0 }}'
+      tags: always
+
+    - name: Ensure ~/.config directory exists
+      ansible.builtin.file:
+        path: '{{ ansible_env.HOME }}/.config'
+        state: directory
+      tags: always
 
     - name: Load defaults
       ansible.builtin.include_vars:
         file: '{{ playbook_dir }}/../default.yml'
       tags: always
-
   roles:
-    - role: linux
+    - role: distro
       tags: [linux, distro]
 
     - role: nerd-fonts
@@ -37,12 +63,27 @@
     - role: kde-plasma
       tags: [kde-plasma, kde, desktop]
 
-    - role: tweaks
-      tags: [distro, tweaks, fixes]
-
     - role: dotfiles
       tags: [dotfiles]
 
     - role: flatpak
       tags: [flatpak, apps]
+
+  tasks:
+    - name: Run tweaks
+      import_role:
+        name: tweaks
+        tasks_from: systemd-timeout.yml
+      tags: tweaks
+
+    - name: Set vm cache pressure to increase perceived speed
+      ansible.builtin.copy:
+        content: |
+          vm.vfs_cache_pressure=40
+
+        dest: /etc/sysctl.d/99-vfs-cache-pressure.conf
+        mode: 0644
+        owner: root
+      tags: root
+      when: run_root_tasks is defined and run_root_tasks
 
