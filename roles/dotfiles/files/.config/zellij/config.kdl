@@ -1,15 +1,23 @@
 themes {
-    default {
-        fg 1
+    darklight {
+        // accent around actions like QUIT RESIZE ETC
+        fg 250
+        // session title, keybinding surrounding characters
+        white 99
+
         bg 0
-        black 238
-        red 196
-        green 22
-        yellow 3
+        // bar background color
+        black 236
+
+        red 9
+        green 34
+        yellow 11
         blue 39
         magenta 201
         cyan 159
-        white 16
-        orange 214
+        orange 208
     }
 }
+
+theme "darklight"
+
