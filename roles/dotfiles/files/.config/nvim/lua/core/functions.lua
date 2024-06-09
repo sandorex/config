@@ -17,17 +17,15 @@ M.mason_packages = {
 --- neobrew packages to install in bootstrap
 M.neobrew_packages = {}
 
+-- TODO move this into its own module bootstrap.lua
 --- installs lazy.nvim if missing and downloads LSPs and tools using mason and homebrew
 function M.bootstrap()
-    -- install lazy plugin manager
-    require('core.lazy').install_lazy()
+    print("Bootstrapping plugins and LSPs")
 
-    if not pcall(require, 'lazy') then
-        print("Lazy.nvim was just installed please restart neovim and rerun :Bootstrap")
-        return
-    end
+    -- install and load lazy plugin manager
+    require('core.lazy').install_and_load()
 
-    -- run only if plugin is enabled
+    -- run only if plugin is loaded by lazy
     if pcall(require, 'neobrew') then
         vim.cmd('HomebrewSetup') -- initial setup of homebrew
 

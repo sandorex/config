@@ -1,2 +1,1 @@
--- redirect to core
-require('core')
+lua/core/init.lua

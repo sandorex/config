@@ -21,6 +21,8 @@ require('core.auto')
 require('core.lazy')
 require('core.themesync')
 
+-- TODO this fails without plugins for some reason
+--[[
 -- open netrw if no args passed
 if vim.fn.argc() == 0 then
     vim.cmd.Explore()
@@ -38,4 +40,5 @@ require('core.session').autoload_directory_session({
         vim.notify('Error while loading directory session automatically')
     end
 })
+]]--
 
