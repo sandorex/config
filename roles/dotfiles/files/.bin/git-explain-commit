@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+# interactive git commit editor
+# date of creation: 10-06-2024
+
+# NOTE -m enabled job control so `suspend` works
+set -m -eu -o pipefail
+
+if git diff --cached --quiet; then
+    echo "There are no staged changes"
+    exit 0
+fi
+
+GIT_ROOT="$(git rev-parse --show-toplevel)"
+
+# this file contains the final commit message
+COMMIT_MSG_FILE="$(mktemp)"
+
+# this file is used for temporary editing before appending to the above file
+TEMP_FILE="$(mktemp)"
+
+files=($(git diff --cached --name-only))
+file_count="${#files[@]}"
+index=0
+
+trap "rm -f $COMMIT_MSG_FILE $TEMP_FILE" EXIT
+
+function next() {
+    if [[ $index -eq $(( file_count - 1 )) ]]; then
+        echo "This is the last change"
+    else
+        index=$(( index + 1))
+    fi
+}
+
+function prev() {
+    if [[ $index -eq 0 ]]; then
+        echo "This is the first change"
+    else
+        index=$(( index - 1))
+    fi
+}
+
+function current_diff() {
+    git diff --cached "${GIT_ROOT}/${files[$index]}"
+}
+
+# TODO disabled suspend as it messes up the menu, find a way to make it work nicer
+trap "" SIGTSTP
+
+while true; do
+    clear
+    current_diff
+    echo "(Change $(( index + 1 ))/${file_count})"
+    echo -n "[Quit/Commit/Edit/Append/Next/Previous/Suspend/Help] "
+    read -n1
+    echo
+
+    case "$REPLY" in
+        [qQ])
+            echo -n "Are you sure you want to discard the message? [Y/n] "
+            read -n1
+            echo
+
+            case "$REPLY" in
+                [Yy])
+                    echo "Goodbye."
+                    exit 0
+                    ;;
+                *)
+                    ;;
+            esac
+            ;;
+        [cC])
+            # NOTE: --template means user will not be able to use the message
+            # verbatim as git will check it, so the user can add a meaningful
+            # summary in the title
+            git commit --template="${COMMIT_MSG_FILE}"
+
+            # quit after making the final commit
+            break
+            ;;
+        [eE])
+            "${EDITOR:-vi}" "${COMMIT_MSG_FILE}"
+            ;;
+        [aA])
+            # clean the file
+            echo "" > "${TEMP_FILE}"
+
+            # open editor
+            "${EDITOR:-vi}" "${TEMP_FILE}"
+
+            # append to the commit msg
+            cat "${TEMP_FILE}" >> "${COMMIT_MSG_FILE}"
+            ;;
+        [nN])
+            next
+            ;;
+        [pP])
+            prev
+            ;;
+        [sS])
+            # requires set -m
+            suspend
+            ;;
+        [hH])
+            cat <<EOF
+-------------------------------- HELP -----------------------------------------
+q) Quit and discard the message
+c) Run git commit with current message as template
+e) Edit the current commit message in the editor
+a) Append text to commit message, opens the editor
+n) Go to next change
+p) Go to previous change
+s) Suspend script, use fg to bring it back
+-------------------------------------------------------------------------------
+EOF
+            # wait for key press
+            read -n1
+            ;;
+        *)
+            ;;
+    esac
+done
+
