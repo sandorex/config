@@ -2,7 +2,7 @@
 
 -- reloads last set colorscheme
 local function get_last_colorscheme()
-    local file = io.open(vim.fn.stdpath('config') .. '/last_colorscheme.txt', 'r')
+    local file = io.open(vim.fn.stdpath('state') .. '/last_colorscheme.txt', 'r')
     if file == nil then
         return nil
     end
@@ -31,7 +31,7 @@ vim.api.nvim_create_autocmd({ 'ColorScheme' }, {
     callback = function(args)
         local new_colorscheme = args.match ---@type string
 
-        local file, err = io.open(vim.fn.stdpath('config') .. '/last_colorscheme.txt', 'w')
+        local file, err = io.open(vim.fn.stdpath('state') .. '/last_colorscheme.txt', 'w')
         if file == nil then
             print('Error saving colorscheme name: ' .. err)
         else
