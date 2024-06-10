@@ -41,7 +41,7 @@ function prev() {
 }
 
 function current_diff() {
-    git diff --cached "${GIT_ROOT}/${files[$index]}"
+    git diff --cached -- "${GIT_ROOT}/${files[$index]}"
 }
 
 # TODO disabled suspend as it messes up the menu, find a way to make it work nicer
