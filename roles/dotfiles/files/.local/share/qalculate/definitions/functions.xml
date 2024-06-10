@@ -28,4 +28,47 @@
       <zero_forbidden>true</zero_forbidden>
     </argument>
   </function>
+  <function>
+    <title>Color Luminosity</title>
+    <names>colorLuminosity</names>
+    <subfunction precalculate="false">colorToSRGB(\x)</subfunction>
+    <subfunction precalculate="false">colorToSRGB(\y)</subfunction>
+    <subfunction precalculate="false">colorToSRGB(\z)</subfunction>
+    <expression>0.2126 * \1 + 0.7152 * \2 + 0.0722 * \3</expression>
+    <argument type="number" index="1">
+      <title>r</title>
+    </argument>
+    <argument type="number" index="2">
+      <title>g</title>
+      <handle_vector>true</handle_vector>
+      <test>false</test>
+      <alert>false</alert>
+    </argument>
+    <argument type="number" index="3">
+      <title>b</title>
+      <handle_vector>true</handle_vector>
+      <test>false</test>
+      <alert>false</alert>
+    </argument>
+  </function>
+  <function>
+    <title>Color To SRGB</title>
+    <names>colorToSRGB</names>
+    <subfunction precalculate="true">if(\x &gt; 1, \x / 255, \x)</subfunction>
+    <expression>if(\1 &lt;= 0.03928, \1 / 12.92, ((\1 + 0.055) / 1.055) ^ 2.4)</expression>
+    <argument type="number" index="1">
+      <title>color</title>
+    </argument>
+  </function>
+  <function>
+    <title>Color Contrast</title>
+    <names>r:colorContrast</names>
+    <expression>(\x + 0.05) / (\y + 0.05)</expression>
+    <argument type="number" index="1">
+      <title>color1luminosity</title>
+    </argument>
+    <argument type="number" index="2">
+      <title>color2luminosity</title>
+    </argument>
+  </function>
 </QALCULATE>

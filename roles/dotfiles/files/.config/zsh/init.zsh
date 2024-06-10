@@ -114,9 +114,8 @@ function precmd() {
     printf "\033]0;%s\007" "$(pwd)"
 }
 
-# path aliases
-hash -d ws=$HOME/ws
-hash -d downloads=$HOME/Downloads
-hash -d torrent=$HOME/Torrent
-hash -d dotfiles=$DOTFILES
-
+for dir in $HOME/ws $HOME/Downloads $HOME/Torrent; do
+    if [[ -d "$dir" ]]; then
+        hash -d "$(basename $dir:l)=$dir"
+    fi
+done

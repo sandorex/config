@@ -15,11 +15,8 @@ alias e="$EDITOR1"
 alias ee="$EDITOR2"
 alias eee="$EDITOR3"
 alias se="sudo -e"
-alias edit="$EDITOR1"
 alias s='sudo'
-alias t='task'
 alias g='git'
-alias cg="git --git-dir $DOTFILES/.git --work-tree $DOTFILES"
 alias f="$FILE_MANAGER";
 alias m='tmux'
 
@@ -40,12 +37,10 @@ else
 fi
 
 if command -v zellij &>/dev/null; then
+    alias z='zellij'
+
     # quickly spin up a layout
     alias zl='zellij --layout'
-fi
-
-if [[ -v DISTROBOX_ENTER_PATH ]]; then
-    alias h='distrobox-host-exec'
 fi
 
 # make dot without arguments list directory, otherwise just pass args through
@@ -65,7 +60,6 @@ alias -- '..'='cd ..'
 
 alias diff='diff --report-identical-files --color=auto'
 alias grep='grep --color=auto'
-alias rcat='cat -A' # safely read escape sequences
 alias isodate="date +'%Y%m%dT%H%M'"
 alias qr="qrencode -t UTF8"
 

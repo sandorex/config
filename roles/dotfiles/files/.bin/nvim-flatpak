@@ -33,6 +33,7 @@ bootstrap() {
         --env=TERMINFO_DIRS=/var/run/host/usr/share/terminfo:/var/run/host/usr/lib/terminfo:/var/run/host/etc/terminfo:/usr/share/terminfo \
         --env="FLATPAK_ENABLE_SDK_EXT=$FLATPAK_SDK" \
         "${args[@]}" \
+        --nofilesystem=~/.ssh \
         io.neovim.nvim
 
     # TODO run :Bootstrap etc but with --share=network
