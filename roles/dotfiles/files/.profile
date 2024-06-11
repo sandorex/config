@@ -7,15 +7,9 @@
 
 export DOTFILES="$HOME/.dotfiles"       # dotfiles path
 export AGSHELLDIR="$HOME/.config/shell" # agnostic shell stuff
-export RUSTUP_HOME="$HOME/.rustup"
-export GOPATH="$HOME/.golang"           # GOPATH defaults to $HOME/go ugh
-export NPM_HOME="$HOME/.npm-packages"   # npm global user install
 
 PATH="$PATH:$HOME/.bin"
 PATH="$PATH:$HOME/.local/bin"
-PATH="$PATH:$HOME/.cargo/bin"
-PATH="$PATH:$GOPATH/bin"
-PATH="$PATH:$NPM_HOME/bin"
 PATH="$PATH:$HOME/.bin/polyfill"        # fallback path for optional software
 
 export PATH
