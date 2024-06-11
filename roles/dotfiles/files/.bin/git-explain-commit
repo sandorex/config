@@ -71,13 +71,13 @@ while true; do
             esac
             ;;
         [cC])
-            # NOTE: --template means user will not be able to use the message
-            # verbatim as git will check it, so the user can add a meaningful
-            # summary in the title
-            git commit --template="${COMMIT_MSG_FILE}"
-
-            # quit after making the final commit
-            break
+            if git commit --template="${COMMIT_MSG_FILE}"; then
+                # quit if commit was successfull?
+                break
+            else
+                echo "Something went wrong with the commit"
+                read -n1
+            fi
             ;;
         [eE])
             "${EDITOR:-vi}" "${COMMIT_MSG_FILE}"
