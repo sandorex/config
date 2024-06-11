@@ -71,13 +71,31 @@ while true; do
             esac
             ;;
         [cC])
-            if git commit --template="${COMMIT_MSG_FILE}"; then
-                # quit if commit was successfull?
-                break
-            else
-                echo "Something went wrong with the commit"
-                read -n1
-            fi
+            clear
+            cat <<EOF
+--------------------------------- MSG -----------------------------------------
+$(cat "${COMMIT_MSG_FILE}")
+--------------------------------- MSG -----------------------------------------
+EOF
+            echo -n "Do you want to commit changes with this message? [Y/n] "
+            read -n1
+            echo
+
+            case "$REPLY" in
+                [yY])
+                    # --file wont open the editor at all
+                    if git commit --file="${COMMIT_MSG_FILE}"; then
+                        # quit if commit was successfull
+                        break
+                    else
+                        echo "Something went wrong while committing.."
+                        read -n1
+                    fi
+                    ;;
+                *)
+                    # do nothing and just go back to the menu
+                    ;;
+            esac
             ;;
         [eE])
             "${EDITOR:-vi}" "${COMMIT_MSG_FILE}"
