@@ -41,7 +41,7 @@ function prev() {
 }
 
 function current_diff() {
-    git --no-pager diff --cached -- "${GIT_ROOT}/${files[$index]}"
+    git --no-pager diff --color=always --cached -- "${GIT_ROOT}/${files[$index]}"
 }
 
 # TODO disabled suspend as it messes up the menu, find a way to make it work nicer
@@ -71,8 +71,8 @@ while true; do
             esac
             ;;
         [vV])
-            # prevent less options from messing with this
-            current_diff | LESS='--mouse' less "${COMMIT_MSG_FILE}"
+            # prevent sless options from messing with this
+            current_diff | LESS='-R --mouse' less
             ;;
         [cC])
             clear
