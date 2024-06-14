@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# scripts to automatically connect to bluetooth headphones
+
+TWS=(
+    '41:42:88:CF:75:1B' # TWS 1
+)
+
+# default to first one but you can pass any number
+addr="${TWS[$(( ${1:-1} - 1 ))]}"
+attempt=0
+
+# pair and trust once
+bluetoothctl pair "${addr:?}"
+sleep 0.2
+bluetoothctl trust "${addr:?}"
+sleep 0.2
+
+# reconnect until endpoint is available or tried too many times
+while [[ "$(bluetoothctl endpoint.list | wc -l)" -eq 0 && "$ATTEMPT" -lt 3 ]]; do
+    echo
+    echo "Attempting to connect to ${addr:?}"
+    bluetoothctl disconnect "${addr:?}"
+    sleep 0.2
+    bluetoothctl connect "${addr:?}"
+
+    attempt="$(( attempt + 1 ))"
+    sleep 1
+done

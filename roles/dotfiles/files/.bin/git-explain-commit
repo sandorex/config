@@ -41,7 +41,7 @@ function prev() {
 }
 
 function current_diff() {
-    git diff --cached -- "${GIT_ROOT}/${files[$index]}"
+    git --no-pager diff --cached -- "${GIT_ROOT}/${files[$index]}"
 }
 
 # TODO disabled suspend as it messes up the menu, find a way to make it work nicer
@@ -51,8 +51,8 @@ while true; do
     clear
     current_diff
     echo "(Change $(( index + 1 ))/${file_count})"
-    echo -n "[Quit/Commit/Edit/Append/Next/Previous/Suspend/Help] "
-    read -n1
+    echo -n "[Quit/View/Commit/Edit/Append/Next/Previous/Suspend/Help] "
+    read -e -n1
     echo
 
     case "$REPLY" in
@@ -69,6 +69,10 @@ while true; do
                 *)
                     ;;
             esac
+            ;;
+        [vV])
+            # prevent less options from messing with this
+            current_diff | LESS='--mouse' less "${COMMIT_MSG_FILE}"
             ;;
         [cC])
             clear
