@@ -5,7 +5,7 @@
 # NOTE: this does not compare versions or anything, if it is installed it wont
 # be installed again
 
-- name: Check is font {{ font_name }} installed
+- name: _Check is font {{ font_name }} installed
   shell: 'ls {{ install_dir }}/{{ font_name }}*NerdFont*'
   ignore_errors: yes
   changed_when: false

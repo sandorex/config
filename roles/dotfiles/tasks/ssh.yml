@@ -1,5 +1,5 @@
 ---
-- name: Ensure directory ~/.ssh exists
+- name: _Ensure directory ~/.ssh exists
   ansible.builtin.file:
     path: '{{ ansible_env.HOME }}/.ssh'
     state: directory
@@ -17,10 +17,11 @@
     state: directory
     mode: 0700
 
-- name: Generate new ssh keys
+- name: Generate ssh keys if needed
   loop:
     - '@github.com'
     - '@gitlab.com'
   ansible.builtin.command:
     cmd: ssh-keygen -N '' -t ed25519 -f '{{ ansible_env.HOME }}/.ssh/{{ item }}'
     creates: '{{ ansible_env.HOME }}/.ssh/{{ item }}'
+  no_log: true

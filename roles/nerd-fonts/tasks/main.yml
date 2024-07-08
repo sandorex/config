@@ -4,6 +4,7 @@
     path: '{{ ansible_env.HOME }}/.fonts'
     state: directory
 
+# TODO this could show better each font installed
 - name: Install NerdFonts
   loop: '{{ nerdfonts_fonts }}'
   ansible.builtin.include_tasks:
@@ -14,4 +15,4 @@
         font_name: '{{ item }}'
         install_dir: '{{ nerdfonts_install_dir }}'
   when: nerdfonts_fonts is defined and nerdfonts_version is defined
-
+  no_log: true

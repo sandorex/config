@@ -19,7 +19,7 @@
 
 - when: "'io.neovim.nvim' in flatpak_install"
   block:
-    - name: Ensure directories exist
+    - name: _Ensure directories exist
       ansible.builtin.file:
         path: "{{ ansible_user_dir }}/{{ item }}"
         state: directory

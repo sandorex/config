@@ -27,3 +27,4 @@
   loop:
     - '.zshenv'
     - '.zlogin'
+  no_log: true

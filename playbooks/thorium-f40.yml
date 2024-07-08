@@ -58,7 +58,7 @@
       - org.qbittorrent.qBittorrent
 
   pre_tasks:
-    - name: Check if running on correct machine
+    - name: _Check if running on correct machine
       ansible.builtin.pause:
         prompt: 'This machine does not appear to be {{ ansible_play_name }}, if you want to continue type "yes" and press enter'
       when: ansible_nodename | lower != ansible_play_name or ansible_env.container is defined
@@ -66,7 +66,15 @@
       failed_when: answer.user_input | lower != 'yes'
       tags: always
 
-    - name: Test if password is given
+    - name: _Check if running on correct distro
+      ansible.builtin.pause:
+        prompt: 'This machine does not appear to be running Fedora 40, if you want to continue type "yes" and press enter'
+      when: ansible_distribution != "Fedora" or ansible_distribution_major_version != "40"
+      register: answer
+      failed_when: answer.user_input | lower != 'yes'
+      tags: always
+
+    - name: _Test if password is given
       ansible.builtin.command:
         cmd: whoami
       become: yes
@@ -75,18 +83,18 @@
       changed_when: false
       tags: always
 
-    - name: Enable root tasks
+    - name: _Enable root tasks
       ansible.builtin.set_fact:
         run_root_tasks: '{{ output.rc == 0 }}'
       tags: always
 
-    - name: Ensure ~/.config directory exists
+    - name: _Ensure ~/.config directory exists
       ansible.builtin.file:
         path: '{{ ansible_env.HOME }}/.config'
         state: directory
       tags: always
 
-    - name: Load defaults
+    - name: _Load defaults
       ansible.builtin.include_vars:
         file: '{{ playbook_dir }}/../default.yml'
       tags: always

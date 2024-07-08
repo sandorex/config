@@ -1,5 +1,5 @@
 ---
-- name: Ensure /etc/systemd/user.conf.d exists
+- name: _Ensure /etc/systemd/user.conf.d exists
   ansible.builtin.file:
     path: /etc/systemd/user.conf.d
     state: directory
