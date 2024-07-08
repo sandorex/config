@@ -2,3 +2,4 @@ __pycache__/
 venv/
 ssh_key
 ssh_key.pub
+logs/

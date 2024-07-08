@@ -48,6 +48,7 @@
 
     flatpak_install:
       - io.neovim.nvim
+      - page.codeberg.JakobDev.jdDesktopEntryEdit
       - com.brave.Browser
       - md.obsidian.Obsidian
       - io.github.Qalculate.qalculate-qt
