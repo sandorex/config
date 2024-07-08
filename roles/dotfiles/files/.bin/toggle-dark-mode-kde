@@ -10,7 +10,7 @@ function notify() {
     notify-send -a toggle-dark-theme-kde -i color-picker 'Color Scheme Changed' "$*" || true
 }
 
-current="$(plasma-apply-colorscheme -l | grep 'current color scheme')"
+current="$(plasma-apply-colorscheme -l | grep -i 'current')"
 case "$current" in
     *"$COLOR_DARK"*)
         plasma-apply-colorscheme "$COLOR_LIGHT"

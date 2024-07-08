@@ -42,8 +42,6 @@ export EDITOR="$EDITOR1"
 export SUDO_EDITOR="$EDITOR1"
 export FILE_MANAGER=ranger
 
-export TASK_PAGER=glow
-
 # options for less
 # FRX is git default, adding mouse for mousewheel scrolling
 export LESS='FRX --mouse'

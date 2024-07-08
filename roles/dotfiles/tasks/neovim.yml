@@ -64,10 +64,10 @@
         state: link
         force: true
 
-    - name: Link neovim configuration directory (flatpak)
-      ansible.builtin.file:
-        src: '{{ role_path }}/files/.config/nvim'
-        dest: '{{ ansible_user_dir }}/.var/app/io.neovim.nvim/config/nvim'
-        state: link
-        force: true
-
+#    - name: Link neovim configuration directory (flatpak)
+#      ansible.builtin.file:
+#        src: '{{ role_path }}/files/.config/nvim'
+#        dest: '{{ ansible_user_dir }}/.var/app/io.neovim.nvim/config/nvim'
+#        state: link
+#        force: true
+#

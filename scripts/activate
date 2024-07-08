@@ -43,9 +43,8 @@ if ! source "$VENV_DIR/bin/activate"; then
     return 1
 fi
 
-# install ansible-core if not present
+# install ansible if not present
 if ! command -v ansible-playbook &>/dev/null; then
-    # watchdog is a dependancy for ansible callback
-    pip install ansible watchdog
+    pip install ansible
 fi
 

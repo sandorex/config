@@ -1,7 +1,0 @@
-#!/bin/sh
-# to enable run:
-#   ln -s ../../.git-prepare-commit-hook .git/hooks/prepare-commit-msg
-
-# just adds automated 'A <host>' msg
-printf '%s%s\n' "#A $(uname -n)" "$(cat $1)" > "$1"
-
