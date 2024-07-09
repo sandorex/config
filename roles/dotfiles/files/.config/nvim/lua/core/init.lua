@@ -8,8 +8,8 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- set default themes (overriden when theme loads)
-vim.g.colorscheme_dark = 'habamax'
-vim.g.colorscheme_light = 'shine'
+vim.g.colorscheme_dark = 'slate'
+vim.g.colorscheme_light = 'delek'
 
 require('core.languages')
 require('core.functions')

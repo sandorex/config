@@ -17,32 +17,11 @@
   when: kde_night_mode_filter is defined and kde_night_mode_filter
   notify: 'Restart KWin'
 
-- name: Set default browser
-  community.general.kdeconfig:
-    path: '{{ ansible_env.HOME }}/.config/kdeglobals'
-    values:
-      - group: General
-        key: BrowserApplication
-        value: '{{ kde_default_browser }}.desktop'
-  when: kde_default_browser is defined
-  notify: 'Restart KWin'
-
-- name: Set default terminal
-  community.general.kdeconfig:
-    path: '{{ ansible_env.HOME }}/.config/kdeglobals'
-    values:
-      - group: General
-        key: TerminalApplication
-        value: '{{ kde_default_terminal }}'
-      - group: General
-        key: TerminalService
-        value: '{{ kde_default_terminal }}.desktop' # TODO idk if this is correct?
-  when: kde_default_terminal is defined
-  notify: 'Restart KWin'
-
+# TODO use 'balooctl status' to check if disabled or not
 - name: Disable baloo file indexer
   ansible.builtin.command:
-    cmd: balooctl disable
+    # balooctl on KDE 5.27
+    cmd: balooctl6 disable
   register: disable_baloo
   changed_when: disable_baloo.rc != 0
   tags: [baloo, fixes]

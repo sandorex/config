@@ -3,10 +3,6 @@
   ansible.builtin.import_tasks:
     file: '{{ role_path }}/tasks/mouse.yml'
 
-- tags: wacom
-  ansible.builtin.import_tasks:
-    file: '{{ role_path }}/tasks/wacom.yml'
-
 - tags: keyboard
   ansible.builtin.import_tasks:
     file: '{{ role_path }}/tasks/keyboard.yml'
@@ -14,10 +10,6 @@
 - tags: theming
   ansible.builtin.import_tasks:
     file: '{{ role_path }}/tasks/theming.yml'
-
-- tags: widgets
-  ansible.builtin.import_tasks:
-    file: '{{ role_path }}/tasks/widgets.yml'
 
 - ansible.builtin.import_tasks:
     file: '{{ role_path }}/tasks/other.yml'
