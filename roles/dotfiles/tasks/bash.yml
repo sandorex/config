@@ -13,18 +13,16 @@
     state: link
     force: true
 
-- name: Link bashrc to bash init
+- name: Link bashrc
   ansible.builtin.file:
-    src: '{{ ansible_env.HOME }}/.config/bash/init.bash'
+    src: '{{ role_path }}/files/.bashrc'
     dest: '{{ ansible_env.HOME }}/.bashrc'
     state: link
     force: true
 
-- name: Create bash_profile to load profile and bashrc
-  ansible.builtin.copy:
-    content: |
-      # source the actual profile and bashrc (includes check for interactive shell)
-      source ~/.profile
-      source ~/.bashrc
+-  name: Link bash_profile
+   ansible.builtin.file:
+    src: '{{ role_path }}/files/.bash_profile'
     dest: '{{ ansible_env.HOME }}/.bash_profile'
-
+    state: link
+    force: true

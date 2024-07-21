@@ -9,21 +9,14 @@
       - name: 'E-Signal USB Gaming Mouse'
         pid: '1241'
         vid: '41119'
-        accel: ' -0.200'
+        accel: '0.020'
         accelProfile: 1
 
       - name: 'Logitech Wireless Mouse PID:4022'
         pid: '1133'
         vid: '16418'
-        accel: '0.200'
+        accel: '0.020'
         accelProfile: 1
-
-    kde_wacom_settings:
-      - name: 'Wacom One by Wacom S Pen'
-        pid: '1386'
-        vid: '890'
-        leftHanded: false
-        outputArea: '0,0,1,1'
 
     ## other ##
     configure:

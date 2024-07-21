@@ -8,14 +8,14 @@
 
 - name: Link ZSH init file
   ansible.builtin.file:
-    src: '.config/zsh/init.zsh'
+    src: '{{ role_path }}/files/.zshrc'
     dest: '{{ ansible_env.HOME }}/.zshrc'
     state: link
     force: true
 
-- name: Link zprofile to profile
+- name: Link zprofile
   ansible.builtin.file:
-    src: '.profile'
+    src: '{{ role_path }}/files/.zprofile'
     dest: '{{ ansible_env.HOME }}/.zprofile'
     state: link
     force: true
