@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# script to automatically build aseprite, used to automate installation on multiple machines, please obtain a proper license before using
+#
+# made for fedora 40
+# requires libcxx-devel on host system
+#
+# consult following url for any breakages
+# https://github.com/aseprite/aseprite/blob/main/INSTALL.md
+
+set -e
+
+if [[ ! -v container ]]; then
+    # TODO automate podman or distrobox
+    echo "Please run in a fedora container!"
+    exit 1
+fi
+
+ASEPRITE_GIT_TAG='v1.3.7'
+SKIA_PRECOMPILED_TAG='m102-861e4743af'
+
+# install dependencies
+echo "Installing build-dependencies, sudo password is required"
+sudo dnf install -y git gcc-c++ clang libcxx-devel cmake ninja-build libX11-devel libXcursor-devel libXi-devel mesa-libGL-devel fontconfig-devel wget
+
+# contain everything in one dir so its easily deleted
+mkdir -p aseprite_build
+pushd aseprite_build
+
+# clone the repository with known version
+[[ -d aseprite ]] || git clone --depth 1 -b "$ASEPRITE_GIT_TAG" --recursive https://github.com/aseprite/aseprite.git
+
+# download and extract skia
+if [[ ! -d deps/skia ]]; then
+    mkdir -p deps/skia
+    pushd deps/skia
+    wget "https://github.com/aseprite/skia/releases/download/$SKIA_PRECOMPILED_TAG/Skia-Linux-Release-x64-libc++.zip" -O skia.zip
+    unzip skia.zip
+    rm skia.zip
+    popd
+fi
+
+pushd aseprite
+
+mkdir -p build
+pushd build
+export CC=clang
+export CXX=clang++
+cmake \
+  -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+  -DCMAKE_CXX_FLAGS:STRING=-stdlib=libc++ \
+  -DCMAKE_EXE_LINKER_FLAGS:STRING=-stdlib=libc++ \
+  -DLAF_BACKEND=skia \
+  -DSKIA_DIR=../../deps/skia \
+  -DSKIA_LIBRARY_DIR=../../deps/skia/out/Release-x64 \
+  -DSKIA_LIBRARY=../../deps/skia/out/Release-x64/libskia.a \
+  -G Ninja \
+  ..
+
+# build
+ninja aseprite
+
+# zip up the binary
+pushd bin
+zip -r aseprite.zip aseprite data gen
+mv aseprite.zip ../../../
+
+echo "Finished!"
