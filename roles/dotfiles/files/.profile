@@ -5,8 +5,8 @@
 # THIS SHOULD NOT RUN ON START OF EACH SHELL
 # SYMLINK ~/.zprofile TO THIS FILE
 
-export DOTFILES="$HOME/.dotfiles"       # dotfiles path
-export AGSHELLDIR="$HOME/.config/shell" # agnostic shell stuff
+export DOTFILES="$HOME/.dotfiles/dotfiles"  # path to pure dotfiles (stowable)
+export AGSHELLDIR="$HOME/.config/shell"     # agnostic shell stuff
 
 PATH="$PATH:$HOME/.bin"
 PATH="$PATH:$HOME/.local/bin"

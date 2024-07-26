@@ -16,8 +16,8 @@ export SHELLDIR="$HOME/.config/bash"
 
 source "$AGSHELLDIR/aliases.sh"
 
-alias reload-shell="source '$SHELLDIR/init.bash'"
-alias reload-bash="source '$SHELLDIR/init.bash'"
+# aliases.sh clears aliases so this must go below
+alias reload='source "$HOME/.bashrc"'
 
 # updates LINES & COLUMN
 shopt -s checkwinsize

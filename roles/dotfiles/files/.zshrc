@@ -104,8 +104,7 @@ typeset -U path
 source "$AGSHELLDIR/aliases.sh"
 
 # aliases.sh clears aliases so i moved this here
-alias reload-shell="source '$SHELLDIR/init.zsh'; compinit"
-alias reload-zsh="source '$SHELLDIR/init.zsh'; compinit"
+alias reload='source "$HOME/.zshrc"; compinit'
 
 # list files on dir change
 function chpwd() {
