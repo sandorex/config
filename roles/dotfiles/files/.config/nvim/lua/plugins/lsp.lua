@@ -25,7 +25,20 @@ local function lsp_config()
     local capabilities = vim.lsp.protocol.make_client_capabilities()
     capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
 
+    -- load configs from separate file
+    local configs = require('core.lspconfig');
+    
+    local lspconfig = require('lspconfig')
+
+    -- setup each lsp that has cfg defined
+    for lsp_name, cfg in pairs(configs.configs) do
+        lspconfig[lsp_name].setup(cfg)
+    end
+
     require('mason').setup()
+
+    -- removed to make    
+    --[[
     local mason_lspconfig = require('mason-lspconfig')
 
     -- load configs from separate file
@@ -38,12 +51,12 @@ local function lsp_config()
     }
 
     -- autoconfigure servers
-    mason_lspconfig.setup(configs.configs.mason_lsp)
+    mason_lspconfig.setup(configs.mason_lsp)
     mason_lspconfig.setup_handlers {
         function(server_name)
             require('lspconfig')[server_name].setup(vim.tbl_extend('force', default_server_config, configs.configs[server_name]))
         end,
-    }
+    }]]
 
     -- autocompletion setup
     local cmp = require 'cmp'

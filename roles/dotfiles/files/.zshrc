@@ -75,13 +75,8 @@ compinit -C
 _comp_options+=(globdots)
 
 ## PROMPT ##
-# simple indicator when running in container
-if [[ -v container ]]; then
-    _prompt_container_indicator='.'
-fi
-
 # prompt expansion https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
-PROMPT="[%F{magenta}%n%f@%F{blue}%m%F{${PROMPT_ICON_COLOR}} ${PROMPT_ICON}${_prompt_container_indicator:- }%f] %F{$PROMPT_ICON_COLOR}%(1j.%U.)%%%u%f "
+PROMPT="[%F{magenta}%n%f@%F{blue}%m%F{${PROMPT_ICON_COLOR}} ${PROMPT_ICON} %f] %F{$PROMPT_ICON_COLOR}%(1j.%U.)%%%u%f "
 
 # shows exit code if last command exited with non-zero
 RPROMPT="%(?..%F{red}[ %?%  ] %f)%F{243}%27<..<%~%f"

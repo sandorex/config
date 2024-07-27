@@ -1,4 +1,6 @@
 -- lsp server configuration
+-- NOTE use lspconfig naming!
+-- https://github.com/williamboman/mason-lspconfig.nvim/blob/main/doc/server-mapping.md
 
 local M = {}
 
@@ -12,7 +14,7 @@ setmetatable(M.configs, {
     end
 })
 
-M.configs.mason_lsp = {}
+M.mason_lsp = {}
 
 M.configs.lua_ls = {
     settings = {
@@ -54,6 +56,14 @@ M.configs.pylsp = {
         },
     },
 }
+
+M.configs.clangd = {}
+M.configs.cmake = {}
+--M.configs.jedi_language_server = {} -- if needed remove pylsp first
+M.configs.rust_analyzer = {}
+M.configs.html = {}
+M.configs.tsserver = {}
+M.configs.bashls = {}
 
 return M
 
