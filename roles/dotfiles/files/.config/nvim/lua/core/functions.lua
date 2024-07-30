@@ -34,9 +34,10 @@ function M.bootstrap()
         end
     end
 
-    for _, i in ipairs(M.mason_packages) do
+    print("Disabled mason install for testing")
+    --[[for _, i in ipairs(M.mason_packages) do
         vim.cmd('MasonInstall ' .. i)
-    end
+    end]]
 end
 vim.api.nvim_create_user_command("Bootstrap", M.bootstrap, {})
 

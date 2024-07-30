@@ -41,6 +41,7 @@ function prev() {
 }
 
 function current_diff() {
+    echo "-- git-explain-commit --"
     git --no-pager diff --color=always --cached -- "${GIT_ROOT}/${files[$index]}"
 }
 
@@ -57,7 +58,7 @@ while true; do
 
     case "$REPLY" in
         [qQ])
-            echo -n "Are you sure you want to discard the message? [Y/n] "
+            echo -n "Are you sure you want to discard the message? [y/N] "
             read -n1
             echo
 
@@ -81,7 +82,7 @@ while true; do
 $(cat "${COMMIT_MSG_FILE}")
 --------------------------------- MSG -----------------------------------------
 EOF
-            echo -n "Do you want to commit changes with this message? [Y/n] "
+            echo -n "Do you want to commit changes with this message? [y/N] "
             read -n1
             echo
 

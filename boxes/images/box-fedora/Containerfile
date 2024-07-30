@@ -1,0 +1,62 @@
+LABEL name="box-fedora" \
+      summary="fedora-toolbox based development container" \
+      maintainer="Sandorex <rzhw3h@gmail.com>"
+
+ARG VERSION=40
+FROM registry.fedoraproject.org/fedora-toolbox:$VERSION
+ARG VERSION
+
+ENV box=fedora
+ENV LC_ALL=en_US.UTF-8
+ENV SHELL=/bin/zsh
+
+# improve DNF experience
+RUN echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf \
+    && echo "defaultyes=True" >> /etc/dnf/dnf.conf \
+    && echo "fastestmirror=True" >> /etc/dnf/dnf.conf \
+    && echo "install_weak_deps=False" >> /etc/dnf/dnf.conf
+
+# install rpmfusion
+RUN dnf -y install "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${VERSION}.noarch.rpm" \
+   && dnf -y install "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${VERSION}.noarch.rpm"
+
+# SYSTEM
+COPY ./images/box-fedora/extra-packages /
+RUN dnf -y install $(<extra-packages) \
+    && rm /extra-packages \
+    && dnf clean all
+
+# NPM
+COPY ./images/box-fedora/npm-packages /
+RUN npm install -g $(<npm-packages) \
+    && rm /npm-packages \
+    && npm cache clean --force
+
+# PIP
+COPY ./images/box-fedora/pip-packages /
+RUN pip install $(<pip-packages) \
+    && rm /pip-packages \
+    && pip cache purge
+
+# download zellij cause compilation from cargo takes too long
+RUN curl --location "https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz" | tar -C "/usr/local/bin/" -xz
+
+# install box so i can get it from the image itself if needed, its tiny anyways
+RUN cargo install --git https://github.com/sandorex/box --branch rust
+
+# copy init scripts
+COPY ./init.d /init.d
+
+# TODO this should move to box-init
+# passwordless sudo for all
+RUN echo 'ALL ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers
+
+# copy dotfiles if provided during build
+RUN if [[ -d /dotfiles ]]; then \
+        echo 'found dotfiles'; \
+        rm -rf /etc/skel; \
+        cp -r /dotfiles/ /etc/skel; \
+    fi; true
+
+COPY ./help.sh /help.sh
+ENTRYPOINT [ "/help.sh" ]

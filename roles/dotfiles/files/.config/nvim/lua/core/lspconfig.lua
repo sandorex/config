@@ -8,11 +8,11 @@ local M = {}
 M.configs = {}
 
 -- return empty table when cfg is not defined
-setmetatable(M.configs, {
+--[[setmetatable(M.configs, {
     __index = function(_, _)
         return {}
     end
-})
+})]]
 
 M.mason_lsp = {}
 
