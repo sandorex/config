@@ -49,10 +49,9 @@ vim.opt.signcolumn = 'yes'
 
 vim.opt.updatetime = 300
 
--- key timeout timing, setting this too high will break WhichKey but
--- setting it too low will make it harder to hit combo keys
+-- this should be high if WhichKey is used, otherwise at least 800
 vim.opt.timeout = true
-vim.opt.timeoutlen = 300
+vim.opt.timeoutlen = 800
 
 -- TODO redo this
 vim.opt.foldlevel = 99 -- unfold everything by default TODO

@@ -47,10 +47,6 @@ RUN cargo install --git https://github.com/sandorex/box --branch rust
 # copy init scripts
 COPY ./init.d /init.d
 
-# TODO this should move to box-init
-# passwordless sudo for all
-RUN echo 'ALL ALL = (ALL) NOPASSWD: ALL' >> /etc/sudoers
-
 # copy dotfiles if provided during build
 RUN if [[ -d /dotfiles ]]; then \
         echo 'found dotfiles'; \
