@@ -9,6 +9,7 @@ bat
 cargo
 rust-src
 rust-analyzer
+clippy
 npm
 gcc
 clang

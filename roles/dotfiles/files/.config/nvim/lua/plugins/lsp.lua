@@ -27,36 +27,19 @@ local function lsp_config()
 
     -- load configs from separate file
     local configs = require('core.lspconfig');
-    
+
     local lspconfig = require('lspconfig')
 
     -- setup each lsp that has cfg defined
     for lsp_name, cfg in pairs(configs.configs) do
-        lspconfig[lsp_name].setup(cfg)
+        lspconfig[lsp_name].setup({
+            capabilities = capabilities,
+            on_attach = on_attach,
+            settings = cfg
+        })
     end
 
     require('mason').setup()
-
-    -- removed to make    
-    --[[
-    local mason_lspconfig = require('mason-lspconfig')
-
-    -- load configs from separate file
-    local configs = require('core.lspconfig');
-
-    -- used on all servers
-    local default_server_config = {
-        capabilities = capabilities,
-        on_attach = on_attach,
-    }
-
-    -- autoconfigure servers
-    mason_lspconfig.setup(configs.mason_lsp)
-    mason_lspconfig.setup_handlers {
-        function(server_name)
-            require('lspconfig')[server_name].setup(vim.tbl_extend('force', default_server_config, configs.configs[server_name]))
-        end,
-    }]]
 
     -- autocompletion setup
     local cmp = require 'cmp'
