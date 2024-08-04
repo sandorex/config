@@ -59,7 +59,7 @@ M.configs.pylsp = {
 
 M.configs.clangd = {}
 M.configs.cmake = {}
---M.configs.jedi_language_server = {} -- if needed remove pylsp first
+M.configs.jedi_language_server = {} -- i think it works together with pylsp?
 M.configs.rust_analyzer = {}
 M.configs.html = {}
 M.configs.tsserver = {}

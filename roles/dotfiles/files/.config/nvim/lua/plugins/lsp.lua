@@ -11,11 +11,13 @@ local function on_attach(ev)
     map('n', '<leader>ld', vim.lsp.buf.definition, 'LSP Definition')
     map('n', '<leader>lr', vim.lsp.buf.references, 'LSP References')
     map('n', '<C-k>', vim.lsp.buf.hover, 'LSP Hover')
-    map({'n', 'i'}, '<2-LeftMouse>', vim.lsp.buf.hover) -- i'm a heretic
     map('n', '<leader>lf', function()
         vim.lsp.buf.format { async = true }
     end, 'LSP Format')
     map('i', '<C-c>', vim.lsp.buf.completion, 'LSP Completion')
+
+    -- HERESY: mouse popup menu options
+    vim.cmd.amenu('PopUp.LSP\\ Info', ':lua vim.lsp.buf.hover()<cr>')
 end
 
 local function lsp_config()
@@ -88,7 +90,7 @@ local function lsp_config()
                 behavior = cmp.ConfirmBehavior.Replace,
                 select = false,
             },
-            ['<S-Tab>'] = cmp.mapping(function(fallback)
+            ['<Tab>'] = cmp.mapping(function(fallback)
                 if cmp.visible() then
                     cmp.select_next_item()
                 elseif luasnip.expand_or_jumpable() then
