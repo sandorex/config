@@ -21,6 +21,11 @@ require('core.auto')
 require('core.lazy')
 require('core.themesync')
 
+if vim.fn.argc() == 0 then
+    vim.g.root_dir = vim.fn.getcwd()
+    vim.cmd.Explore()
+end
+
 -- TODO this fails without plugins for some reason
 --[[
 -- open netrw if no args passed

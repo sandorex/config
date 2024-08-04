@@ -39,8 +39,9 @@ return {
                 }
             }
 
-            local telescope_fn = require('telescope.builtin')
-            vim.keymap.set('n', '<leader>b', telescope_fn.buffers, { desc = 'Pick buffer using telescope', silent = true })
+            local builtins = require('telescope.builtin')
+            vim.keymap.set('n', '<leader>b', builtins.buffers, { desc = 'Pick buffer using telescope', silent = true })
+            vim.keymap.set('n', '<leader>F', builtins.git_files, { desc = 'Pick file (respects git)', silent = true })
         end,
     },
 
