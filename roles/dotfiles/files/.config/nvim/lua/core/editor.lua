@@ -15,22 +15,23 @@ vim.opt.completeopt = 'menuone,noselect' -- ??
 vim.opt.cursorline = true -- highlight the line where cursor is
 vim.opt.title = true -- set terminal title
 
--- TODO toggle this somehow
---vim.opt.clipboard = 'unnamedplus' -- enable system clipboard
+vim.o.clipboard = 'unnamedplus'
 
--- NOTE nvim 0.10.0+ !!!!
--- make it use terminal for clipboard (works through tmux or even in container)
-vim.g.clipboard = {
-    name = 'OSC 52',
-    copy = {
-        ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
-        ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
-    },
-    paste = {
-        ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
-        ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
-    },
-}
+-- ability to force OSC 52 usage
+if os.getenv('NVIM_FORCE_OSC52') == true and vim.fn.has('nvim-0.10') then
+    -- make it use terminal for clipboard (works through tmux or even in container)
+    vim.g.clipboard = {
+        name = 'OSC 52',
+        copy = {
+            ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+            ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+        },
+        paste = {
+            ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+            ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+        },
+    }
+end
 
 vim.opt.mousemodel = 'popup' -- do not move cursor on right mouse click
 
