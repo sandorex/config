@@ -6,9 +6,7 @@ ARG VERSION=40
 FROM registry.fedoraproject.org/fedora-toolbox:$VERSION
 ARG VERSION
 
-ENV box=fedora
 ENV LC_ALL=en_US.UTF-8
-ENV SHELL=/bin/zsh
 
 # improve DNF experience
 RUN echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf \
@@ -38,11 +36,23 @@ RUN pip install $(<pip-packages) \
     && rm /pip-packages \
     && pip cache purge
 
+ENV CARGO_HOME=/usr/local/
+
+RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
+
+# zellij takes forever to compile
+RUN cargo binstall --no-confirm zellij
+
+# TODO @nogit remove --branch after merging to main
+RUN cargo install --git https://github.com/sandorex/box --branch configs
 # download zellij cause compilation from cargo takes too long
-RUN curl --location "https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz" | tar -C "/usr/local/bin/" -xz
+#RUN curl --location "https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz" | tar -C "/usr/local/bin/" -xz
 
 # install box so i can get it from the image itself if needed, its tiny anyways
-RUN cargo install --git https://github.com/sandorex/box --branch rust
+#RUN cargo install --git https://github.com/sandorex/box --branch rust
+
+# copy box config
+COPY ./images/box-fedora/config.toml /config.toml
 
 # copy init scripts
 COPY ./init.d /init.d

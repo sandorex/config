@@ -1,0 +1,12 @@
+version = 1
+
+[[config]]
+name = "fedora"
+image = "box-fedora"
+network = true
+
+[config.podman]
+engine_args = [
+    "--volume", "box-data:/data"
+]
+env = { "NVIM_FORCE_OSC52" = "true" }

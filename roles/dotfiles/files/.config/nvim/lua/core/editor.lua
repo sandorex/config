@@ -18,7 +18,7 @@ vim.opt.title = true -- set terminal title
 vim.o.clipboard = 'unnamedplus'
 
 -- ability to force OSC 52 usage
-if os.getenv('NVIM_FORCE_OSC52') == true and vim.fn.has('nvim-0.10') then
+if os.getenv('NVIM_FORCE_OSC52') ~= nil and vim.fn.has('nvim-0.10') then
     -- make it use terminal for clipboard (works through tmux or even in container)
     vim.g.clipboard = {
         name = 'OSC 52',
