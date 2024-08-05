@@ -15,8 +15,6 @@
     autocommit = "!git commit --message=\"#A $(hostname)\" --edit"
     # commit empty commit
     nullcommit = "commit --allow-empty-message -am ''"
-    # just explain
-    ex = "!git-explain-staged"
 
     # reset last commit so files are back to staged
     fuck = reset --soft HEAD~
