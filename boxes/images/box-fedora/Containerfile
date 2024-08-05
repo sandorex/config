@@ -42,14 +42,9 @@ RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/ca
 
 # zellij takes forever to compile
 RUN cargo binstall --no-confirm zellij
+RUN cargo install --git https://github.com/sandorex/box
 
-# TODO @nogit remove --branch after merging to main
-RUN cargo install --git https://github.com/sandorex/box --branch configs
-# download zellij cause compilation from cargo takes too long
-#RUN curl --location "https://github.com/zellij-org/zellij/releases/latest/download/zellij-x86_64-unknown-linux-musl.tar.gz" | tar -C "/usr/local/bin/" -xz
-
-# install box so i can get it from the image itself if needed, its tiny anyways
-#RUN cargo install --git https://github.com/sandorex/box --branch rust
+ENV CARGO_HOME=
 
 # copy box config
 COPY ./images/box-fedora/config.toml /config.toml

@@ -15,8 +15,6 @@
     autocommit = "!git commit --message=\"#A $(hostname)\" --edit"
     # commit empty commit
     nullcommit = "commit --allow-empty-message -am ''"
-    # commit & explain
-    ec = "!git-explain-staged --commit"
     # just explain
     ex = "!git-explain-staged"
 

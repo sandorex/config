@@ -15,10 +15,15 @@ vim.opt.completeopt = 'menuone,noselect' -- ??
 vim.opt.cursorline = true -- highlight the line where cursor is
 vim.opt.title = true -- set terminal title
 
+-- use primary clipboard by default (IDE experience)
 vim.o.clipboard = 'unnamedplus'
 
 -- ability to force OSC 52 usage
 if os.getenv('NVIM_FORCE_OSC52') ~= nil and vim.fn.has('nvim-0.10') then
+    -- copy to primary clipboard but not paste, cause you can easily press
+    -- CTRL + SHIFT + V
+    vim.o.clipboard = 'unnamed'
+
     -- make it use terminal for clipboard (works through tmux or even in container)
     vim.g.clipboard = {
         name = 'OSC 52',
