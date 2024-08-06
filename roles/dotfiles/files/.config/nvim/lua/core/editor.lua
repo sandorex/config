@@ -19,9 +19,13 @@ vim.opt.title = true -- set terminal title
 vim.o.clipboard = 'unnamedplus'
 
 -- ability to force OSC 52 usage
-if os.getenv('NVIM_FORCE_OSC52') ~= nil and vim.fn.has('nvim-0.10') then
-    -- TODO make it copy to primary clipboard but not paste cuz Ctrl + Shift + V    
-    -- make it use terminal for clipboard (works through tmux or even in container)
+if (os.getenv('SSH_TTY') ~= nil or os.getenv('NVIM_FORCE_OSC52') ~= nil) and vim.fn.has('nvim-0.10') then
+    local function default_paste()
+        return { vim.fn.split(vim.fn.getreg(''), '\n'), vim.fn.getregtype('') }
+    end
+
+    -- use OSC52 to copy to primary clipboard but do not paste from it as every terminal should
+    -- support Ctrl + Shift + V
     vim.g.clipboard = {
         name = 'OSC 52',
         copy = {
@@ -29,8 +33,8 @@ if os.getenv('NVIM_FORCE_OSC52') ~= nil and vim.fn.has('nvim-0.10') then
             ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
         },
         paste = {
-            ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
-            ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+            ['+'] = default_paste,
+            ['*'] = default_paste,
         },
     }
 end
