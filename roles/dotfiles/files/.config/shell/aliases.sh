@@ -20,6 +20,21 @@ alias g='git'
 alias f="$FILE_MANAGER";
 alias m='tmux'
 
+# start box container automatically and set env var if no args
+function box() {
+    if [[ "$#" -eq 0 ]]; then
+        if [[ -v BOX_CONTAINER ]] && box exists; then
+            echo "Box is already running"
+            exit 0
+        fi
+
+        unset BOX_CONTAINER
+        export BOX_CONTAINER="$(box start)"
+    else
+        command box "$@"
+    fi
+}
+
 # use bat if available
 if command -v bat &>/dev/null; then
     alias cat='bat --style=plain'

@@ -93,8 +93,9 @@ local function lsp_config()
             ['<Tab>'] = cmp.mapping(function(fallback)
                 if cmp.visible() then
                     cmp.select_next_item()
-                elseif luasnip.expand_or_jumpable() then
-                    luasnip.expand_or_jump()
+                    -- causing issues of jumping cursor randomly
+--                elseif luasnip.expand_or_jumpable() then
+--                    luasnip.expand_or_jump()
                 else
                     fallback()
                 end
