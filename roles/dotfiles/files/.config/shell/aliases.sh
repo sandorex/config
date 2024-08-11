@@ -17,15 +17,16 @@ alias eee="$EDITOR3"
 alias se="sudo -e"
 alias s='sudo'
 alias g='git'
-alias f="$FILE_MANAGER";
+alias gs='g s' # i keep typing it instead of g s
+alias f="$FILE_MANAGER"
 alias m='tmux'
 
 # start box container automatically and set env var if no args
 function box() {
     if [[ "$#" -eq 0 ]]; then
-        if [[ -v BOX_CONTAINER ]] && box exists; then
+        if [[ -n "$BOX_CONTAINER" ]] && box exists "$BOX_CONTAINER"; then
             echo "Box is already running"
-            exit 0
+            return
         fi
 
         unset BOX_CONTAINER
