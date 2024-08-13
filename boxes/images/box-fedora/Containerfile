@@ -59,5 +59,8 @@ RUN if [[ -d /dotfiles ]]; then \
         cp -r /dotfiles/ /etc/skel; \
     fi; true
 
+# disable zsh newuser prompt thingy
+RUN echo "zsh-newuser-install () {}" > /etc/zshenv
+
 COPY ./help.sh /help.sh
 ENTRYPOINT [ "/help.sh" ]
