@@ -108,7 +108,7 @@ function chpwd() {
 
 function precmd() {
     # update the title
-    printf "\033]0;%s\007" "$(pwd)"
+    printf "\033]0;%s\007" "$(print -rP '%~')"
 }
 
 for dir in $HOME/ws $HOME/Downloads $HOME/Torrent; do
