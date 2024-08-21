@@ -30,7 +30,7 @@ function box() {
         fi
 
         unset BOX_CONTAINER
-        export BOX_CONTAINER="$(box start)"
+        export BOX_CONTAINER="$(command box start)"
     else
         command box "$@"
     fi
