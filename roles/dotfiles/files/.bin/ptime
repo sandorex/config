@@ -6,5 +6,5 @@
 
 start="$(date +'%s.%N')"
 "$@"
-echo "$(date +"%s.%N - ${start}" | bc) ms" >&2
+echo "$(date +"%s.%N - ${start}" | bc)s" >&2
 

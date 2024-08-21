@@ -149,5 +149,10 @@ return {
             vim.notify = require('fidget.notification').notify
         end,
     },
+
+    {
+        "nvim-treesitter/nvim-treesitter",
+        build = ":TSUpdate"
+    },
 }
 

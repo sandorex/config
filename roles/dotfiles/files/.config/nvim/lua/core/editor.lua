@@ -60,10 +60,11 @@ vim.opt.updatetime = 300
 vim.opt.timeout = true
 vim.opt.timeoutlen = 800
 
--- TODO redo this
-vim.opt.foldlevel = 99 -- unfold everything by default TODO
-vim.opt.foldmethod = 'syntax'
-vim.opt.fillchars = 'fold: '
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 4
+vim.opt.foldnestmax = 4
 
 vim.opt.colorcolumn = '80,100' -- guide lines (old standard 80 and my fav 100)
 

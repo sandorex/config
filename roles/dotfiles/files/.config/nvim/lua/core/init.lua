@@ -21,30 +21,13 @@ require('core.auto')
 require('core.lazy')
 require('core.themesync')
 
+-- open netrw by default if no args
 if vim.fn.argc() == 0 then
     vim.g.root_dir = vim.fn.getcwd()
-    vim.cmd.Explore()
+    vim.api.nvim_create_autocmd({"VimEnter"}, {
+        pattern = {"*"},
+        command  = ":silent! Explore",
+        group = vim.api.nvim_create_augroup("netrw", {clear = true})
+    })
 end
-
--- TODO this fails without plugins for some reason
---[[
--- open netrw if no args passed
-if vim.fn.argc() == 0 then
-    vim.cmd.Explore()
-end
-
-require('core.session').autoload_directory_session({
-    session_loaded = function(path)
-        -- kindof project root directory
-        -- TODO move this into sparate var like vim.g.session_dir so it can be included in core.session
-        vim.g.root_dir = path
-
-        vim.notify('Loaded directory session automatically')
-    end,
-    session_load_error = function()
-        vim.notify('Error while loading directory session automatically')
-    end
-})
-]]--
-
 
