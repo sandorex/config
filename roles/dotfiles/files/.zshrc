@@ -16,6 +16,9 @@ export SHELLDIR="$HOME/.config/zsh"
 precmd_functions=( )
 preexec_functions=( )
 
+# remove the command not found handler
+unset -f command_not_found_handler
+
 ## OPTIONS ##
 HISTFILE=~/.zhistory
 HISTSIZE=SAVEHIST=10000
