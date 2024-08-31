@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 # simple build script for box images
 
-# TODO allow storing boxes in other locations, .local/share/box/ for example or .config/box/
-
 set -eu -o pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 BOXES_DIR=images
+DOTFILES="$(realpath ..)"
 
 VARIANTS=(
     # automatically find variants
@@ -16,10 +15,7 @@ VARIANTS=(
 
 function usage() {
     cat <<EOF
-Usage: $0 [<opts...>] <variant>
-
-Opts:
-    --dotfiles <path>   Include files from this path as /etc/skel
+Usage: $0 <variant>
 
 Variant images available:
     ${VARIANTS[*]}
@@ -29,16 +25,11 @@ EOF
 }
 
 POSITIONAL_ARGS=()
-DOTFILES=''
 
 while [ $# -gt 0 ]; do
     case $1 in
         --help|-h)
             usage
-            ;;
-        --dotfiles)
-            DOTFILES="$2"
-            shift 2
             ;;
         -*)
             echo "Unknown option $1"
@@ -80,4 +71,3 @@ podman build \
     -f "$BOXES_DIR/$variant/Containerfile" \
     "${args[@]}" \
     .
-

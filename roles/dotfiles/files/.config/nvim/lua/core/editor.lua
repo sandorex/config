@@ -63,7 +63,6 @@ vim.opt.timeoutlen = 800
 vim.opt.foldmethod = "expr"
 vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.opt.foldlevel = 99
-vim.opt.foldlevelstart = 4
 vim.opt.foldnestmax = 4
 
 vim.opt.colorcolumn = '80,100' -- guide lines (old standard 80 and my fav 100)
