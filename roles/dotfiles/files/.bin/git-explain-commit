@@ -18,9 +18,14 @@ COMMIT_MSG_FILE="$(mktemp)"
 # this file is used for temporary editing before appending to the above file
 TEMP_FILE="$(mktemp)"
 
-files=($(git diff --cached --name-only))
+function find_files() {
+    git diff --cached --name-only
+}
+
+files=($(find_files))
 file_count="${#files[@]}"
 index=0
+refresh_needed=0
 
 trap "rm -f $COMMIT_MSG_FILE $TEMP_FILE" EXIT
 
@@ -49,10 +54,18 @@ function current_diff() {
 trap "" SIGTSTP
 
 while true; do
+    # refresh status if needed
+    if [[ "$refresh_needed" -eq 1 ]]; then
+        files=($(find_files))
+        file_count="${#files[@]}"
+        index=0
+        refresh_needed=0
+    fi
+
     clear
     current_diff
     echo "(Change $(( index + 1 ))/${file_count})"
-    echo -n "[Quit/View/Commit/Edit/Append/Next/Previous/Suspend/Help] "
+    echo -n "[Quit/View/Commit/Edit/Append/Next/Previous/Suspend/Refresh/Help] "
     read -e -n1
     echo
 
@@ -122,8 +135,13 @@ EOF
             prev
             ;;
         [sS])
+            refresh_needed=1
+
             # requires set -m
             suspend
+            ;;
+        [rR])
+            refresh_needed=1
             ;;
         [hH])
             cat <<EOF
@@ -135,6 +153,7 @@ a) Append text to commit message, opens the editor
 n) Go to next change
 p) Go to previous change
 s) Suspend script, use fg to bring it back
+r) Refresh git status (do this if you change the git staged)
 -------------------------------------------------------------------------------
 EOF
             # wait for key press
@@ -144,4 +163,3 @@ EOF
             ;;
     esac
 done
-
