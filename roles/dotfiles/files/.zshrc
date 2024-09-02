@@ -17,7 +17,7 @@ precmd_functions=( )
 preexec_functions=( )
 
 # remove the command not found handler
-unset -f command_not_found_handler
+unset -f command_not_found_handler &>/dev/null || true
 
 ## OPTIONS ##
 HISTFILE=~/.zhistory
