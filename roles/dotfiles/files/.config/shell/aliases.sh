@@ -21,6 +21,13 @@ alias gs='g s' # i keep typing it instead of g s
 alias f="$FILE_MANAGER"
 alias m='tmux'
 
+# intentionally different command so i know if i am trashing or deleting
+# NOTE: requires gvfs
+alias t='gio trash'
+alias trash='gio trash'
+alias trash-list='gio trash --list'
+alias trash-restore='gio trash --restore'
+
 # start box container automatically and set env var if no args
 function box() {
     if [[ "$#" -eq 0 ]]; then
