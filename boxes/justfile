@@ -45,7 +45,9 @@ _ci_only:
 
 login-ci: _ci_only
     #!/usr/bin/env bash
-    echo "${TOKEN:?}" podman login --username "{{ container_repository_username }}" --password-stdin {{ container_repository }}
+    echo "${TOKEN:?}" | podman login \
+        --username "{{ container_repository_username }}" \
+        --password-stdin {{ container_repository }}
 
 logout-ci: _ci_only
     #!/usr/bin/env bash
