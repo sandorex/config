@@ -1,0 +1,38 @@
+on:
+  schedule:
+    # run at 8 AM UTC every sunday
+    - cron: '0 8 * * 0'
+
+  push:
+    branches:
+      - 'master'
+    paths:
+      - 'boxes/**'
+
+jobs:
+  build_containers:
+    strategy:
+      matrix:
+        # names of container images go here!
+        image_name:
+          - dev-fedora
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      # idk if it works properly with docker
+      - name: Installing podman
+        run: |
+          sudo apt-get update
+          sudo apt-get -y install podman
+
+      - uses: actions/checkout@v4
+      - uses: extractions/setup-just@v2
+      - name: Login for the registry
+        run: |
+          cd boxes
+          just login-ci
+          just package "${{ matrix.image_name }}"
+          just logout-ci
+
