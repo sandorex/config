@@ -17,7 +17,8 @@ jobs:
         # names of container images go here!
         image_name:
           - dev-fedora
-    runs-on: ubuntu-latest
+    # i am using 24.04 cause 22.04 has too old version of podman
+    runs-on: ubuntu-24.04
     permissions:
       packages: write
       contents: read
