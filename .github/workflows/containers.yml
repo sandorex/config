@@ -31,18 +31,15 @@ jobs:
       - uses: extractions/setup-just@v2
 
       # idk if it works properly with docker
-      - name: Installing podman
+      - name: Install podman
         run: |
           sudo apt-get update
           sudo apt-get -y install podman
 
-      - name: Login for the registry
-        run: just login-ci
+      - name: Build and Publish
+        run: |
+          just login-ci
+          just publish "{{ matrix.image_name }}"
+          just logout-ci
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Publish the image
-        run: just publish "${{ matrix.image_name }}"
-
-      - name: Logout of the registry
-        run: just logout-ci
