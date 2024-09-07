@@ -1,19 +1,10 @@
 #!/usr/bin/bash
-# the default entrypoint for box images
+# the default entrypoint for images
 
 cat <<EOF
-Image made for use with box
+Image made for use with arcam
 
-To use this image install box using one of the following ways:
-
-cargo:
-    $ cargo install --git https://github.com/sandorex/box
-
-Copy from from this container while its running:
-    $ podman cp <CONTAINER_ID>:/usr/local/bin/box ./box
+Install it using cargo:
+    $ cargo install arcam
 
 EOF
-
-echo "Press any key to shutdown the container"
-read -n1
-echo "Goodbye."

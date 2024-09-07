@@ -28,21 +28,6 @@ alias trash='gio trash'
 alias trash-list='gio trash --list'
 alias trash-restore='gio trash --restore'
 
-# start box container automatically and set env var if no args
-function box() {
-    if [[ "$#" -eq 0 ]]; then
-        if [[ -n "$BOX_CONTAINER" ]] && box exists "$BOX_CONTAINER"; then
-            echo "Box is already running"
-            return
-        fi
-
-        unset BOX_CONTAINER
-        export BOX_CONTAINER="$(command box start)"
-    else
-        command box "$@"
-    fi
-}
-
 # use bat if available
 if command -v bat &>/dev/null; then
     alias cat='bat --style=plain'

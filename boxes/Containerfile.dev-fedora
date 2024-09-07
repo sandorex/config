@@ -19,35 +19,36 @@ RUN dnf -y install "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-rel
    && dnf -y install "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${VERSION}.noarch.rpm"
 
 # SYSTEM
-COPY ./images/box-fedora/extra-packages /
+COPY ./fedora/extra-packages /
 RUN dnf -y install $(<extra-packages) \
     && rm /extra-packages \
     && dnf clean all
 
 # NPM
-COPY ./images/box-fedora/npm-packages /
+COPY ./fedora/npm-packages /
 RUN npm install -g $(<npm-packages) \
     && rm /npm-packages \
     && npm cache clean --force
 
 # PIP
-COPY ./images/box-fedora/pip-packages /
+COPY ./fedora/pip-packages /
 RUN pip install $(<pip-packages) \
     && rm /pip-packages \
     && pip cache purge
 
 ENV CARGO_HOME=/usr/local/
 
+# use binstall cause is faster
 RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
 
-# zellij takes forever to compile
-RUN cargo binstall --no-confirm zellij
-RUN cargo install --git https://github.com/sandorex/box
+COPY ./fedora/cargo-packages /
+RUN cargo binstall --no-confirm $(<cargo-packages) \
+    && rm /cargo-packages
 
 ENV CARGO_HOME=
 
 # copy box config
-COPY ./images/box-fedora/config.toml /config.toml
+COPY ./fedora/config.toml /config.toml
 
 # copy init scripts
 COPY ./init.d /init.d

@@ -8,8 +8,8 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- set default themes (overriden when theme loads)
-vim.g.colorscheme_dark = 'slate'
-vim.g.colorscheme_light = 'delek'
+vim.g.colorscheme_dark = 'catppuccin_macchiato' -- slate
+vim.g.colorscheme_light = 'catppuccin_latte' -- delek
 
 require('core.languages')
 require('core.functions')
@@ -20,6 +20,7 @@ require('core.netrw')
 require('core.auto')
 require('core.lazy')
 require('core.themesync')
+require('core.bootstrap')
 
 -- open netrw by default if no args
 if vim.fn.argc() == 0 then

@@ -24,6 +24,13 @@ return {
         name = "catppuccin",
         priority = 1000,
         config = function()
+            --[[require('catppuccin').setup({
+                background = {
+                    dark = 'macchiato',
+                    light = 'latte',
+                }
+            })]]
+            --vim.cmd.colorscheme('catppuccin')
             vim.g.colorscheme_dark = 'catppuccin-macchiato'
             vim.g.colorscheme_light = 'catppuccin-latte'
         end,

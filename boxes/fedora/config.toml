@@ -1,8 +1,8 @@
 version = 1
 
 [[config]]
-name = "fedora"
-image = "box-fedora"
+name = "dev-fedora"
+image = "ghcr.io/sandorex/dev-fedora"
 network = true
 
 [config.podman]

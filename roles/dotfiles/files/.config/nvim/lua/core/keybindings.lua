@@ -68,5 +68,5 @@ vim.keymap.set('n', '<leader>n', function()
     fun.open_notes(vim.g.root_dir .. '/vim_notes.md')
 end, { desc = 'Open project notes', silent = true })
 
-vim.keymap.set('n', '<leader>tt', function() fun.set_theme_variant() end, { desc = 'Toggle dark/light theme', silent = true })
+vim.keymap.set('n', '<leader>tt', function() require('core.themesync').set_theme_variant('toggle') end, { desc = 'Toggle dark/light theme', silent = true })
 

@@ -57,8 +57,8 @@ export DBX_CONTAINER_NAME=dev
 export DBX_CONTAINER_GENERATE_ENTRY=0
 export DBX_CONTAINER_HOME_PREFIX="$HOME/.dbx"
 
-# set default box config
-export BOX_IMAGE=@fedora
+# use fedora config by default
+export ARCAM_IMAGE=@dev-fedora
 
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
