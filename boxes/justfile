@@ -34,7 +34,12 @@ build image:
 publish image: (build image)
     #!/usr/bin/env bash
     echo "Publishing image {{ image }}"
+    
+    # push git sha tagged
     podman image push "{{ image }}" "{{ image_tag_prefix + image + image_tag_suffix }}"
+    
+    # push as latest
+    podman image push "{{ image }}" "{{ image_tag_prefix + image }}:latest"
 
 _ci_only:
     #!/usr/bin/env bash

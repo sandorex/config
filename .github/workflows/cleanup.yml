@@ -1,0 +1,13 @@
+on:
+  workflow_dispatch:
+
+jobs:
+  cleanup-old-containers:
+    name: Delete old containers
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'dev-fedora'
+          package-type: 'container'
+          min-versions-to-keep: 5
