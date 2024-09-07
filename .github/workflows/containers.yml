@@ -8,6 +8,7 @@ on:
       - 'master'
     paths:
       - 'boxes/**'
+      - '.github/workflows/containers.yml'
 
 jobs:
   build_containers:
@@ -20,19 +21,27 @@ jobs:
     permissions:
       packages: write
       contents: read
+    defaults:
+      run:
+        # justfile is here
+        working-directory: boxes
     steps:
+      - uses: actions/checkout@v4
+      - uses: extractions/setup-just@v2
+
       # idk if it works properly with docker
       - name: Installing podman
         run: |
           sudo apt-get update
           sudo apt-get -y install podman
 
-      - uses: actions/checkout@v4
-      - uses: extractions/setup-just@v2
       - name: Login for the registry
-        run: |
-          cd boxes
-          just login-ci
-          just package "${{ matrix.image_name }}"
-          just logout-ci
+        run: just login-ci
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Publish the image
+        run: just publish "${{ matrix.image_name }}"
+
+      - name: Logout of the registry
+        run: just logout-ci
