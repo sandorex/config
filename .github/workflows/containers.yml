@@ -39,7 +39,7 @@ jobs:
       - name: Build and Publish
         run: |
           just login-ci
-          just publish "{{ matrix.image_name }}"
+          just publish "${{ matrix.image_name }}"
           just logout-ci
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
