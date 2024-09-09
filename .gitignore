@@ -3,3 +3,4 @@ venv/
 ssh_key
 ssh_key.pub
 logs/
+install.log
