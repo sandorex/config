@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+# simple script to play youtube playlist using mpv and yt-dlp
+#
+# requires mpv yt-dlp
+
+set -e
+
+MPV_SOCKET="${XDG_RUNTIME_DIR:-/run/user/1000}/yt-mpv"
+
+function control() {
+    if [[ ! -e "$MPV_SOCKET" ]]; then
+        echo "mpv is not running"
+        exit 2
+    fi
+
+    case "$1" in
+        +play)
+            echo cycle pause | socat - "$MPV_SOCKET"
+            ;;
+        +vol-up)
+            echo add volume +5 | socat - "$MPV_SOCKET"
+            ;;
+        +vol-down)
+            echo add volume -5 | socat - "$MPV_SOCKET"
+            ;;
+        +mute)
+            echo cycle mute | socat - "$MPV_SOCKET"
+            ;;
+        +next)
+            echo playlist-next | socat - "$MPV_SOCKET"
+            ;;
+        +prev)
+            echo playlist-prev | socat - "$MPV_SOCKET"
+            ;;
+        +shuffle)
+            echo cycle shuffle | socat - "$MPV_SOCKET"
+            ;;
+        +quit)
+            echo quit | socat - "$MPV_SOCKET"
+            ;;
+        *)
+            echo "Invalid command '$1'"
+            exit 1
+            ;;
+    esac
+}
+
+POSITIONAL_ARGS=()
+
+while [ $# -gt 0 ]; do
+    case "$1" in
+        -h|--help)
+            cat <<EOF
+Usage: $0 [<+command>]
+
+Starts playing yotube playlist using mpv and yt-dlp or controls it using IPC
+
+The playlist url can be placed in ~/.yt-playlist or using env var YT_PLAYLIST
+
+Commands:
+    +play       - cycle play/pause
+    +mute       - cycle mute
+    +vol-up     - volume up
+    +vol-down   - volume donw
+    +next       - next playlist entry
+    +prev       - previous playlist entry
+    +shuffle    - cycle shuffle
+    +quit       - quit player
+
+EOF
+            exit
+            ;;
+        +*)
+            control "$@"
+            exit
+            ;;
+        -*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            # save positional arg
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+if [[ -e "$MPV_SOCKET" ]]; then
+    echo "mpv is already running!"
+    exit 1
+fi
+
+args=()
+
+if command -v vivaldi &>/dev/null; then
+    echo "Using vivaldi cookies"
+    args+=(--ytdl-raw-options='cookies-from-browser=vivaldi')
+else
+    echo "Not using cookies so experience will be impaired"
+fi
+
+if [[ -n "${YT_MUSIC_PLAYLIST}" ]]; then
+    playlist="${YT_MUSIC_PLAYLIST}"
+elif [[ -f "$HOME"/.yt-playlist ]]; then
+    playlist="$(cat "$HOME"/.yt-playlist)"
+else
+    echo "Playlist not found in env or at ~/.yt-playlist"
+    exit 1
+fi
+
+mpv \
+    "${playlist:?}" \
+    --volume=60 \
+    --input-ipc-server="$MPV_SOCKET" \
+    --no-video \
+    "${args[@]}" \
+    "$@"
+
+# cleanup
+rm "$MPV_SOCKET"
+
