@@ -6,6 +6,8 @@ ARG VERSION=40
 FROM registry.fedoraproject.org/fedora-toolbox:$VERSION
 ARG VERSION
 
+# set locale properly
+ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 
 # improve DNF experience
@@ -46,6 +48,9 @@ RUN cargo binstall --no-confirm $(<cargo-packages) \
     && rm /cargo-packages
 
 ENV CARGO_HOME=
+
+# install nix
+RUN sh <(curl -L https://nixos.org/nix/install) --daemon
 
 # copy box config
 COPY ./fedora/config.toml /config.toml

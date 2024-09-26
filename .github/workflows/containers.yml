@@ -13,6 +13,8 @@ on:
 jobs:
   build_containers:
     strategy:
+      # if they run one by one then i can base them off eachother
+      max-parallel: 1
       matrix:
         # names of container images go here!
         image_name:

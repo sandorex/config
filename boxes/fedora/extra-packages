@@ -20,3 +20,4 @@ perl
 python3-pip
 latexmk
 shellcheck
+glibc-langpack-en

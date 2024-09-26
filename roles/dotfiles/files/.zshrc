@@ -89,7 +89,8 @@ source "$SHELLDIR/keybindings.zsh"
 
 ## PLUGINS ##
 
-source "$SHELLDIR/plugins/smart-terminal.zsh"
+# TODO it does not work in all terminals also does not work in nested shells
+#source "$SHELLDIR/plugins/smart-terminal.zsh"
 source "$SHELLDIR/plugins/execution-time.zsh"
 
 # load last
