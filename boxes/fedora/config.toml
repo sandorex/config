@@ -7,6 +7,10 @@ network = true
 
 [config.podman]
 engine_args = [
-    "--volume", "box-data:/data"
+    # mainly used by neovim
+    "--volume=box-data:/data",
+
+    # cache nix packages
+    "--volume=nix:/nix"
 ]
 env = { "NVIM_FORCE_OSC52" = "true" }
