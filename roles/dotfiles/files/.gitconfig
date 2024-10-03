@@ -28,12 +28,13 @@
 [push]
     default=tracking
 
+# this can cause problems with cargo
 # allows using ssh keys with https remote
-[url "git@github.com:sandorex/"]
-    insteadOf = https://github.com/sandorex/
-
-[url "git@gitlab.com:sandorex/"]
-    insteadOf = https://gitlab.com/sandorex/
+#[url "git@github.com:sandorex/"]
+#    insteadOf = https://github.com/sandorex/
+#
+#[url "git@gitlab.com:sandorex/"]
+#    insteadOf = https://gitlab.com/sandorex/
 
 [init]
     defaultBranch = main

@@ -116,7 +116,7 @@ function precmd() {
 }
 
 for dir in $HOME/ws $HOME/Downloads $HOME/Torrent; do
-    if [[ -d "$dir" ]]; then
+    if [[ -d "$dir" ]] && [[ -n "$dir" ]]; then
         hash -d "$(basename $dir:l)=$dir"
     fi
 done
