@@ -11,6 +11,7 @@ if [[ ! -v ZSH_VERSION ]]; then
     compdef() { :; }
 fi
 
+function a() { arcam start "$@"; arcam shell }
 alias e="$EDITOR1"
 alias ee="$EDITOR2"
 alias eee="$EDITOR3"

@@ -1,16 +1,23 @@
-version = 1
-
 [[config]]
 name = "dev-fedora"
 image = "ghcr.io/sandorex/dev-fedora"
 network = true
-
-[config.podman]
-engine_args = [
-    # mainly used by neovim
-    "--volume=box-data:/data",
-
-    # cache nix packages
-    "--volume=nix:/nix"
+env = {
+    # tell neovim to use OSC52
+    "NVIM_FORCE_OSC52" = "true"
+}
+engine_args_podman = [
+    # persist neovim plugins
+    "--volume=box-nvim:$HOME/.local/share/nvim",
+    
+    # persist cargo packages
+    "--volume=box-cargo:$HOME/.cargo/registry",
+    
+    # persist nix packages
+    "--volume=box-nix:/nix"
 ]
-env = { "NVIM_FORCE_OSC52" = "true" }
+on_init_pre = [
+    # all volumes are owned by root by default
+    "sudo chown $USER:$USER ~/.local/share/nvim",
+    "sudo chown $USER:$USER ~/.cargo ~/.cargo/registry"
+]

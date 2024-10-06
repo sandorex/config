@@ -13,3 +13,7 @@
 ;(ido-ubiquitous-mode 1)
 
 (xterm-mouse-mode 1)     ; enable mouse in terminal
+
+(setq-default indent-tabs-mode nil) ; do not enter tabs randomly.. wtf
+
+
