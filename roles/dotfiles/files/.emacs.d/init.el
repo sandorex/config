@@ -1,5 +1,6 @@
-(setq custom-file "~/.emacs.d/custom.el")
-(load custom-file)
+; load machine specific custom file
+(setq custom-file (locate-user-emacs-file (concat "custom-" (system-name) ".el")))
+(load custom-file 'noerror 'nomessage)
 
 (package-initialize)
 
@@ -13,10 +14,10 @@
 ;  :hook (rust-ts-mode . eglot-ensure))
 
 ; shutdown server after killing last managed buffer
-(setq eglot-autoshutdown t)
+(setq-default eglot-autoshutdown t)
 
 ;; TODO install these automatically
-(setq treesit-language-source-alist
+(setq-default treesit-language-source-alist
   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
      (rust "https://github.com/tree-sitter/tree-sitter-rust")
      (cmake "https://github.com/uyha/tree-sitter-cmake")
@@ -39,10 +40,18 @@
 (global-display-line-numbers-mode 1)
 (show-paren-mode 1)
 
-(ido-mode 1)             ; autocompletion?
+(global-auto-revert-mode 1) ; reload buffers automatically
+(setq global-auto-revert-non-file-buffers t) ; reload dired buffers automatically
+
+(cua-selection-mode 1) ; allows C-RET selection / multi cursor
+
+(ido-mode 1)           ; autocompletion?
 (ido-everywhere 1)
 
 (xterm-mouse-mode 1)     ; enable mouse in terminal
+
+(setq-default history-length 20) ; save queries in minibuffer
+(savehist-mode 1)
 
 ; more vim-like scrolling without jumping whole page and centering cursor
 (setq-default scroll-margin 2
