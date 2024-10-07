@@ -12,6 +12,9 @@
 ;  :defer t
 ;  :hook (rust-ts-mode . eglot-ensure))
 
+; shutdown server after killing last managed buffer
+(setq eglot-autoshutdown t)
+
 ;; TODO install these automatically
 (setq treesit-language-source-alist
   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
@@ -38,12 +41,16 @@
 
 (ido-mode 1)             ; autocompletion?
 (ido-everywhere 1)
-;(ido-ubiquitous-mode 1)
 
 (xterm-mouse-mode 1)     ; enable mouse in terminal
 
-(setq-default scroll-margin 4) ; keep x lines above or below cursor visible
+; more vim-like scrolling without jumping whole page and centering cursor
+(setq-default scroll-margin 2
+              scroll-conservatively 101
+              scroll-up-aggressively 0.01
+              scroll-down-aggressively 0.01)
 
 (setq-default indent-tabs-mode nil) ; do not enter tabs randomly.. wtf
 
+; seems like a cool feature
 (put 'narrow-to-region 'disabled nil)
