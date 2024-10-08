@@ -1,0 +1,5 @@
+# EMACS WHITELIST
+*
+!.gitignore
+!*.el
+!themes/*.el
