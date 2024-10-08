@@ -11,7 +11,22 @@
 ;; move backup directory
 (setq-default backup-directory-alist '(("~/.emacs.bak")))
 
+;; parse cargo warnings and errors in compilation mode
+(require 'compile)
+(add-to-list 'compilation-error-regexp-alist 'cargo)
+(add-to-list 'compilation-error-regexp-alist-alist
+             '(rust . ("\\(?:error\\|warning\\): .+\n.*--> \\(.+\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3 2 1)))
+
+;; TODO set this so 80x40 cells no matter the font size
+(if (display-graphic-p)
+    (progn
+      (set-frame-width (selected-frame) 90)
+      (set-frame-height (selected-frame) 30)))
+
 (package-initialize)
+
+;; disable the startup message
+(defun display-startup-echo-area-message ())
 
 (tool-bar-mode 0)      ; remove toolbar
 (menu-bar-mode 0)      ; remove menu bar
