@@ -15,7 +15,7 @@
 (require 'compile)
 (add-to-list 'compilation-error-regexp-alist 'cargo)
 (add-to-list 'compilation-error-regexp-alist-alist
-             '(rust . ("\\(?:error\\|warning\\): .+\n.*--> \\(.+\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3 2 1)))
+             '(cargo . ("\\(?:error\\|warning\\): .+\n.*--> \\(.+\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3 2 1)))
 
 ;; TODO set this so 80x40 cells no matter the font size
 (if (display-graphic-p)
