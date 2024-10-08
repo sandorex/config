@@ -15,6 +15,7 @@
 
 (tool-bar-mode 0)      ; remove toolbar
 (menu-bar-mode 0)      ; remove menu bar
+(scroll-bar-mode -1)   ; hide scroll bar
 (global-display-line-numbers-mode 1)
 (show-paren-mode 1)
 
