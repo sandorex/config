@@ -17,11 +17,15 @@
 (add-to-list 'compilation-error-regexp-alist-alist
              '(cargo . ("\\(?:error\\|warning\\): .+\n.*--> \\(.+\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3 2 1)))
 
-;; TODO set this so 80x40 cells no matter the font size
-(if (display-graphic-p)
-    (progn
-      (set-frame-width (selected-frame) 90)
-      (set-frame-height (selected-frame) 30)))
+(add-to-list 'default-frame-alist '(height . 30))
+(add-to-list 'default-frame-alist '(width . 80))
+
+(unless (display-graphic-p)
+  (progn
+    ;; fix some keys in terminal (has to be set in terminal explicitly)
+    ;; NOTE keymap-set does not work here
+    (define-key key-translation-map (kbd "\e[[;") (kbd "C-;"))
+    ))
 
 (package-initialize)
 
@@ -58,7 +62,6 @@
 ; seems like a cool feature
 (put 'narrow-to-region 'disabled nil)
 
-; TODO get path to the emacs dir so there is no raw paths
 (load (concat config-path "modeline.el"))
 (load (concat config-path "lsp.el"))
 
