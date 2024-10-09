@@ -3,3 +3,7 @@
 !.gitignore
 !*.el
 !themes/*.el
+!config/
+!config/*
+!plugins/
+!plugins/*
