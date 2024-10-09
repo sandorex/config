@@ -9,3 +9,13 @@
 
 ;; scroll with compilation but stop at first error
 (setq-default compilation-scroll-output 'first-error)
+
+(defun compilation-mode--user-setup ()
+  "User setup of compilation mode"
+  (setq proj (project-current nil))
+  (when proj
+    ;; add project root to compilation search path for better experience
+    (add-to-list 'compilation-search-path (project-root proj))))
+
+(add-hook 'compilation-mode-hook 'compilation-mode--user-setup)
+
