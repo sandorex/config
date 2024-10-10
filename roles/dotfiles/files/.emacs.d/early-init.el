@@ -20,10 +20,6 @@
         (height . 30)
         (width . 90)
 
-        ;; start with dark background so there is no flashbang
-        (background-color . "#000000")
-        (foreground-color . "#ffffff")
-
         ;; prevent flashes when theme loads
         (ns-appearance . dark)
         (ns-transparent-titlebar . t)))

@@ -16,11 +16,7 @@
 (load custom-file 'noerror 'nomessage)
 
 ;; set backup in tmp so its available if needed but deleted often for security
-(setq-default backup-directory-alist '(("." . "/tmp/emacs-bak/")))
-
-;; start with appropriate size
-(add-to-list 'default-frame-alist '(height . 30))
-(add-to-list 'default-frame-alist '(width . 90))
+(setopt backup-directory-alist '(("." . "/tmp/emacs-bak/")))
 
 (unless (display-graphic-p)
   ;; fix some keys in terminal (has to be set in terminal explicitly)

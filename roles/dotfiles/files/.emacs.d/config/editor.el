@@ -9,8 +9,9 @@
 ;; show tab bar only if more than 1 tab
 (setopt tab-bar-show 1)
 
-
 (show-paren-mode 1)
+
+(winner-mode 1) ; quickly restore windows
 
 (setopt auto-revert-avoid-polling t)
 (setopt auto-revert-interval 5)
@@ -23,8 +24,9 @@
 (ido-mode 1)           ; autocompletion?
 (ido-everywhere 1)
 
-(xterm-mouse-mode 1)   ; enable mouse in terminal
-(blink-cursor-mode -1) ; disable blinking cursor
+(xterm-mouse-mode 1)      ; enable mouse in terminal
+(blink-cursor-mode -1)    ; disable blinking cursor
+(setopt cursor-type 'bar) ; vertical line cursor to better show what is actually selected, also default in some terminals
 
 (setopt history-length 20) ; save queries in minibuffer
 (savehist-mode 1)
