@@ -1,6 +1,7 @@
 ;; Minimal Configuration
-;;
-;; Using: eglot project.el
+
+(when (< emacs-major-version 29)
+  (error "Oldest supported emacs version is 29, you are on %s" emacs-major-version))
 
 ;; load from user directory whatever it may be
 (add-to-list 'load-path (concat user-emacs-directory "config"))
@@ -8,9 +9,6 @@
 ;; load machine specific custom file
 (setq custom-file (concat "custom-" (system-name) ".el"))
 (load custom-file 'noerror 'nomessage)
-
-;; disable the startup message
-(defun display-startup-echo-area-message ())
 
 ;; set backup in tmp so its available if needed but deleted often for security
 (setq-default backup-directory-alist '(("." . "/tmp/emacs-bak")))
@@ -24,10 +22,11 @@
   ;; NOTE keymap-set does not work here
   (define-key key-translation-map (kbd "\e[[;") (kbd "C-;")))
 
-;; keybindings (currently too short for separate file)
-(keymap-global-set "<f9>" 'recompile)
+(load "compile-mode" nil 'nomessage)
+(load "editor" nil 'nomessage)
+(load "modeline" nil 'nomessage)
+(load "lsp" nil 'nomessage)
+(load "keys" nil 'nomessage)
 
-(eval-after-load 'compile (load "compile-mode.el"))
-(load "editor.el")
-(load "modeline.el")
-(load "lsp.el")
+;; reset gc-cons-threshold
+(setq gc-cons-threshold (or emacs--initial-gc-threshold 800000))

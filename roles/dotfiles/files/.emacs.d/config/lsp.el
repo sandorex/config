@@ -1,4 +1,4 @@
-;; eglot options and tweaks
+;; general all lsp and language related things
 
 ; TODO enable only if rust-analyzer is present
 ;(use-package eglot
@@ -9,11 +9,8 @@
 ;; use treesitter rust mode
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
 
-; shutdown server after killing last managed buffer
-(setq-default eglot-autoshutdown t)
-
 ;; TODO install these automatically
-(setq-default treesit-language-source-alist
+(setopt treesit-language-source-alist
   '((bash "https://github.com/tree-sitter/tree-sitter-bash")
      (rust "https://github.com/tree-sitter/tree-sitter-rust")
      (cmake "https://github.com/uyha/tree-sitter-cmake")
@@ -31,3 +28,10 @@
      (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
      (yaml "https://github.com/ikatyang/tree-sitter-yaml")))
 
+(eval-after-load 'eglot
+  (lambda ()
+    (setopt eglot-autoshutdown t) ; shutdown lsp server automatically
+    (setopt eglot-send-changes-idle-time 0.1) ; faster update time
+
+    ;; improves performance? (stolen from internet)
+    (fset #'jsonrpc--log-event #'ignore)))

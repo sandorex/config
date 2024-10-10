@@ -3,9 +3,6 @@
 ;; set compile-command for rust
 (add-hook 'rust-ts-mode-hook (setq-local compile-command "cargo build"))
 
-;; scroll with compilation but stop at first error
-(setq-default compilation-scroll-output 'first-error)
-
 ;; focus compilation-mode buffer on compile/recompile
 (defadvice compile (after jump-back activate) (other-window 1))
 (defadvice recompile (after jump-back activate) (other-window 1))
@@ -13,6 +10,9 @@
 ;; set everything up only when compile loads
 (eval-after-load 'compile
   (lambda ()
+    ;; scroll with compilation but stop at first error
+    (setopt compilation-scroll-output 'first-error)
+
     ;; parse cargo warnings and errors in compilation mode
     (add-to-list 'compilation-error-regexp-alist 'cargo)
 
