@@ -8,8 +8,8 @@
 (setq inhibit-startup-echo-area-message (user-login-name))
 (setq frame-resize-pixelwise t)
 
-(tool-bar-mode 0)      ; remove toolbar
-(menu-bar-mode 0)      ; remove menu bar
+(tool-bar-mode -1)      ; remove toolbar
+(menu-bar-mode -1)      ; remove menu bar
 
 (setq default-frame-alist
       '((vertical-scroll-bars . nil)
@@ -19,6 +19,10 @@
         ;; TODO scale with font size
         (height . 30)
         (width . 90)
+
+        ;; start with dark background so there is no flashbang
+        (background-color . "#000000")
+        (foreground-color . "#ffffff")
 
         ;; prevent flashes when theme loads
         (ns-appearance . dark)

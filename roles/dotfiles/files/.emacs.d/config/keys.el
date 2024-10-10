@@ -2,6 +2,8 @@
 
 (keymap-global-set "<f9>" 'recompile)
 
+(keymap-global-set "<f7>" 'theme-choose-variant) ; toggle variant easily
+
 ;; make C-x o stick until other key is pressed
 (defun other-window-and-beyond (count &optional all-frames)
   (interactive "p")

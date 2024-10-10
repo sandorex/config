@@ -3,15 +3,20 @@
 (when (< emacs-major-version 29)
   (error "Oldest supported emacs version is 29, you are on %s" emacs-major-version))
 
+(package-initialize)
+
 ;; load from user directory whatever it may be
-(add-to-list 'load-path (concat user-emacs-directory "config"))
+(add-to-list 'load-path (concat user-emacs-directory "config/"))
+
+(setopt custom-theme-directory (concat user-emacs-directory "themes/"))
+(add-to-list 'load-path custom-theme-directory)
 
 ;; load machine specific custom file
-(setq custom-file (concat "custom-" (system-name) ".el"))
+(setopt custom-file (concat user-emacs-directory "config/custom-" (system-name) ".el"))
 (load custom-file 'noerror 'nomessage)
 
 ;; set backup in tmp so its available if needed but deleted often for security
-(setq-default backup-directory-alist '(("." . "/tmp/emacs-bak")))
+(setq-default backup-directory-alist '(("." . "/tmp/emacs-bak/")))
 
 ;; start with appropriate size
 (add-to-list 'default-frame-alist '(height . 30))
@@ -24,7 +29,7 @@
 
 (load "compile-mode" nil 'nomessage)
 (load "editor" nil 'nomessage)
-(load "modeline" nil 'nomessage)
+(load "theming" nil 'nomessage)
 (load "lsp" nil 'nomessage)
 (load "keys" nil 'nomessage)
 

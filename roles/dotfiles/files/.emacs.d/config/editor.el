@@ -9,8 +9,8 @@
 ;; show tab bar only if more than 1 tab
 (setopt tab-bar-show 1)
 
+
 (show-paren-mode 1)
-;;(winner-mode 1) ; easy window undo C-c <left>/<right>
 
 (setopt auto-revert-avoid-polling t)
 (setopt auto-revert-interval 5)
@@ -23,7 +23,8 @@
 (ido-mode 1)           ; autocompletion?
 (ido-everywhere 1)
 
-(xterm-mouse-mode 1)     ; enable mouse in terminal
+(xterm-mouse-mode 1)   ; enable mouse in terminal
+(blink-cursor-mode -1) ; disable blinking cursor
 
 (setopt history-length 20) ; save queries in minibuffer
 (savehist-mode 1)
@@ -53,8 +54,6 @@
 (setopt sentence-end-double-space nil)
 
 (setopt show-trailing-whitespace t) ; highlight trailling whitespace
-
-(setopt blink-cursor-mode 0) ; disable blinking cursor
 
 (when (display-graphic-p)
   (context-menu-mode))
