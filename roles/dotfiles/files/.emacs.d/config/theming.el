@@ -16,6 +16,9 @@
           ;; readonly marker
           (:eval (if buffer-read-only " [RO]"))
 
+          ;; show if zoomed
+          (:eval (when (get-register 'zoom) " [Z]"))
+
           ;; overwrite mode marker
           (:eval (if overwrite-mode (propertize " [Ow]" 'face '(:foreground "red" :bold t))))
 

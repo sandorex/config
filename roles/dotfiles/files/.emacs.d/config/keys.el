@@ -1,10 +1,16 @@
 ;; all keybindings and related
 
+;; i keep accidentally hitting ; instead of C-;
+;; also terminal does not support C-; by default
+(keymap-global-set "C-x ;" 'comment-line)
+
 (keymap-global-set "<f9>"
                    (lambda ()
                      (interactive)
-                     (require 'compile)
-                     (recompile))) ; requires compile to be loaded
+                     ;; if in project then compile project
+                     (if (project-root nil)
+                         (project-compile)
+                       (recompile))))
 
 (keymap-global-set "<f7>" 'theme-choose-variant) ; toggle variant easily
 
@@ -38,3 +44,20 @@
       (set-register 'zoom nil))))
 
 (keymap-global-set "C-x z" 'zoom-window)
+
+;; move line up
+(defun move-line-up ()
+  (interactive)
+  (transpose-lines 1)
+  (previous-line 2))
+
+(keymap-global-set "C-S-<up>" 'move-line-up)
+
+;; move line down
+(defun move-line-down ()
+  (interactive)
+  (next-line 1)
+  (transpose-lines 1)
+  (previous-line 1))
+
+(keymap-global-set "C-S-<down>" 'move-line-down)

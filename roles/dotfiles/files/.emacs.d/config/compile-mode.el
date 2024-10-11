@@ -1,5 +1,9 @@
 ;; contains configuration for compilation mode
 
+;; (add-hook 'rust-ts-mode-hook
+;;           (lambda ()
+;;             (setq-local compile-command "cargo build ")))
+
 ;; set everything up only when compile loads
 (eval-after-load 'compile
   (lambda ()
@@ -15,12 +19,8 @@
     (setopt compilation-scroll-output 'first-error)
 
     ;; cargo ;;
-    (add-hook 'rust-ts-mode-hook
-              (lambda ()
-                (setq-local compile-command "cargo build ")))
-
     (add-to-list 'compilation-error-regexp-alist 'cargo)
 
     ;; TODO properly set whether its a warning or error
     (add-to-list 'compilation-error-regexp-alist-alist
-		 '(cargo . ("\\(?:error\\|warning\\): .+\n.*--> \\(.+\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3 2 1)))))
+		 '(cargo . ("\\(?:error\\|warning\\).*: .+\n.*--> \\(.+\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3 2 1)))))

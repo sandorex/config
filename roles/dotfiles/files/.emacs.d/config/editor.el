@@ -3,6 +3,11 @@
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
 (setopt display-line-numbers-width 3)           ; Set a minimum width
 
+(add-hook 'prog-mode-hook 'whitespace-mode)
+(setopt whitespace-line-column 80)
+;; TODO style whitespace style better
+;; whitespace-style '(face lines-tail))
+
 ;; nicer wrap when editing text
 (add-hook 'text-mode-hook 'visual-line-mode)
 
