@@ -1,7 +1,7 @@
 ;; contains all editor configuration
 
 (add-hook 'prog-mode-hook 'display-line-numbers-mode)
-(setopt display-line-numbers-width 3)           ; Set a minimum width
+(setopt display-line-numbers-width 3) ; Set a minimum width
 
 (add-hook 'prog-mode-hook 'whitespace-mode)
 (setopt whitespace-line-column 80
@@ -36,17 +36,27 @@
 (savehist-mode 1)
 
 (setopt enable-recursive-minibuffers t)                ; Use the minibuffer whilst in the minibuffer
-(setopt completion-cycle-threshold 1)                  ; TAB cycles candidates
-(setopt completions-detailed t)                        ; Show annotations
-(setopt tab-always-indent 'complete)                   ; When I hit TAB, try to complete, otherwise, indent
-(setopt completion-styles '(basic initials substring)) ; Different styles to match input to candidates
 
-(setopt completion-auto-help 'always)                  ; Open completion always; `lazy' another option
-(setopt completions-max-height 20)                     ; This is arbitrary
-(setopt completions-detailed t)
-(setopt completions-format 'one-column)
-(setopt completions-group t)
-(setopt completion-auto-select 'second-tab)            ; Much more eager
+;; NOTE i commented these out as they often get in the way i do not want such
+;; distracting autocompletion, i mapped the completion to C-c C-c
+;;
+;; ill go through these some other time
+;; (setopt completion-cycle-threshold 1)                  ; TAB cycles candidates
+;; (setopt completions-detailed t)                        ; Show annotations
+;; (setopt tab-always-indent 'complete)                   ; When I hit TAB, try to complete, otherwise, indent
+;; (setopt completion-styles '(basic initials substring)) ; Different styles to match input to candidates
+
+;; (setopt completion-auto-help 'always)                  ; Open completion always; `lazy' another option
+;; (setopt completions-max-height 20)                     ; This is arbitrary
+;; (setopt completions-detailed t)
+;; (setopt completions-format 'one-column)
+;; (setopt completions-group t)
+;; (setopt completion-auto-select 'second-tab)            ; Much more eager
+
+;; focus completion buffer on completion
+(defadvice complete-symbol (after jump-back activate)
+  (unless (string= (buffer-name) "*Completion*")
+    (other-window 1)))
 
 (keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete) ; TAB acts more like how it does in the shell
 

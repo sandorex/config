@@ -4,13 +4,7 @@
 ;; also terminal does not support C-; by default
 (keymap-global-set "C-x ;" 'comment-line)
 
-(keymap-global-set "<f9>"
-                   (lambda ()
-                     (interactive)
-                     ;; if in project then compile project
-                     (if (project-root nil)
-                         (project-compile)
-                       (recompile))))
+(keymap-global-set "C-c C-c" 'complete-symbol)
 
 (keymap-global-set "<f7>" 'theme-choose-variant) ; toggle variant easily
 
