@@ -6,6 +6,11 @@
 ;  :defer t
 ;  :hook (rust-ts-mode . eglot-ensure))
 
+;; less distracting eldoc, limit to single line
+(setopt eldoc-echo-area-display-truncation-message nil
+        eldoc-echo-area-prefer-doc-buffer t ; prefer eldoc window if it exists
+        eldoc-echo-area-use-multiline-p nil)
+
 ;; use treesitter rust mode
 (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
 

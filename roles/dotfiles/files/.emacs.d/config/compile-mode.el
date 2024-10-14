@@ -20,7 +20,6 @@
 
     ;; cargo ;;
     (add-to-list 'compilation-error-regexp-alist 'cargo)
-
-    ;; TODO properly set whether its a warning or error
     (add-to-list 'compilation-error-regexp-alist-alist
-		 '(cargo . ("\\(?:error\\|warning\\).*: .+\n.*--> \\(.+\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3 2 1)))))
+		 '(cargo . ("\\(?:error\\|warning\\)\\(?:\\[.+\\]\\)?: .+\n *--> \\(.+\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3 2 1)))))
+
