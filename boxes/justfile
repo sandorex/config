@@ -62,10 +62,10 @@ publish +IMAGES: (build IMAGES)
         echo "Publishing image ${image:?}"
 
         # push git sha tagged
-        podman image push "$image" "{{ repository_prefix }}/arcam-$image:{{ git_sha }}"
+        podman image push "arcam-$image" "{{ repository_prefix }}/arcam-$image:{{ git_sha }}"
 
         # push as latest
-        podman image push "$image" "{{ repository_prefix }}/arcam-$image:latest"
+        podman image push "arcam-$image" "{{ repository_prefix }}/arcam-$image:latest"
         
         echo
     done
