@@ -1,59 +1,71 @@
 #!/usr/bin/env just --justfile
 container_repository_username := 'sandorex'
 container_repository := 'ghcr.io'
-images_dir := join(justfile_directory(), 'images')
+
+images_dir := justfile_directory()
 dotfiles_dir := canonicalize(join(justfile_directory(), '../dotfiles'))
-image_tag_prefix := container_repository + '/' + container_repository_username + '/'
-image_tag_suffix := ':' + shell('git rev-parse --short=10 HEAD')
+repository_prefix := container_repository + '/' + container_repository_username
+git_sha := shell('git rev-parse --short=10 HEAD')
+
+images := "fedora-base fedora"
 
 _default:
     @just --justfile {{ justfile() }} --list
 
+# list images
+images:
+    @echo "{{ images }}"
+
+# build all images in order
+build-all: (build images)
+
 # build image
-build image:
+build +IMAGES:
     #!/usr/bin/env bash
-    echo "Building image {{ image }}"
+    set -euo pipefail
 
-    # im tagging it multiple times intentionally
-    # <image>:latest
-    # <image>:<git_sha>
-    # <repository>/<owner>/<image>:latest
-    # <repository>/<owner>/<image>:<git_sha>
-    podman build \
-        --security-opt label=disable \
-        --cache-ttl=10h \
-        -t "{{ image }}:latest" \
-        -t "{{ image + image_tag_suffix }}" \
-        -t "{{ image_tag_prefix + image }}:latest" \
-        -t "{{ image_tag_prefix + image + image_tag_suffix }}" \
-        -f "Containerfile.{{ image }}" \
-        --volume "{{ dotfiles_dir }}:/dotfiles:ro" \
-        "{{ justfile_directory() }}"
+    for image in {{ IMAGES }}; do
+        echo "Building image ${image:?}"
+        
+        # im tagging it multiple times intentionally
+        # arcam-<image>:latest
+        # arcam-<image>:<git_sha>
+        # <repository>/<owner>/arcam-<image>:latest
+        # <repository>/<owner>/arcam-<image>:<git_sha>
+        #
+        # --build-arg=SHA is important so the correct image is used as the base but
+        # this means the images need to be built in order, at least base images
+        podman build \
+            --security-opt label=disable \
+            --cache-ttl=10h \
+            --build-arg="SHA={{ git_sha }}" \
+            -t "arcam-$image:latest" \
+            -t "arcam-$image:{{ git_sha }}" \
+            -t "{{ repository_prefix }}/arcam-$image:latest" \
+            -t "{{ repository_prefix }}/arcam-$image:{{ git_sha }}" \
+            -f "{{ images_dir }}/Containerfile.$image" \
+            --volume "{{ dotfiles_dir }}:/dotfiles:ro" \
+            "{{ justfile_directory() }}"
 
-# publish image to repository after building it
-publish image: (build image)
+        echo
+    done
+
+# build and publish all images
+publish-all: (publish images)
+
+# build an publish image to the repository (requires podman to be logged in)
+publish +IMAGES: (build IMAGES)
     #!/usr/bin/env bash
-    echo "Publishing image {{ image }}"
-    
-    # push git sha tagged
-    podman image push "{{ image }}" "{{ image_tag_prefix + image + image_tag_suffix }}"
-    
-    # push as latest
-    podman image push "{{ image }}" "{{ image_tag_prefix + image }}:latest"
+    set -euo pipefail
 
-_ci_only:
-    #!/usr/bin/env bash
-    if [ ! -v CI ]; then
-        echo "This can only run in the CI"
-        exit 1
-    fi
+    for image in {{ IMAGES }}; do
+        echo "Publishing image ${image:?}"
 
-login-ci: _ci_only
-    #!/usr/bin/env bash
-    echo "${TOKEN:?}" | podman login \
-        --username "{{ container_repository_username }}" \
-        --password-stdin {{ container_repository }}
+        # push git sha tagged
+        podman image push "$image" "{{ repository_prefix }}/arcam-$image:{{ git_sha }}"
 
-logout-ci: _ci_only
-    #!/usr/bin/env bash
-    podman logout --all
+        # push as latest
+        podman image push "$image" "{{ repository_prefix }}/arcam-$image:latest"
+        
+        echo
+    done

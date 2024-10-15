@@ -1,5 +1,5 @@
-LABEL name="box-fedora" \
-      summary="fedora-toolbox based development container" \
+LABEL name="arcam-fedora-base" \
+      summary="Base image for fedora dev containers tailored for use with arcam" \
       maintainer="Sandorex <rzhw3h@gmail.com>"
 
 ARG VERSION=40
@@ -20,60 +20,33 @@ RUN echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf \
 RUN dnf -y install "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${VERSION}.noarch.rpm" \
    && dnf -y install "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${VERSION}.noarch.rpm"
 
-# SYSTEM
-COPY ./fedora/extra-packages /
-RUN dnf -y install $(<extra-packages) \
-    && rm /extra-packages \
+# essential tools and editors
+RUN dnf -y install git just curl wget zsh nano \
     && dnf clean all
 
-# NPM
-COPY ./fedora/npm-packages /
-RUN npm install -g $(<npm-packages) \
-    && rm /npm-packages \
-    && npm cache clean --force
-
-# PIP
-COPY ./fedora/pip-packages /
-RUN pip install $(<pip-packages) \
-    && rm /pip-packages \
-    && pip cache purge
-
+# setup binstall for use in other images
 ENV CARGO_HOME=/usr/local/
-
-# use binstall cause is faster
 RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
-
-COPY ./fedora/cargo-packages /
-RUN cargo binstall --no-confirm $(<cargo-packages) \
-    && rm /cargo-packages
-
 ENV CARGO_HOME=
 
 # install nix
 RUN sh <(curl -L https://nixos.org/nix/install) --daemon
 
-# install fira code font
-RUN mkdir -p /usr/share/fonts/nerd-fonts \
-    && curl -L https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.tar.xz \
-    | xz -d - \
-    | tar --wildcards -C /usr/share/fonts/nerd-fonts -xvf - '*.ttf' \
-    && fc-cache -fv
-
-# copy box config
-COPY ./fedora/config.toml /config.toml
-
-# copy init scripts
-COPY ./init.d /init.d
+# nix should be started early so scripts can use it
+COPY ./init.d/nix.sh /init.d/20-nix.sh
 
 # copy dotfiles if provided during build
 RUN if [[ -d /dotfiles ]]; then \
-        echo 'found dotfiles'; \
+        echo 'copying dotfiles into the image'; \
         rm -rf /etc/skel; \
         cp -r /dotfiles/ /etc/skel; \
     fi; true
 
 # disable zsh newuser prompt thingy
 RUN echo "zsh-newuser-install () {}" > /etc/zshenv
+
+# copy config
+COPY ./fedora-base/config.toml /config.toml
 
 COPY ./help.sh /help.sh
 ENTRYPOINT [ "/help.sh" ]

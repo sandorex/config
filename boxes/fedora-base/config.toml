@@ -1,0 +1,8 @@
+[[config]]
+name = "fedora-base"
+image = "ghcr.io/sandorex/arcam-fedora-base"
+network = true
+engine_args_podman = [
+    # persist nix packages
+    "--volume=box-nix:/nix"
+]

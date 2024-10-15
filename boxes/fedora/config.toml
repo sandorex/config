@@ -1,6 +1,6 @@
 [[config]]
-name = "dev-fedora"
-image = "ghcr.io/sandorex/dev-fedora"
+name = "fedora"
+image = "ghcr.io/sandorex/arcam-fedora"
 network = true
 env = {
     # tell neovim to use OSC52
