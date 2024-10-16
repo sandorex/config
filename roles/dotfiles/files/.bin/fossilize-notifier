@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# script to notify when fossilize_replay is running
+
+if ! command -v notify-send &>/dev/null; then
+    echo "notify-send not found"
+    exit 1
+fi
+
+running=0
+
+function num_of_proc() {
+    pgrep -f fossilize_replay | wc -l
+}
+
+function is_running() {
+    [[ "$(num_of_proc)" -gt 0 ]]
+}
+
+function msg_start() {
+    # i might miss this notification but its not that important
+    notify-send -t 5000 -i steam 'fossilize-notifier' "Fossilize has started with $(num_of_proc) threads"
+}
+
+function msg_stop() {
+    # intentionally critical as i want to know when fossilize finishes
+    notify-send -u critical -i steam 'fossilize-notifier' 'Fossilize has finished, hurray!'
+}
+
+while :; do
+    if [[ "$running" -eq 0 ]]; then
+        # not running so check infrequently
+        #echo "Checking for fossilize"
+
+        if is_running; then
+            running=1
+            msg_start
+            continue
+        fi
+
+        sleep 60s
+    else
+        # running so check more frequently
+        #echo "Waiting for fossilize to quit"
+        if ! is_running; then
+            running=0
+            msg_stop
+            continue
+        fi
+
+        sleep 30s
+    fi
+done
