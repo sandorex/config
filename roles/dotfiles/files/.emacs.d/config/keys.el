@@ -1,7 +1,7 @@
 ;; all keybindings and related
 
-;; i keep accidentally hitting ; instead of C-;
-;; also terminal does not support C-; by default
+;;; keybindings ;;;
+;; terminal does not support C-; also i keep hitting ; instead of C-;
 (keymap-global-set "C-x ;" 'comment-line)
 
 (keymap-global-set "C-c C-c" 'complete-symbol)

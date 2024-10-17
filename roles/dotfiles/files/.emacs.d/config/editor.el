@@ -71,6 +71,7 @@
 
 (setopt show-trailing-whitespace t) ; highlight trailling whitespace
 
+;; context menu mode in GUI only
 (when (display-graphic-p)
   (context-menu-mode))
 

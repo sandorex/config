@@ -6,17 +6,23 @@
 
 ;; Silence stupid startup message
 (setq inhibit-startup-echo-area-message (user-login-name))
+(setq inhibit-startup-screen t)
 (setq frame-resize-pixelwise t)
 
 (tool-bar-mode -1)      ; remove toolbar
 (menu-bar-mode -1)      ; remove menu bar
 
+;; default theme
+(load-theme 'leuven-dark t)
+
 (setq default-frame-alist
       '((vertical-scroll-bars . nil)
         (horizontal-scroll-bars . nil)
 
+        ;; default font override in custom-<host>.el
+        (font . "Fira Code Nerd Font Mono:pixelsize=16")
+
         ;; bit larger size
-        ;; TODO scale with font size
         (height . 30)
         (width . 90)
 
