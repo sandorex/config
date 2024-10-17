@@ -71,8 +71,11 @@
 (setopt completions-group t
         completions-detailed t
         completions-max-height 16
+        completions-sort nil
+        completions-format 'one-column
         completion-auto-select 'second-tab ; autofocus comp buffer on second tab
-        tab-always-indent 'complete)       ; complete on indent on tab
+        tab-always-indent 'complete       ; complete on indent on tab
+        completion-styles '(basic flex partial-completion emacs22))
 
 (keymap-set minibuffer-mode-map "TAB" 'minibuffer-complete) ; TAB acts more like how it does in the shell
 
