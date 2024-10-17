@@ -8,6 +8,8 @@
 
 (keymap-global-set "<f7>" 'theme-choose-variant) ; toggle variant easily
 
+(global-set-key [remap list-buffers] 'ibuffer) ; simply better
+
 ;; make C-x o sticky until other key is pressed
 (defun user--other-window-sticky (count &optional all-frames)
   (interactive "p")

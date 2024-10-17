@@ -12,15 +12,12 @@
 (tool-bar-mode -1)      ; remove toolbar
 (menu-bar-mode -1)      ; remove menu bar
 
-;; default theme
-(load-theme 'leuven-dark t)
-
 (setq default-frame-alist
       '((vertical-scroll-bars . nil)
         (horizontal-scroll-bars . nil)
 
         ;; default font override in custom-<host>.el
-        (font . "Fira Code Nerd Font Mono:pixelsize=16")
+        (font . "Noto Sans Mono:pixelsize=16")
 
         ;; bit larger size
         (height . 30)

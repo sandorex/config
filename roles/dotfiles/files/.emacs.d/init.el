@@ -1,19 +1,28 @@
 ;; Minimal Configuration
 
 (when (< emacs-major-version 29)
-  (error "Oldest supported emacs version is 29, you are on %s" emacs-major-version))
+  (error "Oldest supported Emacs version is 29, you are on %s" emacs-major-version))
 
 (require 'use-package)
 
 ;; load from user directory whatever it may be
 (add-to-list 'load-path (concat user-emacs-directory "config/"))
 
-(setopt custom-theme-directory (concat user-emacs-directory "themes/"))
-(add-to-list 'load-path custom-theme-directory)
+;; i do not use third-party themes
+;; (setopt custom-theme-directory (concat user-emacs-directory "themes/"))
+;; (add-to-list 'load-path custom-theme-directory)
+
+(setopt modus-themes-fringes 'subtle
+        modus-themes-subtle-line-numbers t
+        modus-themes-vivendi-color-overrides '((bg-main . "#010101")))
 
 ;; load machine specific custom file
 (setopt custom-file (concat user-emacs-directory "config/custom-" (system-name) ".el"))
 (load custom-file 'noerror 'nomessage)
+
+;; load default theme if no themes are enabled
+(unless custom-enabled-themes
+  (load-theme 'modus-vivendi))
 
 ;; set backup in tmp so its available if needed but deleted often for security
 (setopt backup-directory-alist '(("." . "/tmp/emacs-bak/")))
