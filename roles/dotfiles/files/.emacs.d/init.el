@@ -190,12 +190,6 @@
   ;; show links
   (dired-listing-switches "-alFhgob"))
 
-; TODO enable only if rust-analyzer is present
-;(use-package eglot
-;  :ensure t
-;  :defer t
-;  :hook (rust-ts-mode . eglot-ensure))
-
 (use-package eldoc
   :init
   ;; less distracting eldoc, limit to single line
@@ -228,10 +222,11 @@
             (yaml "https://github.com/ikatyang/tree-sitter-yaml"))))
 
 (use-package eglot
+  :hook (rust-ts-mode . eglot-ensure)
+  :custom
+  (eglot-autoshutdown t)             ; shutdown lsp server automatically
+  (eglot-send-changes-idle-time 0.1) ; faster update time
   :config
-  (setopt eglot-autoshutdown t              ; shutdown lsp server automatically
-          eglot-send-changes-idle-time 0.1) ; faster update time
-
   ;; improves performance? (stolen from internet)
   (fset #'jsonrpc--log-event #'ignore))
 
