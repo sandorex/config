@@ -167,6 +167,10 @@
 ;;; plugins (builtin) ;;;
 (use-package tramp
   :config
+  ;; do not cache completion as it completes with dead podman containers
+  (setopt tramp-completion-use-cache nil)
+
+  ;; add arcam support directly
   (add-to-list 'tramp-methods
                '("arcam"
                  (tramp-login-program "arcam")
@@ -175,10 +179,13 @@
                  (tramp-remote-shell-login ("-l"))
                  (tramp-remote-shell-args ("-i") ("-c"))))
 
-  ;; TODO replace this when arcam gets `arcam list --raw`
   (defun arcam--tramp-completion (&optional ignored)
-    (seq-filter (lambda (i) (string-suffix-p "-arcam" (nth 1 i)))
-                (tramp-container--completion-function "/usr/bin/podman")))
+    (when-let ((raw (shell-command-to-string "arcam list --raw"))
+               (lines (split-string raw "\n" 'omit))
+               (containers (mapcar (lambda (x) ; split by tab and map it
+                                     (let ((split (split-string x "\t" 'omit)))
+                                       `(nil ,(nth 0 split)))) lines)))
+      containers))
 
   (tramp-set-completion-function "arcam" '((arcam--tramp-completion ""))))
 
