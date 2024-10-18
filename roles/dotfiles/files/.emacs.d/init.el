@@ -165,6 +165,23 @@
 ;; (keymap-global-set "C-S-<down>" 'move-line-down)
 
 ;;; plugins (builtin) ;;;
+(use-package tramp
+  :config
+  (add-to-list 'tramp-methods
+               '("arcam"
+                 (tramp-login-program "arcam")
+                 (tramp-login-args (("exec") ("%h") ("--") ("%l")))
+                 (tramp-remote-shell "/bin/bash")
+                 (tramp-remote-shell-login ("-l"))
+                 (tramp-remote-shell-args ("-i") ("-c"))))
+
+  ;; TODO replace this when arcam gets `arcam list --raw`
+  (defun arcam--tramp-completion (&optional ignored)
+    (seq-filter (lambda (i) (string-suffix-p "-arcam" (nth 1 i)))
+                (tramp-container--completion-function "/usr/bin/podman")))
+
+  (tramp-set-completion-function "arcam" '((arcam--tramp-completion ""))))
+
 (use-package compile
   :config
   ;; focus compilation-mode buffer on compile/recompile
@@ -228,7 +245,11 @@
   (eglot-send-changes-idle-time 0.1) ; faster update time
   :config
   ;; improves performance? (stolen from internet)
-  (fset #'jsonrpc--log-event #'ignore))
+  (fset #'jsonrpc--log-event #'ignore)
+  :bind (:map eglot-mode-map
+              ("C-c l f" . eglot-format-buffer)
+              ("C-c l r" . eglot-rename)
+              ("C-c l d" . eglot-find-declaration)))
 
 (use-package flymake
   :bind (:map flymake-mode-map
