@@ -1,4 +1,6 @@
-;; theming
+;;; theming.el --- theming
+;;; Commentary:
+;;; Code:
 
 ;; set the modeline format
 (setopt mode-line-format
@@ -30,12 +32,9 @@
           " (%l:%c)"
           ))
 
-(defun user--theme-update ()
+(defun user--modeline-update ()
   "Sets up colors which get overwritten by themes"
   (let ((bg-color "#712E8E"))
-    (set-face-attribute 'cursor nil
-                        :background "#8E46AE")
-
     (set-face-attribute 'minibuffer-prompt nil
                         :foreground "white"
                         :background bg-color)
@@ -49,15 +48,18 @@
     (set-face-attribute 'mode-line nil
                         :box nil
                         :foreground "white"
-                        :background "#712E8E")
+                        :background bg-color)
     (set-face-attribute 'mode-line-inactive nil
                         :box nil
                         :foreground "#888888e"
-                        :background "#712E8E")))
+                        :background bg-color)))
 
 ;; call it once on setup
-(user--theme-update)
+(user--modeline-update)
 
 ;; reload modeline after setting a theme as the theme overrides it..
 (defadvice load-theme (after load-theme activate)
-  (user--theme-update))
+  (user--modeline-update))
+
+(provide 'theming)
+;;; theming.el ends here

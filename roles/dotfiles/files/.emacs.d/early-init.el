@@ -1,28 +1,27 @@
 (setq emacs--initial-gc-threshold gc-cons-threshold)
-(setq gc-cons-threshold 10000000)
-(setq byte-compile-warnings '(not obsolete))
-(setq warning-suppress-log-types '((comp) (bytecomp)))
-(setq native-comp-async-report-warnings-errors 'silent)
+(setopt gc-cons-threshold 10000000
+        warning-suppress-log-types '((comp) (bytecomp))
+        native-comp-async-report-warnings-errors 'silent
 
-;; Silence stupid startup message
-(setq inhibit-startup-echo-area-message (user-login-name))
-(setq inhibit-startup-screen t)
-(setq frame-resize-pixelwise t)
+        ;; prevent startup message
+        inhibit-startup-echo-area-message (user-login-name)
+        inhibit-startup-screen t
+        frame-resize-pixelwise t)
 
 (tool-bar-mode -1)      ; remove toolbar
 (menu-bar-mode -1)      ; remove menu bar
 
-(setq default-frame-alist
-      '((vertical-scroll-bars . nil)
-        (horizontal-scroll-bars . nil)
+(setopt default-frame-alist
+        '((vertical-scroll-bars . nil)
+          (horizontal-scroll-bars . nil)
 
-        ;; default font override in custom-<host>.el
-        (font . "Noto Sans Mono:pixelsize=16")
+          ;; default font override in custom-<host>.el
+          (font . "Noto Sans Mono:pixelsize=16")
 
-        ;; bit larger size
-        (height . 30)
-        (width . 90)
+          ;; bit larger size
+          (height . 30)
+          (width . 90)
 
-        ;; prevent flashes when theme loads
-        (ns-appearance . dark)
-        (ns-transparent-titlebar . t)))
+          ;; prevent flashes when theme loads
+          (ns-appearance . dark)
+          (ns-transparent-titlebar . t)))
