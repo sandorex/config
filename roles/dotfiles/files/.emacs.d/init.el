@@ -21,12 +21,12 @@
         ;; disable backups
         make-backup-files nil)
 
+(setq user-theme-light 'leuven
+      user-theme-dark 'modus-vivendi
+      user-theme-current 'dark) ; start dark always
+
 ;; load machine specific custom file
 (load custom-file 'noerror 'nomessage)
-
-;; load default theme if no themes are enabled
-(unless custom-enabled-themes
-  (load-theme 'modus-vivendi))
 
 ;;; other files ;;;
 (load "theming" nil 'nomessage)
@@ -51,6 +51,7 @@
   ;; enter spaces not tabs
   (indent-tabs-mode nil)
   (sentence-end-double-space nil)
+  (tab-width 4)
 
   (use-short-answers t)
   (confirm-kill-emacs 'yes-or-no-p)
@@ -107,11 +108,29 @@
   (put 'narrow-to-region 'disabled nil))
 
 ;;; non-plugin keybindings ;;;
+(when (display-graphic-p)
+  ;; remove C-z when in GUI as it's annoying
+  (keymap-global-unset "C-z"))
 (keymap-global-set "C-c x r" 'restart-emacs)
 (keymap-global-set "C-x ;" 'comment-line) ; C-; not supported in terminal
 (keymap-global-set "C-c d" 'duplicate-line)
 
-(keymap-global-set "<f7>" 'theme-choose-variant) ; toggle light/dark theme
+(defun user-theme-toggle ()
+  "Set or toggle light and dark theme.
+Use variables `user-theme-light' and `user-theme-dark'"
+  (interactive)
+  (custom-set-variables '(custom-enabled-themes nil)) ; remove old themes so there is no conflicts
+  (when-let ((current (if (eq (when (boundp 'user-theme-current) user-theme-current) 'dark)
+                          'light
+                        'dark))
+             (theme (if (eq current 'dark)
+                        user-theme-dark
+                      user-theme-light)))
+    (setq user-theme-current current)
+    (custom-set-variables `(custom-enabled-themes '(,theme)))
+    (load-theme theme))
+  )
+(keymap-global-set "<f7>" 'user-theme-toggle) ; toggle light/dark theme
 
 (global-set-key [remap list-buffers] 'ibuffer) ; simply better
 
@@ -146,14 +165,17 @@
 
 (keymap-global-set "C-x z" 'zoom-window)
 
+;; (keymap-global-set "C-S-<up>" 'move-line-up)
+;; (keymap-global-set "C-S-<down>" 'move-line-down)
+
+;;; custom functions (interactive) ;;;
+
 ;; TODO make it work with multiple lines
 ;; ;; move line up
 ;; (defun move-line-up ()
 ;;   (interactive)
 ;;   (transpose-lines 1)
 ;;   (previous-line 2))
-
-;; (keymap-global-set "C-S-<up>" 'move-line-up)
 
 ;; ;; move line down
 ;; (defun move-line-down ()
@@ -162,7 +184,14 @@
 ;;   (transpose-lines 1)
 ;;   (previous-line 1))
 
-;; (keymap-global-set "C-S-<down>" 'move-line-down)
+(defun eshell-host ()
+  "Open eshell in home directory on localhost.
+
+  Useful when using tramp to open eshell on host"
+  (interactive)
+  (let ((default-directory (getenv "HOME")))
+    ;; open new eshell if it does not exist
+    (eshell 69)))
 
 ;;; plugins (builtin) ;;;
 (use-package tramp

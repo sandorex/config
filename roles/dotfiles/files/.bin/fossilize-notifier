@@ -16,13 +16,12 @@ function is_running() {
     [[ "$(num_of_proc)" -gt 0 ]]
 }
 
+# messages are critical so i dont miss the notificaiton
 function msg_start() {
-    # i might miss this notification but its not that important
-    notify-send -t 5000 -i steam 'fossilize-notifier' "Fossilize has started with $(num_of_proc) threads"
+    notify-send -u critical -i steam 'fossilize-notifier' "Fossilize has started with $(num_of_proc) threads"
 }
 
 function msg_stop() {
-    # intentionally critical as i want to know when fossilize finishes
     notify-send -u critical -i steam 'fossilize-notifier' 'Fossilize has finished, hurray!'
 }
 

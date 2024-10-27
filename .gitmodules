@@ -4,6 +4,3 @@
 [submodule "roles/dotfiles/files/.config/zsh/plugins/zsh-syntax-highlighting"]
 	path = roles/dotfiles/files/.config/zsh/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
-[submodule "roles/dotfiles/files/.emacs.d/plugins/kkp"]
-	path = roles/dotfiles/files/.emacs.d/plugins/kkp
-	url = https://github.com/benjaminor/kkp.git
