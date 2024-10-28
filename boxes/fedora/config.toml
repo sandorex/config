@@ -3,16 +3,18 @@ name = "fedora"
 image = "ghcr.io/sandorex/arcam-fedora"
 network = true
 env = {
+    "BOOTSTRAP_NVIM" = "1",
+
     # tell neovim to use OSC52
-    "NVIM_FORCE_OSC52" = "true"
+    "NVIM_FORCE_OSC52" = "true",
 }
 engine_args_podman = [
     # persist neovim plugins
     "--volume=box-nvim:$HOME/.local/share/nvim",
-    
+
     # persist cargo packages
     "--volume=box-cargo:$HOME/.cargo/registry",
-    
+
     # persist nix packages
     "--volume=box-nix:/nix"
 ]
