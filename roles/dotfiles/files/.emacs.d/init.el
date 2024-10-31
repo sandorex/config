@@ -34,7 +34,7 @@
 ;; configure the editor itself
 (use-package emacs
   :hook ((prog-mode . display-line-numbers-mode)
-         ;;(prog-mode . whitespace-mode)
+         (prog-mode . hs-minor-mode) ; folding
          (prog-mode . flymake-mode)
 
          (text-mode . visual-line-mode) ; nicer wrap when editing raw text
@@ -85,6 +85,8 @@
   (scroll-conservatively 101)
   (scroll-up-aggressively 0.01)
   (scroll-down-aggressively 0.01)
+  (mouse-wheel-progressive-speed nil) ; disable the unholy scroll acceleration
+  (text-scale-mode-amount 0.25) ; smaller increment/decrement when changing font scale
 
   (history-length 25)       ; minibuffer history size
   (mark-ring-max 32)        ; mark buffer size
@@ -196,6 +198,13 @@ Use variables `user-theme-light' and `user-theme-dark'"
 ;;; plugins (builtin) ;;;
 (use-package tramp
   :config
+  (setopt remote-file-name-inhibit-cache 30)
+  (setopt vc-ignore-dir-regexp
+          (format "%s\\|%s"
+                  vc-ignore-dir-regexp
+                  tramp-file-name-regexp))
+  (setopt tramp-verbose 1)
+
   ;; do not cache completion as it completes with dead podman containers
   (setopt tramp-completion-use-cache nil)
 
@@ -235,6 +244,10 @@ Use variables `user-theme-light' and `user-theme-dark'"
   (add-to-list 'compilation-error-regexp-alist 'cargo)
   (add-to-list 'compilation-error-regexp-alist-alist
 	       '(cargo . ("\\(?:error\\|warning\\)\\(?:\\[.+\\]\\)?: .+\n *--> \\(.+\\):\\([0-9]+\\):\\([0-9]+\\)" 1 2 3 2 1))))
+
+(use-package hideshow
+  :bind (:map hs-minor-mode-map
+              ("C-c s" . hs-toggle-hiding)))
 
 (use-package dired
   :custom
@@ -279,6 +292,7 @@ Use variables `user-theme-light' and `user-theme-dark'"
   :custom
   (eglot-autoshutdown t)             ; shutdown lsp server automatically
   (eglot-send-changes-idle-time 0.1) ; faster update time
+  (eglot-ignored-server-capabilities '(:inlayHintProvider))
   :config
   ;; improves performance? (stolen from internet)
   (fset #'jsonrpc--log-event #'ignore)
