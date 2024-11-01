@@ -53,6 +53,10 @@
   (sentence-end-double-space nil)
   (tab-width 4)
 
+  ;; better splitting threshold, prefer horizontal splits over vertical
+  (split-width-threshold 100)
+  (split-height-threshold 24)
+
   (use-short-answers t)
   (confirm-kill-emacs 'yes-or-no-p)
 
@@ -244,7 +248,8 @@ Use variables `user-theme-light' and `user-theme-dark'"
 (use-package hideshow
   :bind (:map hs-minor-mode-map
               ;; simple code fold toggle
-              ("C-c f" . hs-toggle-hiding)))
+              ("C-c f" . hs-toggle-hiding)
+              ("C-c F" . hs-hide-level)))
 
 (use-package dired
   :custom
