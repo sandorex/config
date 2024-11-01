@@ -199,10 +199,6 @@ Use variables `user-theme-light' and `user-theme-dark'"
 (use-package tramp
   :config
   (setopt remote-file-name-inhibit-cache 30)
-  (setopt vc-ignore-dir-regexp
-          (format "%s\\|%s"
-                  vc-ignore-dir-regexp
-                  tramp-file-name-regexp))
   (setopt tramp-verbose 1)
 
   ;; do not cache completion as it completes with dead podman containers
@@ -247,7 +243,8 @@ Use variables `user-theme-light' and `user-theme-dark'"
 
 (use-package hideshow
   :bind (:map hs-minor-mode-map
-              ("C-c s" . hs-toggle-hiding)))
+              ;; simple code fold toggle
+              ("C-c f" . hs-toggle-hiding)))
 
 (use-package dired
   :custom
