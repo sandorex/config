@@ -2,12 +2,6 @@
 name = "fedora"
 image = "ghcr.io/sandorex/arcam-fedora"
 network = true
-env = {
-    "BOOTSTRAP_NVIM" = "1",
-
-    # tell neovim to use OSC52
-    "NVIM_FORCE_OSC52" = "true",
-}
 engine_args_podman = [
     # persist neovim plugins
     "--volume=box-nvim:$HOME/.local/share/nvim",
@@ -15,11 +9,18 @@ engine_args_podman = [
     # persist cargo packages
     "--volume=box-cargo:$HOME/.cargo/registry",
 
-    # persist nix packages
-    "--volume=box-nix:/nix"
+    # persist rustup toolchains
+    "--volume=box-rustup:/opt/rustup",
 ]
 on_init_pre = [
     # all volumes are owned by root by default
     "sudo chown $USER:$USER ~/.local/share/nvim",
-    "sudo chown $USER:$USER ~/.cargo ~/.cargo/registry"
+    "sudo chown $USER:$USER ~/.cargo ~/.cargo/registry",
 ]
+
+[config.env]
+# tell neovim to use OSC52
+"NVIM_FORCE_OSC52" = "true"
+
+# bootstrap nvim on startup
+"BOOTSTRAP_NVIM" = "1"

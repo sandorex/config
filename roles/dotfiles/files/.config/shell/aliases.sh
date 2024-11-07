@@ -29,6 +29,7 @@ alias gau='git add -u'
 alias gp='git add --patch'
 alias gri='git rebase -i'
 alias gc='git commit'
+alias gmnc='git merge --no-commit --no-ff'
 alias f="$FILE_MANAGER"
 alias m='tmux'
 

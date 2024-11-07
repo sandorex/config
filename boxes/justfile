@@ -7,7 +7,7 @@ dotfiles_dir := canonicalize(join(justfile_directory(), '../dotfiles'))
 repository_prefix := container_repository + '/' + container_repository_username
 git_sha := shell('git rev-parse --short=10 HEAD')
 
-images := "fedora-base fedora"
+images := "fedora-base fedora-nix fedora"
 
 _default:
     @just --justfile {{ justfile() }} --list

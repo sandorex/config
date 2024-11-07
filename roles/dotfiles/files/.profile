@@ -7,9 +7,7 @@
 
 export DOTFILES="$HOME/.dotfiles/dotfiles"  # path to pure dotfiles (stowable)
 export AGSHELLDIR="$HOME/.config/shell"     # agnostic shell stuff
-export NPM_HOME="$HOME/.npm-packages"
 
-PATH="$PATH:$NPM_HOME/bin"
 PATH="$PATH:$HOME/.bin"
 PATH="$PATH:$HOME/.local/bin"
 PATH="$PATH:$HOME/.bin/polyfill"        # fallback path for optional software

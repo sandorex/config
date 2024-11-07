@@ -22,27 +22,15 @@ RUN pip install $(<pip-packages) \
     && rm /pip-packages \
     && pip cache purge
 
-ENV CARGO_HOME=/usr/local/
+ENV RUSTUP_HOME=/opt/rustup
+RUN mkdir -p $RUSTUP_HOME
 
-COPY ./fedora/cargo-packages /
-RUN cargo binstall --no-confirm $(<cargo-packages) \
-    && rm /cargo-packages
-
-# if not unset then cargo breaks
-ENV CARGO_HOME=
-
-# install fira code font
-RUN mkdir -p /usr/share/fonts/nerd-fonts \
-    && curl -L https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FiraCode.tar.xz \
-    | xz -d - \
-    | tar --wildcards -C /usr/share/fonts/nerd-fonts -xvf - '*.ttf' \
-    && fc-cache -fv
-
-# copy box config
+# copy arcam config
 COPY ./fedora/config.toml /config.toml
 
 # copy neovim init script
 COPY ./init.d/neovim.sh /init.d/90-neovim.sh
+COPY ./init.d/rustup.sh /init.d/20-rustup.sh
 
 COPY ./help.sh /help.sh
 ENTRYPOINT [ "/help.sh" ]

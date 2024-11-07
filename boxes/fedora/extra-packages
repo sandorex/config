@@ -1,16 +1,12 @@
 zsh
 nano
 neovim
-emacs
+emacs-nw
 git
 gitui
 lsd
 just
 bat
-cargo
-rust-src
-rust-analyzer
-clippy
 npm
 gcc
 clang
@@ -19,6 +15,7 @@ make
 cmake
 perl
 python3-pip
+rustup
 latexmk
 shellcheck
 glibc-langpack-en
