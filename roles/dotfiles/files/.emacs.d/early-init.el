@@ -8,8 +8,11 @@
         inhibit-startup-screen t
         frame-resize-pixelwise t)
 
-(tool-bar-mode -1)      ; remove toolbar
-(menu-bar-mode -1)      ; remove menu bar
+;; remove tool bar but ignore errors in emacs-nox
+(ignore-errors (tool-bar-mode -1))
+
+;; remove menu bar
+(menu-bar-mode -1)
 
 (setopt default-frame-alist
         '((vertical-scroll-bars . nil)

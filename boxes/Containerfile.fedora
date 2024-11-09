@@ -25,6 +25,11 @@ RUN pip install $(<pip-packages) \
 ENV RUSTUP_HOME=/opt/rustup
 RUN mkdir -p $RUSTUP_HOME
 
+# copy dotfiles (this is in case any package decides to mess with /etc/skel)
+RUN echo 'Copying dotfiles into /etc/skel'; \
+    rm -rf /etc/skel; \
+    cp -r /dotfiles/ /etc/skel;
+
 # copy arcam config
 COPY ./fedora/config.toml /config.toml
 

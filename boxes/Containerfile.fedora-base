@@ -29,18 +29,10 @@ ENV CARGO_HOME=/usr/local/
 RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
 ENV CARGO_HOME=
 
-## install nix
-#RUN sh <(curl -L https://nixos.org/nix/install) --daemon
-#
-## nix should be started early so scripts can use it
-#COPY ./init.d/nix.sh /init.d/20-nix.sh
-
-# copy dotfiles if provided during build
-RUN if [[ -d /dotfiles ]]; then \
-        echo 'copying dotfiles into the image'; \
-        rm -rf /etc/skel; \
-        cp -r /dotfiles/ /etc/skel; \
-    fi; true
+# copy dotfiles
+RUN echo 'Copying dotfiles into /etc/skel'; \
+    rm -rf /etc/skel; \
+    cp -r /dotfiles/ /etc/skel;
 
 # disable zsh newuser prompt thingy
 RUN echo "zsh-newuser-install () {}" > /etc/zshenv
