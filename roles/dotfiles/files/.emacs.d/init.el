@@ -208,14 +208,20 @@ Use variables `user-theme-light' and `user-theme-dark'"
   ;; do not cache completion as it completes with dead podman containers
   (setopt tramp-completion-use-cache nil)
 
+  ;; use PATH from tramp when searching
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path)
+
   ;; add arcam support directly
   (add-to-list 'tramp-methods
                '("arcam"
+                 ;; TODO not working properly the PATH is messed up
                  (tramp-login-program "arcam")
+                 ;; using login and shell so that PATH is same as for the user
                  (tramp-login-args (("exec") ("%h") ("--") ("%l")))
                  (tramp-remote-shell "/bin/bash")
                  (tramp-remote-shell-login ("-l"))
-                 (tramp-remote-shell-args ("-i") ("-c"))))
+                 (tramp-remote-shell-args ("-i") ("-c"))
+                 ))
 
   (defun arcam--tramp-completion (&optional ignored)
     (when-let ((raw (shell-command-to-string "arcam list --raw"))

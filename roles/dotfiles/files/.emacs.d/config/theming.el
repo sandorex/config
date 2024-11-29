@@ -32,9 +32,11 @@
           " (%l:%c)"
           ))
 
+;; TODO make the buffer name background dimmer as well on when inactive
 (defun user--modeline-update ()
-  "Sets up colors which get overwritten by themes"
-  (let ((bg-color "#712E8E"))
+  "Set up colors which get overwritten by themes."
+  (let ((bg-color "#712E8E")
+        (bg-color-inactive "#351344"))
     (set-face-attribute 'minibuffer-prompt nil
                         :foreground "white"
                         :background bg-color)
@@ -51,8 +53,8 @@
                         :background bg-color)
     (set-face-attribute 'mode-line-inactive nil
                         :box nil
-                        :foreground "#888888e"
-                        :background bg-color)))
+                        :foreground "white"
+                        :background bg-color-inactive)))
 
 ;; call it once on setup
 (user--modeline-update)

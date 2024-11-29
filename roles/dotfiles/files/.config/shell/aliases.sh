@@ -32,6 +32,7 @@ alias gc='git commit'
 alias gmnc='git merge --no-commit --no-ff'
 alias f="$FILE_MANAGER"
 alias m='tmux'
+alias mv='mv -i' # safe mv, ask on overwrite
 
 # intentionally different command so i know if i am trashing or deleting
 # NOTE: requires gvfs
