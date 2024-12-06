@@ -1,4 +1,0 @@
-[[config]]
-name = "fedora-base"
-image = "ghcr.io/sandorex/arcam-fedora-base"
-network = true

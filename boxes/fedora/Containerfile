@@ -77,9 +77,15 @@ EOF
 RUN echo "zsh-newuser-install () {}" > /etc/zshenv
 
 # copy dotfiles (intentionally last as some packages modify /etc/skel)
-RUN echo 'Replacing /etc/skel with /dotfiles' \
-    && rm -rf /etc/skel \
-    && cp -r /dotfiles/ /etc/skel
+RUN <<EOF
+if [[ -d /dotfiles ]]; then
+    echo 'Replacing /etc/skel with /dotfiles'
+    rm -rf /etc/skel
+    cp -r /dotfiles/ /etc/skel
+else
+    echo 'Dotfiles not found'
+fi
+EOF
 
 COPY <<EOF /help.sh
 #!/bin/sh

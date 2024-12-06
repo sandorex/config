@@ -1,71 +1,72 @@
 #!/usr/bin/env just --justfile
+
 container_repository_username := 'sandorex'
 container_repository := 'ghcr.io'
 
-images_dir := justfile_directory()
 dotfiles_dir := canonicalize(join(justfile_directory(), '../dotfiles'))
 repository_prefix := container_repository + '/' + container_repository_username
 git_sha := shell('git rev-parse --short=10 HEAD')
 
-images := "fedora-base fedora-nix fedora"
-
 _default:
-    @just --justfile {{ justfile() }} --list
+    @{{ just_executable() }} -f {{ justfile() }} --list
 
-# list images
-images:
-    @echo "{{ images }}"
-
-# build all images in order
-build-all: (build images)
-
-# build image
-build +IMAGES:
+# build custom image
+build name directory options *args:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    for image in {{ IMAGES }}; do
-        echo "Building image ${image:?}"
-        
-        # im tagging it multiple times intentionally
-        # arcam-<image>:latest
-        # arcam-<image>:<git_sha>
-        # <repository>/<owner>/arcam-<image>:latest
-        # <repository>/<owner>/arcam-<image>:<git_sha>
-        #
-        # --build-arg=SHA is important so the correct image is used as the base but
-        # this means the images need to be built in order, at least base images
-        podman build \
-            --security-opt label=disable \
-            --cache-ttl=10h \
-            --build-arg="SHA={{ git_sha }}" \
-            -t "arcam-$image:latest" \
-            -t "arcam-$image:{{ git_sha }}" \
-            -t "{{ repository_prefix }}/arcam-$image:latest" \
-            -t "{{ repository_prefix }}/arcam-$image:{{ git_sha }}" \
-            -f "{{ images_dir }}/Containerfile.$image" \
-            --volume "{{ dotfiles_dir }}:/dotfiles:ro" \
-            "{{ justfile_directory() }}"
+    echo "Building image 'arcam-{{ name }}' with options '{{ options }}'"
 
-        echo
-    done
+    # building as if it was built locally and remotely at the same time
+    podman build \
+        --security-opt label=disable \
+        --cache-ttl=10h \
+        --build-arg "OPTIONS={{ options }}" \
+        -t "arcam-{{ name }}:latest" \
+        -t "arcam-{{ name }}:{{ git_sha }}" \
+        -t "{{ repository_prefix }}/arcam-{{ name }}:latest" \
+        -t "{{ repository_prefix }}/arcam-{{ name }}:{{ git_sha }}" \
+        --volume "{{ dotfiles_dir }}:/dotfiles:ro" \
+        {{ args }} \
+        "{{ justfile_directory() }}/{{ directory }}"
 
-# build and publish all images
-publish-all: (publish images)
+    echo
 
-# build an publish image to the repository (requires podman to be logged in)
-publish +IMAGES: (build IMAGES)
+_publish name directory options *args:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    for image in {{ IMAGES }}; do
-        echo "Publishing image ${image:?}"
+    echo "Publishing image 'arcam-{{ name }}'"
 
-        # push git sha tagged
-        podman image push "arcam-$image" "{{ repository_prefix }}/arcam-$image:{{ git_sha }}"
+    # push git sha tagged
+    podman image push "arcam-{{ name }}" "{{ repository_prefix }}/arcam-{{ name }}:{{ git_sha }}"
 
-        # push as latest
-        podman image push "arcam-$image" "{{ repository_prefix }}/arcam-$image:latest"
-        
-        echo
-    done
+    # push as latest
+    podman image push "arcam-{{ name }}" "{{ repository_prefix }}/arcam-{{ name }}:latest"
+
+    echo
+
+# NOTE: this looks pretty hacky but i do not know how else to define a list of options so i just
+# made a recipe that calls command with arguments for each image and then i can abuse that in other
+# recipes
+_all cmd:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # NOTE the images are defined here
+    {{ cmd }} 'f40' fedora 'rustup utils'
+    {{ cmd }} 'f40-zig' fedora 'rustup utils zig code-server'
+
+## here i using the _all recipe to run printf on each container arguments to print a nice table of
+## all predefined images and their options
+##
+# list all predefined images and their options
+list: &&(_all "printf '|%-25s |%-25s |%-60s\n'")
+    @printf '|%-25s |%-25s |%-60s\n' "NAME" "DIRECTORY" "OPTIONS"
+
+# build all predefined images
+build-all: (_all "'" + just_executable() + "' -f '" + justfile() + "' build")
+
+# build then publish all predefined images
+_publish-all: (build-all) (_all "'" + just_executable() + "' -f '" + justfile() + "' _publish")
+
