@@ -26,6 +26,8 @@ vim.keymap.set('n', ',', '@@', { desc = 'Repeat last used macro', silent = true 
 ---- KEYBINDINGS ----
 -- buffer
 vim.keymap.set('n', '<leader>B', '<cmd>bd<cr>', { desc = 'Drop buffer', silent = true })
+vim.keymap.set('n', '<leader>b', ':buffer<space>', { desc = 'Select buffer shorthand', silent = false })
+
 vim.keymap.set('n', '[b', '<cmd>bprev<cr>', { desc = 'Previous buffer', silent = true })
 vim.keymap.set('n', ']b', '<cmd>bnext<cr>', { desc = 'Next buffer', silent = true })
 
