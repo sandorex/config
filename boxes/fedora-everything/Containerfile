@@ -1,5 +1,12 @@
+# configurable fedora image for arcam
+#
+# seemingly overcomplicated but actually simplifies the containers that do not fit the whole
+# inheritance paradigm
+#
+# configure using build-arg OPTIONS
+
 LABEL name="arcam-fedora-everything" \
-      summary="Image for fedora dev containers tailored for use with arcam" \
+      summary="Configurable arcam container image for development" \
       maintainer="Sandorex <rzhw3h@gmail.com>"
 
 ARG VERSION=40
@@ -32,73 +39,25 @@ COPY ./pkglist /temp/pkglist
 RUN dnf -y install $(</temp/pkglist/base-dnf) \
     && cp -n /temp/init/neovim.sh /init.d/90-neovim.sh
 
-# # setup binstall for use in other images
-# ENV CARGO_HOME=/usr/local/
-# RUN curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
-# ENV CARGO_HOME=
-
 # --- OPTIONS --- #
 ARG OPTIONS
 
-# TODO extensions config etc?
-# add code-server
-# ARG OPT_CODE_SERVER=n
-RUN if [[ "$OPTIONS" == *"code-server"* ]]; then /temp/scripts/opt_code_server.sh; fi
-
-# TODO add zellij?
 # add utilities
-# ARG OPT_UTILS=n
 RUN if [[ "$OPTIONS" == *"utils"* ]]; then /temp/scripts/opt_utils.sh; fi
-# RUN <<EOF
-# if [ "$OPT_UTILS" = "y" ]; then
-#     echo "Installing utilities"
-#     dnf -y install $(</temp/utils-dnf)
-#     cp -n /temp/init/neovim.sh /init.d/90-neovim.sh
-#     npm install -g $(</temp/utils-npm)
-#     pip install $(</temp/utils-pip)
-# fi
-# EOF
 
-# RUN if [ "$OPT_UTILS" = "y" ]; then \
-#         echo "Installing utilities" \
-#         && dnf -y install $(</temp/utils-dnf) \
-#         && cp -n /temp/init/neovim.sh /init.d/90-neovim.sh \
-#         && npm install -g $(</temp/utils-npm) \
-#         && pip install $(</temp/utils-pip) \
-#         ;else :; fi
-
-# install rustup by default (10ish mb not counting the toolchain which can be volume cached)
-# ARG OPT_RUSTUP=y
+# install rustup (very small)
 ENV RUSTUP_HOME=/opt/rustup
 RUN if [[ "$OPTIONS" == *"rustup"* ]]; then /temp/scripts/opt_rustup.sh; fi
-# RUN <<EOF
-# if [ "$OPT_RUSTUP" = "y" ]; then
-#     echo "Installing rustup"
-#     mkdir -p $RUSTUP_HOME
-#     cp -n /temp/init/neovim.sh /init.d/20-rustup.sh
-# fi
-# EOF
 
-# install zig (~100mb)
-# ARG OPT_ZIG=y
+# add code-server
+RUN if [[ "$OPTIONS" == *"code-server"* ]]; then /temp/scripts/opt_code_server.sh; fi
+
+# install zig
 RUN if [[ "$OPTIONS" == *"zig"* ]]; then /temp/scripts/opt_zig.sh; fi
-# RUN <<EOF
-# if [ "$OPT_RUSTUP" = "y" ]; then
-#     echo "Installing zig"
-#     dnf -y install zig
-# fi
-# EOF
 
-# install nix (quite large beware)
-# ARG OPT_NIX=n
+# install nix
 RUN if [[ "$OPTIONS" == *"nix"* ]]; then /temp/scripts/opt_nix.sh; fi
-# RUN <<EOF
-# if [ "$OPT_NIX" = "y" ]; then
-#     echo "Installing Nix"
-#     sh <(curl -L https://nixos.org/nix/install) --daemon
-#     cp -n /temp/init/nix.sh /init.d/05-nix.sh
-# fi
-# EOF
+# --- OPTIONS --- #
 
 # clean up only once as it allows caching things above
 RUN <<EOF
