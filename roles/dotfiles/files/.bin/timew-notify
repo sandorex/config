@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+# script to use timewarrior (timew) using desktop notifications and keybindings
+#
+# requires notify-send timew (kdialog | zenity)
+
+set -eo pipefail
+
+if ! command -v notify-send &>/dev/null; then
+    echo "notify-send not installed..."
+    exit 66
+fi
+
+if ! command -v timew &>/dev/null; then
+    echo "timewarrior (timew) not installed..."
+    exit 66
+fi
+
+DIALOG_TITLE="timew-notify"
+USE_ZENITY=1
+ANSWER=""
+
+function notification() {
+        notify-send -i clock -t "${3:-1500}" -u low -a "$DIALOG_TITLE" "${1:?}" "${2:?}"
+}
+
+function ask_input() {
+    local description="${1:?}"
+    local default="${2:-}"
+
+    if [[ "$USE_ZENITY" -eq 1 ]]; then
+        ANSWER="$(zenity --entry --title="$DIALOG_TITLE" --text="$description" --entry-text="$default")"
+    else
+        # NOTE added geometry as the window gets too squished and title is unreadable
+        ANSWER="$(kdialog --title "$DIALOG_TITLE" --inputbox "$description" "$default" --geometry 300x300+300+300)"
+    fi
+}
+
+function show_help() {
+    # simple help
+    cat <<EOF
+Usage: $0 [--kdialog] <start|stop|cancel|status>
+
+EOF
+}
+
+POSITIONAL_ARGS=()
+
+while [ $# -gt 0 ]; do
+       case "$1" in
+        --kdialog)
+            USE_ZENITY=0
+            shift
+            ;;
+        --help|-h)
+            show_help
+            exit
+            ;;
+        -*)
+            echo "Unknown option $1"
+            exit 1
+            ;;
+        *)
+            # save positional arg
+            POSITIONAL_ARGS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# restore positional parameters
+set -- "${POSITIONAL_ARGS[@]}"
+
+if [[ "$USE_ZENITY" -eq 1 ]]; then
+    if ! command -v zenity &>/dev/null; then
+        echo "zenity is not installed..."
+        exit 99
+    fi
+else
+    if ! command -v kdialog &>/dev/null; then
+        echo "kdialog is not installed..."
+        exit 99
+    fi
+fi
+
+case "$1" in
+    start)
+        ask_input "Enter tags for next time period (passed verbatim to taskw start)"
+
+        if [[ "$(timew get dom.active)" -eq 1 ]]; then
+            notification "Interval Restart" "$(timew start $ANSWER)" 5000
+        else
+            timew start $ANSWER
+            notification "Interval Start" "There was no previous interval"
+        fi
+        ;;
+    stop)
+        if [[ "$(timew get dom.active)" -eq 1 ]]; then
+            notification "Interval Stop" "$(timew stop)" 5000
+        else
+            notification "Interval Stop" "There is no interval being tracked"
+        fi
+        ;;
+    cancel)
+        if [[ "$(timew get dom.active)" -eq 1 ]]; then
+            notification "Interval Cancel" "$(timew cancel)" 5000
+        else
+            notification "Interval Cancel" "There is no interval being tracked"
+        fi
+        ;;
+    '')
+        show_help
+        exit 1
+        ;;
+    *)
+        echo "Invalid command '$1'"
+        exit 1
+        ;;
+esac
+
