@@ -64,6 +64,20 @@ _all cmd:
 list: &&(_all "printf '|%-25s |%-25s |%-60s\n'")
     @printf '|%-25s |%-25s |%-60s\n' "NAME" "DIRECTORY" "OPTIONS"
 
+## this may break at any point but eh its kinda cool
+# list all options for each of the container base files
+options:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    container_base_files="$(find . -maxdepth 2 -name 'Containerfile')"
+
+    for i in $container_base_files; do
+        echo "Options for '$(basename "$(dirname "$i")")':"
+        gawk 'match($0, /"\$OPTIONS" == \*"(.+)"\*/, ary) {print ary[1]}' "$i"
+        echo
+    done
+
 # build all predefined images
 build-all: (_all "'" + just_executable() + "' -f '" + justfile() + "' build")
 
