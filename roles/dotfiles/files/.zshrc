@@ -115,8 +115,21 @@ function precmd() {
     printf "\033]0;%s\007" "$(print -rP '%~')"
 }
 
-for dir in $HOME/ws $HOME/Downloads $HOME/Torrent; do
-    if [[ -d "$dir" ]] && [[ -n "$dir" ]]; then
-        hash -d "$(basename $dir:l)=$dir"
+function cdalias() {
+    if [[ -d "${2:?}" ]]; then
+        hash -d "${1:?}=${2:?}"
     fi
-done
+}
+
+cdalias dotfiles "$HOME/.dotfiles"
+cdalias desktop "$HOME/Desktop"
+cdalias downloads "$HOME/Downloads"
+cdalias documents "$HOME/Documents"
+cdalias videos "$HOME/Videos"
+cdalias music "$HOME/Music"
+cdalias notes "$HOME/Notes"
+cdalias ws "$HOME/ws"
+cdalias slowmf "/mnt/slowmf"
+
+unset cdalias
+
