@@ -4,3 +4,12 @@
 [submodule "roles/dotfiles/files/.config/zsh/plugins/zsh-syntax-highlighting"]
 	path = roles/dotfiles/files/.config/zsh/plugins/zsh-syntax-highlighting
 	url = https://github.com/zsh-users/zsh-syntax-highlighting.git
+[submodule "roles/dotfiles/files/.emacs.d/plugins/zig-mode"]
+	path = roles/dotfiles/files/.emacs.d/plugins/zig-mode
+	url = https://github.com/ziglang/zig-mode.git
+[submodule "roles/dotfiles/files/.emacs.d/plugins/just-mode.el"]
+	path = roles/dotfiles/files/.emacs.d/plugins/just-mode.el
+	url = https://github.com/leon-barrett/just-mode.el.git
+[submodule "roles/dotfiles/files/.emacs.d/plugins/dockerfile-mode"]
+	path = roles/dotfiles/files/.emacs.d/plugins/dockerfile-mode
+	url = https://github.com/spotify/dockerfile-mode.git

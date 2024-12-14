@@ -316,6 +316,12 @@ Use variables `user-theme-light' and `user-theme-dark'"
 
 ;;; plugins (third-party) ;;;
 
+(add-to-list 'load-path (concat user-emacs-directory "plugins/just-mode.el"))
+(use-package just-mode)
+
+(add-to-list 'load-path (concat user-emacs-directory "plugins/dockerfile-mode"))
+(use-package dockerfile-mode)
+
 ;; reset gc-cons-threshold
 (setopt gc-cons-threshold (or emacs--initial-gc-threshold 800000))
 
