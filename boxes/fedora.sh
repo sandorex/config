@@ -6,10 +6,16 @@ set -euo pipefail
 # cd into directory where the script is stored
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
+REPO='ghcr.io/sandorex'
+
 # use dotfiles by default
 DOTFILES="$PWD/../dotfiles"
 NAME=''
 OPTIONS=()
+DNF_ARGS=(
+    # needed as cache is kept on host and reused between containers
+    "--setopt" "keepcache=True"
+)
 
 DNF=(
     git
@@ -55,11 +61,6 @@ CODE_SERVER_URL="https://github.com/coder/code-server/releases/download/v$CODE_S
 
 IMAGE_VERSION="40"
 IMAGE="registry.fedoraproject.org/fedora-toolbox:$IMAGE_VERSION"
-
-if ! command -v buildah &>/dev/null; then
-    echo "buildah was not found.."
-    exit 66
-fi
 
 POSITIONAL_ARGS=()
 while [ $# -gt 0 ]; do
@@ -109,9 +110,20 @@ done
 # restore positional parameters
 set -- "${POSITIONAL_ARGS[@]}"
 
+if ! command -v buildah &>/dev/null; then
+    echo "buildah was not found.."
+    exit 66
+fi
+
 if [[ -z "$NAME" ]]; then
     echo "Image name not set!"
     exit 1
+fi
+
+# try to get the git sha
+GIT_SHA=''
+if command -v git &>/dev/null; then
+    GIT_SHA="$(git rev-parse --short=10 HEAD)"
 fi
 
 if [[ " ${OPTIONS[*]} " =~ [[:space:]]utils[[:space:]] ]]; then
@@ -128,9 +140,12 @@ if [[ "${#PIP[@]}" -ne 0 ]]; then
     DNF+=( 'python3-pip' )
 fi
 
-ctx="$(buildah from --security-opt label=disable $IMAGE)"
+ctx="$(buildah from --security-opt label=disable "$IMAGE")"
 
-echo "Building image from $IMAGE"
+# create cache dirs
+mkdir -p "$PWD/dnf-cache" "$PWD/npm-cache" "$PWD/pip-cache"
+
+echo "Building image '$NAME' from 'fedora-toolbox:$IMAGE_VERSION' using options '${OPTIONS[*]}'"
 
 buildah config --label name="arcam-fedora-everything" \
                --label summary="Configurable arcam container image for development" \
@@ -140,38 +155,38 @@ buildah config --label name="arcam-fedora-everything" \
                --env RUSTUP_HOME=/opt/rustup \
                "$ctx"
 
-# improve DNF speed (although this is not generally recommended picking mirrors for ephimeral container does not make sense)
+# improve DNF speed
 buildah run "$ctx" sh -c \
     'mkdir -p /init.d "$RUSTUP_HOME"; \
      echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf; \
      echo "defaultyes=True" >> /etc/dnf/dnf.conf; \
-     echo "fastestmirror=True" >> /etc/dnf/dnf.conf; \
      echo "install_weak_deps=False" >> /etc/dnf/dnf.conf'
 
 # install rpmfusion
 echo
 echo "Installing RPMFusion"
-buildah run "$ctx" sh -c "dnf -y install 'https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-${IMAGE_VERSION:?}.noarch.rpm' \
-                       && dnf -y install 'https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-${IMAGE_VERSION:?}.noarch.rpm'"
+buildah run -v "$PWD/dnf-cache:/var/cache/dnf" "$ctx" sh -c \
+        "dnf ${DNF_ARGS[*]} -y install 'https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$IMAGE_VERSION.noarch.rpm' \
+      && dnf ${DNF_ARGS[*]} -y install 'https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$IMAGE_VERSION.noarch.rpm'"
 
-# TODO do caching somehow
 # install all dnf stuff
 echo
 echo "Installing DNF packages: ${DNF[*]}"
-buildah run "$ctx" sh -c "dnf -y install ${DNF[*]} && dnf clean all"
+buildah run -v "$PWD/dnf-cache:/var/cache/dnf" "$ctx" sh -c \
+        "dnf ${DNF_ARGS[*]} -y install ${DNF[*]}"
 
 # install all npm stuff
 if [[ "${#NPM[@]}" -ne 0 ]]; then
     echo
     echo "Installing NPM packages: ${NPM[*]}"
-    buildah run "$ctx" sh -c "npm install -g ${NPM[*]} && npm cache clean --force"
+    buildah run -v "$PWD/npm-cache:/root/.npm" "$ctx" sh -c "npm install -g ${NPM[*]}"
 fi
 
 # install all pip stuff
 if [[ "${#PIP[@]}" -ne 0 ]]; then
     echo
     echo "Installing PIP packages: ${PIP[*]}"
-    buildah run "$ctx" sh -c "pip install ${PIP[*]} && pip cache purge"
+    buildah run -v "$PWD/pip-cache:/root/.cache/pip" "$ctx" sh -c "pip install ${PIP[*]}"
 fi
 
 if [[ " ${OPTIONS[*]} " =~ [[:space:]]code-server[[:space:]] ]]; then
@@ -179,8 +194,8 @@ if [[ " ${OPTIONS[*]} " =~ [[:space:]]code-server[[:space:]] ]]; then
     echo "Installing code-server version $CODE_SERVER_VERSION"
 
     buildah run "$ctx" sh -c \
-        "curl -fL "$CODE_SERVER_URL" | tar -C /opt/ -xz; \
-        ln -s /opt/code-server-$CODE_SERVER_VERSION-linux-amd64/bin/code-server /usr/local/bin/code-server"
+        "curl -fL '$CODE_SERVER_URL' | tar -C /opt/ -xz; \
+        ln -s '/opt/code-server-$CODE_SERVER_VERSION-linux-amd64/bin/code-server' /usr/local/bin/code-server"
 
     # init script that sets up the code-server defaults
     buildah run "$ctx" sh -c 'cat > /init.d/80-code-server.sh' <<EOF
@@ -199,7 +214,7 @@ eof2
 EOF
 fi
 
-if [[ " ${OPTIONS[*]} " =~ [[:space:]]code-server[[:space:]] ]]; then
+if [[ " ${OPTIONS[*]} " =~ [[:space:]]nix[[:space:]] ]]; then
     echo
     echo "Installing nix package manager"
 
@@ -214,10 +229,10 @@ nohup sudo /nix/var/nix/profiles/default/bin/nix-daemon &> /dev/null &
 EOF
 fi
 
-if [[ -n "$DOTFILES" ]]; then
+if [[ -n "$DOTFILES" ]] && [[ -e "$DOTFILES" ]]; then
     echo
     echo "Copying dotfiles from $DOTFILES"
-    buildah run -v "$DOTFILES:/dotfiles:ro" "$ctx" sh -c 'rm -rf /etc/skel && cp -rv /dotfiles/ /etc/skel'
+    buildah run -v "$DOTFILES:/dotfiles:ro" "$ctx" sh -c 'rm -rf /etc/skel && cp -r /dotfiles/ /etc/skel'
 fi
 
 # make all init files executable at once, reduces boilerplate code above
@@ -275,9 +290,19 @@ EOF
 
 buildah config --entrypoint /help.sh "$ctx"
 
-# TODO tag with all the tags
-buildah commit "$ctx" boxes-fedora-test
+buildah commit "$ctx" "$NAME"
+
+echo
+echo "Tagging image"
+
+# add additional tags
+buildah tag "$NAME" "$REPO/$NAME:latest"
+
+# optionally tag with git sha
+if [[ -n "$GIT_SHA" ]]; then
+    buildah tag "$NAME" "localhost/$NAME:$GIT_SHA"
+    buildah tag "$NAME" "$REPO/$NAME:$GIT_SHA"
+fi
 
 echo
 echo "Done!"
-
