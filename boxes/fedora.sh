@@ -7,8 +7,6 @@ set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 REPO='ghcr.io/sandorex'
-
-# use dotfiles by default
 DOTFILES="$PWD/../dotfiles"
 NAME=''
 OPTIONS=()
@@ -16,6 +14,8 @@ DNF_ARGS=(
     # needed as cache is kept on host and reused between containers
     "--setopt" "keepcache=True"
 )
+PUBLISH=0
+ALL=0
 
 DNF=(
     git
@@ -56,9 +56,6 @@ UTILS_PIP=(
     git-cliff
 )
 
-CODE_SERVER_VERSION='4.95.3'
-CODE_SERVER_URL="https://github.com/coder/code-server/releases/download/v$CODE_SERVER_VERSION/code-server-$CODE_SERVER_VERSION-linux-amd64.tar.gz"
-
 IMAGE_VERSION="40"
 IMAGE="registry.fedoraproject.org/fedora-toolbox:$IMAGE_VERSION"
 
@@ -70,24 +67,37 @@ while [ $# -gt 0 ]; do
             shift 2
             ;;
 
-        -o|--option)
-            OPTIONS+=("$2")
-            shift 2
-            ;;
-
         --dotfiles)
             DOTFILES="$2"
             shift 2
             ;;
 
+        --publish)
+            PUBLISH=1
+            shift
+            ;;
+
+        --all)
+            ALL=1
+            shift
+            ;;
+
+        --)
+            # consume all the rest as options
+            shift
+            OPTIONS+=("$@")
+            break
+            ;;
+
         -h|--help)
             cat <<EOF
-Usage: $0 [<flags..>]
+Usage: $0 [<flags..>] [-- <options..>]
 
 Flags:
     --name <NAME>       - name of the resulting image (REQUIRED)
-    -o / --option <OPT> - enables option in the build
     --dotfiles <DIR>    - override dotfiles path
+    --publish           - push the image to the repository (requires logged in podman)
+    --all               - builds all predefined image templates
     -h / --help         - shows this help text
 
 EOF
@@ -113,6 +123,22 @@ set -- "${POSITIONAL_ARGS[@]}"
 if ! command -v buildah &>/dev/null; then
     echo "buildah was not found.."
     exit 66
+fi
+
+if [[ "$ALL" -eq 1 ]]; then
+    arg=""
+    [[ "$PUBLISH" -eq 1 ]] && arg="--publish"
+
+    ## DEFINE IMAGES HERE !! ##
+
+    "$0" "$arg" --name arcam-f40-mini
+    "$0" "$arg" --name arcam-f40 -- utils
+    "$0" "$arg" --name arcam-f40-code -- utils code-server
+
+    ## DEFINE IMAGES HERE !! ##
+
+    # quit early
+    exit 0
 fi
 
 if [[ -z "$NAME" ]]; then
@@ -190,6 +216,9 @@ if [[ "${#PIP[@]}" -ne 0 ]]; then
 fi
 
 if [[ " ${OPTIONS[*]} " =~ [[:space:]]code-server[[:space:]] ]]; then
+    CODE_SERVER_VERSION='4.95.3'
+    CODE_SERVER_URL="https://github.com/coder/code-server/releases/download/v$CODE_SERVER_VERSION/code-server-$CODE_SERVER_VERSION-linux-amd64.tar.gz"
+
     echo
     echo "Installing code-server version $CODE_SERVER_VERSION"
 
@@ -292,9 +321,6 @@ buildah config --entrypoint /help.sh "$ctx"
 
 buildah commit "$ctx" "$NAME"
 
-echo
-echo "Tagging image"
-
 # add additional tags
 buildah tag "$NAME" "$REPO/$NAME:latest"
 
@@ -302,6 +328,18 @@ buildah tag "$NAME" "$REPO/$NAME:latest"
 if [[ -n "$GIT_SHA" ]]; then
     buildah tag "$NAME" "localhost/$NAME:$GIT_SHA"
     buildah tag "$NAME" "$REPO/$NAME:$GIT_SHA"
+fi
+
+if [[ "$PUBLISH" -eq 1 ]]; then
+    echo
+    echo "Publishing image"
+
+    # push git sha tagged
+    podman image push "$NAME" "$REPO/$NAME:latest"
+
+    if [[ -n "$GIT_SHA" ]]; then
+        podman image push "$NAME" "$REPO/$NAME:$GIT_SHA"
+    fi
 fi
 
 echo
