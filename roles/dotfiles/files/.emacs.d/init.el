@@ -190,6 +190,30 @@ Use variables `user-theme-light' and `user-theme-dark'"
 ;;   (transpose-lines 1)
 ;;   (previous-line 1))
 
+;; TODO make it ask for file and default to the emacs-abbrevs
+(defun load-safe-abbrevs (&optional file)
+  "Read safe abbrevs file (either FILE or emacs-abbrevs in `default-directory')."
+  (interactive)
+  (message "Loading safe abbreviations..")
+  ;; initiate the abbrev table or clear old one
+  (if 'safe-abbrevs-abbrev-table
+      (define-abbrev-table 'safe-abbrevs-abbrev-table '() "Safe literal string expansion abbreviations, used for temporary abbrevs")
+    (clear-abbrev-table safe-abbrevs-abbrev-table))
+  ;; iterate over the file with temp buffer
+  (with-temp-buffer
+    (insert-file-contents (or file (concat default-directory "emacs-abbrevs")))
+    (goto-char (point-min))
+    (while (not (eobp))
+      (let ((line (buffer-substring-no-properties (line-beginning-position) (line-end-position))))
+        (unless (string-prefix-p ";" line)
+          (when-let ((split (string-split line "|" 'omit))
+                     (key (nth 0 split))
+                     (val (nth 1 split)))
+            ;; :system is important so they are not saved
+            (define-abbrev safe-abbrevs-abbrev-table key val nil :system t))))
+      ;; go to the next line
+      (forward-line 1))))
+
 (defun eshell-host ()
   "Open eshell in home directory on localhost.
 
@@ -314,13 +338,10 @@ Use variables `user-theme-light' and `user-theme-dark'"
               ("C-c p" . flymake-goto-prev-error)
               ("C-c b" . flymake-show-buffer-diagnostics)))
 
-;;; plugins (third-party) ;;;
-
-(add-to-list 'load-path (concat user-emacs-directory "plugins/just-mode.el"))
 (use-package just-mode)
-
-(add-to-list 'load-path (concat user-emacs-directory "plugins/dockerfile-mode"))
 (use-package dockerfile-mode)
+
+;;; plugins (third-party) ;;;
 
 ;; reset gc-cons-threshold
 (setopt gc-cons-threshold (or emacs--initial-gc-threshold 800000))
