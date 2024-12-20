@@ -340,6 +340,8 @@ Use variables `user-theme-light' and `user-theme-dark'"
 
 (use-package just-mode)
 (use-package dockerfile-mode)
+(use-package cmake-mode)
+(use-package simpc-mode)
 
 ;;; plugins (third-party) ;;;
 
