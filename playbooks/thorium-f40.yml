@@ -107,6 +107,7 @@
       tags: [flatpak, apps]
 
   tasks:
+    # TODO redo tweaks so it works like dotfiles and run tweaks from an array
     - import_role:
         name: tweaks
         tasks_from: systemd-timeout.yml
