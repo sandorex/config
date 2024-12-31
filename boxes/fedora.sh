@@ -17,6 +17,11 @@ DNF_ARGS=(
 PUBLISH=0
 ALL=0
 
+CACHE="cache"
+DNF_CACHE="$CACHE/dnf"
+NPM_CACHE="$CACHE/npm"
+PIP_CACHE="$CACHE/pip"
+
 DNF=(
     git
     just
@@ -169,7 +174,7 @@ fi
 ctx="$(buildah from --security-opt label=disable "$IMAGE")"
 
 # create cache dirs
-mkdir -p "$PWD/dnf-cache" "$PWD/npm-cache" "$PWD/pip-cache"
+mkdir -p "$PWD/$CACHE" "$PWD/$DNF_CACHE" "$PWD/NPM_CACHE" "$PWD/$PIP_CACHE"
 
 echo "Building image '$NAME' from 'fedora-toolbox:$IMAGE_VERSION' using options '${OPTIONS[*]}'"
 
@@ -182,6 +187,7 @@ buildah config --label name="arcam-fedora-everything" \
                "$ctx"
 
 # improve DNF speed
+# shellcheck disable=SC2016
 buildah run "$ctx" sh -c \
     'mkdir -p /init.d "$RUSTUP_HOME"; \
      echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf; \
@@ -191,40 +197,52 @@ buildah run "$ctx" sh -c \
 # install rpmfusion
 echo
 echo "Installing RPMFusion"
-buildah run -v "$PWD/dnf-cache:/var/cache/dnf" "$ctx" sh -c \
-        "dnf ${DNF_ARGS[*]} -y install 'https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$IMAGE_VERSION.noarch.rpm' \
-      && dnf ${DNF_ARGS[*]} -y install 'https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$IMAGE_VERSION.noarch.rpm'"
+buildah run -v "$PWD/$DNF_CACHE:/var/cache/dnf" "$ctx" -- dnf "${DNF_ARGS[@]}" -y install \
+        "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$IMAGE_VERSION.noarch.rpm" \
+        "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$IMAGE_VERSION.noarch.rpm"
 
 # install all dnf stuff
 echo
 echo "Installing DNF packages: ${DNF[*]}"
-buildah run -v "$PWD/dnf-cache:/var/cache/dnf" "$ctx" sh -c \
-        "dnf ${DNF_ARGS[*]} -y install ${DNF[*]}"
+buildah run -v "$PWD/$DNF_CACHE:/var/cache/dnf" "$ctx" -- dnf "${DNF_ARGS[@]}" -y install "${DNF[@]}"
 
 # install all npm stuff
 if [[ "${#NPM[@]}" -ne 0 ]]; then
     echo
     echo "Installing NPM packages: ${NPM[*]}"
-    buildah run -v "$PWD/npm-cache:/root/.npm" "$ctx" sh -c "npm install -g ${NPM[*]}"
+    buildah run -v "$PWD/$NPM_CACHE:/root/.npm" "$ctx" -- npm install -g "${NPM[@]}"
 fi
 
 # install all pip stuff
 if [[ "${#PIP[@]}" -ne 0 ]]; then
     echo
     echo "Installing PIP packages: ${PIP[*]}"
-    buildah run -v "$PWD/pip-cache:/root/.cache/pip" "$ctx" sh -c "pip install ${PIP[*]}"
+    buildah run -v "$PWD/$PIP_CACHE:/root/.cache/pip" "$ctx" -- pip install "${PIP[@]}"
 fi
 
 if [[ " ${OPTIONS[*]} " =~ [[:space:]]code-server[[:space:]] ]]; then
     CODE_SERVER_VERSION='4.95.3'
-    CODE_SERVER_URL="https://github.com/coder/code-server/releases/download/v$CODE_SERVER_VERSION/code-server-$CODE_SERVER_VERSION-linux-amd64.tar.gz"
+    CODE_SERVER_FILENAME="code-server-$CODE_SERVER_VERSION-linux-amd64.tar.gz"
+    CODE_SERVER_URL="https://github.com/coder/code-server/releases/download/v$CODE_SERVER_VERSION/$CODE_SERVER_FILENAME"
 
     echo
     echo "Installing code-server version $CODE_SERVER_VERSION"
 
+    # cache the archive
+    if [[ ! -f "$PWD/$CACHE/$CODE_SERVER_FILENAME" ]]; then
+        curl -fL "$CODE_SERVER_URL" --output "$PWD/$CACHE/$CODE_SERVER_FILENAME"
+    else
+        echo "Using cache"
+    fi
+
+    # copy the archive
+    buildah copy "$ctx" "$PWD/$CACHE/$CODE_SERVER_FILENAME" "/$CODE_SERVER_FILENAME"
+
+    # extract it in the container
     buildah run "$ctx" sh -c \
-        "curl -fL '$CODE_SERVER_URL' | tar -C /opt/ -xz; \
-        ln -s '/opt/code-server-$CODE_SERVER_VERSION-linux-amd64/bin/code-server' /usr/local/bin/code-server"
+            "tar -C /opt -xzf '/$CODE_SERVER_FILENAME' \
+            && rm -f '/$CODE_SERVER_FILENAME' \
+            && ln -s '/opt/code-server-$CODE_SERVER_VERSION-linux-amd64/bin/code-server' /usr/local/bin/code-server"
 
     # init script that sets up the code-server defaults
     buildah run "$ctx" sh -c 'cat > /init.d/80-code-server.sh' <<EOF
@@ -319,7 +337,7 @@ EOF
 
 buildah config --entrypoint /help.sh "$ctx"
 
-buildah commit "$ctx" "$NAME"
+buildah commit --squash "$ctx" "$NAME"
 
 # add additional tags
 buildah tag "$NAME" "$REPO/$NAME:latest"
