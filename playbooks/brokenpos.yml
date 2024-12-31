@@ -68,6 +68,7 @@
         dest: /etc/sysctl.d/99-vfs-cache-pressure.conf
         mode: 0644
         owner: root
+      become: yes
       tags: root
       when: run_root_tasks is defined and run_root_tasks
 
