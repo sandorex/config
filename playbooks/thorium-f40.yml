@@ -35,7 +35,6 @@
       - kitty
 
     flatpak_install:
-#      - io.neovim.nvim
       - page.codeberg.JakobDev.jdDesktopEntryEdit
       - com.brave.Browser
       - md.obsidian.Obsidian
@@ -45,7 +44,6 @@
       - com.usebottles.bottles
       - com.github.wwmm.easyeffects
       - org.kde.filelight
-      - org.mozilla.Thunderbird
       - org.kde.krita
       - org.freecadweb.FreeCAD
       - org.qbittorrent.qBittorrent
@@ -109,10 +107,14 @@
       tags: [flatpak, apps]
 
   tasks:
-    - name: Run tweaks
-      import_role:
+    - import_role:
         name: tweaks
         tasks_from: systemd-timeout.yml
+      tags: tweaks
+
+    - import_role:
+        name: tweaks
+        tasks_from: bluetooth-hfp.yml
       tags: tweaks
 
 #    - name: Ensure ~/.config/containers exists

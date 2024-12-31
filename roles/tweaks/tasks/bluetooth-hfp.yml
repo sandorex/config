@@ -1,0 +1,29 @@
+---
+- name: _Ensure wireplumber user config directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_user_dir }}/.config/wireplumber/wireplumber.conf.d/"
+    state: directory
+
+# NOTE this fixes TWS connection issues, but microphone cannot be used on any bluetooth headset!
+- name: Configure wireplumber bluetooth profile selection
+  ansible.builtin.copy:
+    content: |
+      wireplumber.settings = {
+        bluetooth.autoswitch-to-headset-profile = false
+      }
+
+      monitor.bluez.properties = {
+        ## Enabled roles (default: [ a2dp_sink a2dp_source bap_sink bap_source hfp_hf hfp_ag ])
+        ##
+        ## Supported roles: hsp_hs (HSP Headset),
+        ##                  hsp_ag (HSP Audio Gateway),
+        ##                  hfp_hf (HFP Hands-Free),
+        ##                  hfp_ag (HFP Audio Gateway)
+        ##                  a2dp_sink (A2DP Audio Sink)
+        ##                  a2dp_source (A2DP Audio Source)
+        ##                  bap_sink (LE Audio Basic Audio Profile Sink)
+        ##                  bap_source (LE Audio Basic Audio Profile Source)
+        ## --
+        bluez5.roles = [ a2dp_sink a2dp_source ]
+      }
+    dest: "{{ ansible_user_dir }}/.config/wireplumber/wireplumber.conf.d/51-disable-bluetooth-hfp.conf"
