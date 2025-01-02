@@ -136,9 +136,9 @@ if [[ "$ALL" -eq 1 ]]; then
 
     ## DEFINE IMAGES HERE !! ##
 
+    "$0" "$arg" --name arcam-f40-full -- all
     "$0" "$arg" --name arcam-f40-mini
-    "$0" "$arg" --name arcam-f40 -- utils
-    "$0" "$arg" --name arcam-f40-code -- utils code-server
+    "$0" "$arg" --name arcam-f40 -- utils zig
 
     ## DEFINE IMAGES HERE !! ##
 
@@ -157,10 +157,14 @@ if command -v git &>/dev/null; then
     GIT_SHA="$(git rev-parse --short=10 HEAD)"
 fi
 
-if [[ " ${OPTIONS[*]} " =~ [[:space:]]utils[[:space:]] ]]; then
+if [[ " ${OPTIONS[*]} " =~ [[:space:]]utils[[:space:]] || "${OPTIONS[*]}" == "all" ]]; then
     DNF+=( "${UTILS_DNF[@]}" )
     NPM+=( "${UTILS_NPM[@]}" )
     PIP+=( "${UTILS_PIP[@]}" )
+fi
+
+if [[ " ${OPTIONS[*]} " =~ [[:space:]]zig[[:space:]] || "${OPTIONS[*]}" == "all" ]]; then
+    DNF+=( "zig" )
 fi
 
 if [[ "${#NPM[@]}" -ne 0 ]]; then
@@ -220,7 +224,7 @@ if [[ "${#PIP[@]}" -ne 0 ]]; then
     buildah run -v "$PWD/$PIP_CACHE:/root/.cache/pip" "$ctx" -- pip install "${PIP[@]}"
 fi
 
-if [[ " ${OPTIONS[*]} " =~ [[:space:]]code-server[[:space:]] ]]; then
+if [[ " ${OPTIONS[*]} " =~ [[:space:]]code-server[[:space:]] || "${OPTIONS[*]}" == "all"  ]]; then
     CODE_SERVER_VERSION='4.95.3'
     CODE_SERVER_FILENAME="code-server-$CODE_SERVER_VERSION-linux-amd64.tar.gz"
     CODE_SERVER_URL="https://github.com/coder/code-server/releases/download/v$CODE_SERVER_VERSION/$CODE_SERVER_FILENAME"
@@ -261,7 +265,7 @@ eof2
 EOF
 fi
 
-if [[ " ${OPTIONS[*]} " =~ [[:space:]]nix[[:space:]] ]]; then
+if [[ " ${OPTIONS[*]} " =~ [[:space:]]nix[[:space:]] || "${OPTIONS[*]}" == "all"  ]]; then
     echo
     echo "Installing nix package manager"
 
@@ -315,6 +319,35 @@ rustup-init -y \
     -c clippy \
     -c rust-analyzer \
     -c rust-src
+
+EOF
+
+# TODO add zig cache to volumes
+# this is the arcam config, currently does not need to change between options
+buildah run "$ctx" sh -c 'cat > /config.toml' <<EOF
+[[config]]
+name = "$NAME"
+image = "$REPO/$NAME"
+network = true
+engine_args_podman = [
+    # persist neovim plugins
+    "--volume=box-nvim:\$HOME/.local/share/nvim",
+
+    # persist cargo packages
+    "--volume=box-cargo:\$HOME/.cargo/registry",
+
+    # persist rustup toolchains
+    "--volume=box-rustup:/opt/rustup",
+]
+on_init_pre = [
+    # all volumes are owned by root by default
+    "sudo chown \$USER:\$USER ~/.local/share/nvim",
+    "sudo chown \$USER:\$USER ~/.cargo ~/.cargo/registry",
+]
+
+[config.env]
+# force neovim to use terminal to read/write clipboard
+"NVIM_FORCE_OSC52" = "true"
 
 EOF
 
