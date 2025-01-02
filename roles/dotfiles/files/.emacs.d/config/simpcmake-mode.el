@@ -1,4 +1,4 @@
-;;; cmake-mode.el --- major-mode for editing CMake sources -*- lexical-binding: t; -*-
+;;; simpcmake-mode.el --- major-mode for editing CMake sources -*- lexical-binding: t; -*-
 
 ;; Package-Requires: ((emacs "24.1"))
 ;; The package was slimmed down to only syntax and maybe few extra features
@@ -30,16 +30,6 @@
 
 (require 'rst)
 (require 'rx)
-
-(defcustom cmake-mode-cmake-executable "cmake"
-  "*The name of the cmake executable.
-
-This can be either absolute or looked up in $PATH.  You can also
-set the path with these commands:
- (setenv \"PATH\" (concat (getenv \"PATH\") \";C:\\\\Program Files\\\\CMake 2.8\\\\bin\"))
- (setenv \"PATH\" (concat (getenv \"PATH\") \":/usr/local/cmake/bin\"))"
-  :type 'file
-  :group 'cmake)
 
 ;; Keywords
 (defconst cmake-keywords-block-open '("BLOCK" "IF" "MACRO" "FOREACH" "ELSE" "ELSEIF" "WHILE" "FUNCTION"))
@@ -358,6 +348,6 @@ Return t unless search stops due to end of buffer."
   (add-to-list 'auto-mode-alist '("\\.cmake\\'" . cmake-mode)))
 
 ; This file provides cmake-mode.
-(provide 'cmake-mode)
+(provide 'simpcmake-mode)
 
-;;; cmake-mode.el ends here
+;;; simpcmake-mode.el ends here

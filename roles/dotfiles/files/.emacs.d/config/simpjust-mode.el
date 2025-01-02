@@ -1,7 +1,7 @@
-;;; just-mode.el --- Justfile editing mode -*- lexical-binding: t; -*-
+;;; simpjust-mode.el --- Justfile editing mode -*- lexical-binding: t; -*-
+;; The package was slimmed down to only syntax and maybe few extra features
 
 ;; Copyright (C) 2021 leon-barrett (leon@barrettnexus.com)
-;;               2024 Aleksandar Radivojevic (@sandorex)
 ;; Package-Requires: ((emacs "26.1"))
 ;;
 ;; This package is free software: you can redistribute it and/or modify
@@ -219,13 +219,11 @@ Argument N number of untabs to perform"
   (local-set-key (kbd "DEL") #'just-backspace-whitespace-to-tab-stop)
   (local-set-key (kbd "<backtab>") #'just-untab-region))
 
-
-
-(provide 'just-mode)
+(provide 'simpjust-mode)
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("/[Jj]ustfile\\'" . just-mode))
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.[Jj]ust\\(file\\)?\\'" . just-mode))
 
-;;; just-mode.el ends here
+;;; simpjust-mode.el ends here

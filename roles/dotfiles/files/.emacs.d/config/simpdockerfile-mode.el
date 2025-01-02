@@ -1,7 +1,7 @@
-;;; dockerfile-mode.el --- Major mode for editing Docker's Dockerfiles -*- lexical-binding: t -*-
+;;; simpdockerfile-mode.el --- Major mode for editing Docker's Dockerfiles -*- lexical-binding: t -*-
+;; The package was slimmed down to only syntax and maybe few extra features
 
 ;; Copyright (c) 2013 Spotify AB
-;;               2024 Aleksandar Radivojevic (@sandorex)
 ;; Package-Requires: ((emacs "24"))
 ;; Homepage: https://github.com/spotify/dockerfile-mode
 ;; URL: https://github.com/spotify/dockerfile-mode
@@ -143,6 +143,6 @@ returned, otherwise the base image name is used."
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.dockerfile\\'" . dockerfile-mode))
 
-(provide 'dockerfile-mode)
+(provide 'simpdockerfile-mode)
 
-;;; dockerfile-mode.el ends here
+;;; simpdockerfile-mode.el ends here

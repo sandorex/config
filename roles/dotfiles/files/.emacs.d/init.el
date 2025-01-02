@@ -338,12 +338,18 @@ Use variables `user-theme-light' and `user-theme-dark'"
               ("C-c p" . flymake-goto-prev-error)
               ("C-c b" . flymake-show-buffer-diagnostics)))
 
-(use-package just-mode)
-(use-package dockerfile-mode)
-(use-package cmake-mode)
-(use-package simpc-mode)
+;;; plugins ;;;
 
-;;; plugins (third-party) ;;;
+(use-package simpjust-mode)
+(use-package simpdockerfile-mode)
+(use-package simpcmake-mode)
+(use-package simpc-mode
+  :init
+  ;; prefer simpc over c mode
+  (add-to-list 'auto-mode-alist '("\\.c\\'" . simpc-mode)))
+(use-package simpzig-mode)
+
+;;; plugins (external) ;;;
 
 ;; reset gc-cons-threshold
 (setopt gc-cons-threshold (or emacs--initial-gc-threshold 800000))
