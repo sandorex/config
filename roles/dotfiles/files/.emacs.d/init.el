@@ -21,12 +21,12 @@
         ;; disable backups
         make-backup-files nil)
 
-(setq user-theme-light 'leuven
-      user-theme-dark 'modus-vivendi
-      user-theme-current 'dark) ; start dark always
-
 ;; load machine specific custom file
 (load custom-file 'noerror 'nomessage)
+
+;; just use monokai
+(setopt custom-theme-directory (concat user-emacs-directory "themes/"))
+(load-theme 'monokai :no-confirm)
 
 ;;; other files ;;;
 (load "theming" nil 'nomessage)
@@ -120,23 +120,6 @@
 (keymap-global-set "C-c x r" 'restart-emacs)
 (keymap-global-set "C-x ;" 'comment-line) ; C-; not supported in terminal
 (keymap-global-set "C-c d" 'duplicate-line)
-
-(defun user-theme-toggle ()
-  "Set or toggle light and dark theme.
-Use variables `user-theme-light' and `user-theme-dark'"
-  (interactive)
-  (custom-set-variables '(custom-enabled-themes nil)) ; remove old themes so there is no conflicts
-  (when-let ((current (if (eq (when (boundp 'user-theme-current) user-theme-current) 'dark)
-                          'light
-                        'dark))
-             (theme (if (eq current 'dark)
-                        user-theme-dark
-                      user-theme-light)))
-    (setq user-theme-current current)
-    (custom-set-variables `(custom-enabled-themes '(,theme)))
-    (load-theme theme))
-  )
-(keymap-global-set "<f7>" 'user-theme-toggle) ; toggle light/dark theme
 
 (global-set-key [remap list-buffers] 'ibuffer) ; simply better
 

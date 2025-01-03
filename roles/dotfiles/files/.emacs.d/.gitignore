@@ -2,7 +2,8 @@
 *
 !.gitignore
 !*.el
-!themes/*.el
+!themes/
+!themes/*
 !config/
 !config/*
 !plugins/
