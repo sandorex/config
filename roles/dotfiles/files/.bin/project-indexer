@@ -1,0 +1,137 @@
+#!/usr/bin/env python3
+# project indexing tool
+
+import click
+import os
+
+from os.path import join, exists
+from typing import List
+from enum import StrEnum, auto
+
+class Tags(StrEnum):
+    Rust = auto()
+    Zig = auto()
+    Python = auto()
+
+    Godot = auto()
+    Android = auto()
+
+    CMake = auto()
+    Make = auto()
+
+    Web = auto()
+    TS = auto()
+
+    # tags not related to language
+    # do not use in the FILES dictionary
+    Other = auto()
+
+    Git = auto()
+
+    # TODO check origin remote
+    # git repository that i own
+    GitOwned = auto()
+
+# TODO add glob option
+FILES = {
+    'Cargo.toml': [Tags.Rust],
+    'build.zig': [Tags.Zig],
+    'pyproject.toml': [Tags.Python],
+
+    'project.godot': [Tags.Godot],
+    'build.gradle': [Tags.Android],
+
+    'CMakeLists.txt': [Tags.CMake],
+
+    'package.json': [Tags.Web],
+    'tsconfig.json': [Tags.TS],
+}
+
+def get_tags_from_dir(path, quiet=True) -> List[str]:
+    all_tags = []
+
+    for filename, tags in FILES.items():
+        full_path = join(path, filename)
+        if exists(full_path):
+            all_tags.extend(tags)
+
+            if not quiet:
+                print(f'adding following tags cause of \'{full_path}\'')
+                for t in tags:
+                    print('  ' + str(t))
+
+    # keep only unique tags
+    return list(set(all_tags))
+
+# def get_project_mtime(path):
+#     times = []
+#     for f in os.listdir(path):
+#         full_path = join(path, f)
+#         if isfile(full_path):
+#             times.append(os.path.getmtime(full_path))
+
+#     # if there are not files then no mtime
+#     if not times:
+#         return None
+
+#     # return largest / most recent mtime
+#     return max(times)
+
+def get_projects(path):
+    for f in os.listdir(path):
+        full_path = join(path, f)
+        if os.path.isdir(full_path):
+            yield full_path
+
+# # check if any links point to non-existing projects or wrong projects
+# def check_links(target_dir):
+#     pass
+
+def create_links(target_dir, projects_dir, verbose):
+    projects = get_projects(projects_dir)
+
+    os.makedirs(join(target_dir, 'by-tag'), exist_ok=True)
+
+    for proj in projects:
+        tags = get_tags_from_dir(proj)
+        proj_name = os.path.basename(proj)
+
+        # when no other tags just lump it in the other
+        if not tags:
+            tags = [Tags.Other]
+
+        if exists(join(proj, '.git')):
+            # TODO check if git repository is owned by me
+            tags.append(Tags.Git)
+
+        if verbose:
+            print(f'{proj_name}: {' '.join(str(x) for x in tags)}')
+
+        for tag in tags:
+            # NOTE i do not want absolute links here!
+            link_dest = join(target_dir, 'by-tag', tag, proj_name)
+            link_target = os.path.relpath(proj, os.path.dirname(link_dest))
+            print(f'  {link_dest} -> {link_target}')
+
+            os.makedirs(join(target_dir, 'by-tag', tag), exist_ok=True)
+
+            try:
+                # delete the link so it can be updated
+                os.remove(link_dest)
+            except FileNotFoundError:
+                pass
+
+            os.symlink(link_target, link_dest)
+
+# TODO add option for multiple paths for projects to reside in
+@click.command()
+@click.version_option('0.1')
+# @click.option('--index', is_flag=True, default=False, help='reindex tags')
+@click.option('--directory', 'target_dir', metavar='path', default='.', help='create links in directory instead of cwd')
+@click.option('--projects', 'projects_dir', metavar='path', required=True, help='find projects in directory')
+@click.option('-v', '--verbose', is_flag=True, default=False, help='print logging information during indexing')
+def cli(target_dir, projects_dir, verbose):
+    create_links(target_dir, projects_dir, verbose)
+
+if __name__ == '__main__':
+    cli()
