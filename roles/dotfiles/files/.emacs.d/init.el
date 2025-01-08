@@ -332,6 +332,20 @@
   (add-to-list 'auto-mode-alist '("\\.c\\'" . simpc-mode)))
 (use-package simpzig-mode)
 
+(use-package move-text
+  :config
+  (move-text-default-bindings)
+
+  (defun indent-region-advice (&rest ignored)
+    (let ((deactivate deactivate-mark))
+      (if (region-active-p)
+          (indent-region (region-beginning) (region-end))
+        (indent-region (line-beginning-position) (line-end-position)))
+      (setq deactivate-mark deactivate)))
+
+  (advice-add 'move-text-up :after 'indent-region-advice)
+  (advice-add 'move-text-down :after 'indent-region-advice))
+
 ;;; plugins (external) ;;;
 
 ;; reset gc-cons-threshold
