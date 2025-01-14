@@ -59,6 +59,7 @@
 
   (use-short-answers t)
   (confirm-kill-emacs 'yes-or-no-p)
+  (create-lockfiles nil) ; disable annoying lockfiles
 
   ;; redirect to link target when visting links
   (find-file-visit-truename t)
