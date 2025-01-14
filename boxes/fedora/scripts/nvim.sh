@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
-# neovim boostrap script
-# explicitly enable/disable it
-[[ -v BOOTSTRAP_NVIM ]] || exit 0
+# script that sets up neovim
+
+set -eu
+
+buildah run "$ctx" sh -c 'cat > /usr/local/bin/bootstrap-nvim; chmod +x /usr/local/bin/bootstrap-nvim' <<'EOF'
+#!/usr/bin/env bash
+
+set -euo pipefail
 
 # if the directory is empty, bootstrap neovim
 if [[ ! -d ~/.local/share/nvim ]] || [[ -z "$(ls -A ~/.local/share/nvim)" ]]; then
@@ -10,3 +15,4 @@ if [[ ! -d ~/.local/share/nvim ]] || [[ -z "$(ls -A ~/.local/share/nvim)" ]]; th
 else
     echo "Neovim already bootstrapped"
 fi
+EOF
