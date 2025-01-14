@@ -5,8 +5,8 @@ _default:
 
 # build all images
 build-all:
-    fedora/fedora.sh --all
+    {{ justfile_directory() }}/fedora/fedora.sh --all
 
 # publish all images
 publish-all:
-    fedora/fedora.sh --publish --all
+   {{ justfile_directory() }}/fedora/fedora.sh --publish --all
