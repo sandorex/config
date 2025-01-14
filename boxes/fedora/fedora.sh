@@ -7,7 +7,7 @@ set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 REPO='ghcr.io/sandorex'
-DOTFILES="$PWD/../dotfiles"
+DOTFILES="$PWD/../../dotfiles"
 NAME=''
 OPTIONS=()
 DNF_ARGS=(
@@ -238,12 +238,15 @@ if [[ -n "$DOTFILES" ]] && [[ -e "$DOTFILES" ]]; then
     echo
     echo "Copying dotfiles from $DOTFILES"
     buildah run -v "$DOTFILES:/dotfiles:ro" "$ctx" sh -c 'rm -rf /etc/skel && cp -r /dotfiles/ /etc/skel'
+else
+    echo
+    echo "Dotfiles not found, skipped.."
 fi
 
 ./scripts/nvim.sh
 
 # make all init files executable at once, reduces boilerplate code above
-buildah run "$ctx" sh -c 'chmod +x /init.d/* >/dev/null || :'
+buildah run "$ctx" sh -c 'chmod +x /init.d/* || :'
 
 # disable zsh newuser prompt thingy
 buildah run "$ctx" sh -c 'echo "zsh-newuser-install() {}" >> /etc/zshenv'

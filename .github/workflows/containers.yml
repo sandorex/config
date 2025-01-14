@@ -37,7 +37,7 @@ jobs:
             --password-stdin \
             "ghcr.io"
 
-          just _publish-all
+          just publish-all
 
           podman logout --all
         env:

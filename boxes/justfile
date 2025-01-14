@@ -1,86 +1,12 @@
 #!/usr/bin/env just --justfile
 
-container_repository_username := 'sandorex'
-container_repository := 'ghcr.io'
-
-dotfiles_dir := canonicalize(join(justfile_directory(), '../dotfiles'))
-repository_prefix := container_repository + '/' + container_repository_username
-git_sha := shell('git rev-parse --short=10 HEAD')
-
 _default:
     @{{ just_executable() }} -f {{ justfile() }} --list
 
-# build custom image
-build name directory options *args:
-    #!/usr/bin/env bash
-    set -euo pipefail
+# build all images
+build-all:
+    fedora/fedora.sh --all
 
-    echo "Building image 'arcam-{{ name }}' with options '{{ options }}'"
-
-    # building as if it was built locally and remotely at the same time
-    podman build \
-        --security-opt label=disable \
-        --cache-ttl=10h \
-        --build-arg "OPTIONS={{ options }}" \
-        -t "arcam-{{ name }}:latest" \
-        -t "arcam-{{ name }}:{{ git_sha }}" \
-        -t "{{ repository_prefix }}/arcam-{{ name }}:latest" \
-        -t "{{ repository_prefix }}/arcam-{{ name }}:{{ git_sha }}" \
-        --volume "{{ dotfiles_dir }}:/dotfiles:ro" \
-        {{ args }} \
-        "{{ justfile_directory() }}/{{ directory }}"
-
-    echo
-
-_publish name directory options *args:
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    echo "Publishing image 'arcam-{{ name }}'"
-
-    # push git sha tagged
-    podman image push "arcam-{{ name }}" "{{ repository_prefix }}/arcam-{{ name }}:{{ git_sha }}"
-
-    # push as latest
-    podman image push "arcam-{{ name }}" "{{ repository_prefix }}/arcam-{{ name }}:latest"
-
-    echo
-
-# NOTE: this looks pretty hacky but i do not know how else to define a list of options so i just
-# made a recipe that calls command with arguments for each image and then i can abuse that in other
-# recipes
-_all cmd:
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    # NOTE the images are defined here
-    {{ cmd }} 'f40' fedora 'rustup utils'
-    {{ cmd }} 'f40-zig' fedora 'rustup utils zig code-server'
-
-## here i using the _all recipe to run printf on each container arguments to print a nice table of
-## all predefined images and their options
-##
-# list all predefined images and their options
-list: &&(_all "printf '|%-25s |%-25s |%-60s\n'")
-    @printf '|%-25s |%-25s |%-60s\n' "NAME" "DIRECTORY" "OPTIONS"
-
-## this may break at any point but eh its kinda cool
-# list all options for each of the container base files
-options:
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    container_base_files="$(find . -maxdepth 2 -name 'Containerfile')"
-
-    for i in $container_base_files; do
-        echo "Options for '$(basename "$(dirname "$i")")':"
-        gawk 'match($0, /"\$OPTIONS" == \*"(.+)"\*/, ary) {print ary[1]}' "$i"
-        echo
-    done
-
-# build all predefined images
-build-all: (_all "'" + just_executable() + "' -f '" + justfile() + "' build")
-
-# build then publish all predefined images
-_publish-all: (build-all) (_all "'" + just_executable() + "' -f '" + justfile() + "' _publish")
-
+# publish all images
+publish-all:
+    fedora/fedora.sh --publish --all
