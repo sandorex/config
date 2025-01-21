@@ -27,7 +27,7 @@ DNF=(
     just
     curl
     wget
-    zsh
+    fish
     nano
     neovim
     emacs-nox
@@ -62,7 +62,7 @@ UTILS_PIP=(
     git-cliff
 )
 
-IMAGE_VERSION="40"
+IMAGE_VERSION="41"
 IMAGE="registry.fedoraproject.org/fedora-toolbox:$IMAGE_VERSION"
 
 POSITIONAL_ARGS=()
