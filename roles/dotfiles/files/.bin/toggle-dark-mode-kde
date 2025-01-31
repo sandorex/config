@@ -1,23 +1,32 @@
 #!/usr/bin/env bash
-# toggles dark mode in kde plasma by switching a colorscheme
+# toggles dark mode in kde plasma by switching the looknfeel
 
-set -e
+set -euo pipefail
 
-COLOR_DARK="BreezeDark"
-COLOR_LIGHT="BreezeClassic"
+if plasma-apply-lookandfeel -l | grep -q 'org.kde.breezetwilight.desktop'; then
+    THEME_LIGHT="org.kde.breezetwilight.desktop"
+else
+    THEME_LIGHT="org.kde.breeze.desktop"
+fi
 
-function notify() {
-    notify-send -a toggle-dark-theme-kde -i color-picker 'Color Scheme Changed' "$*" || true
-}
+THEME_DARK="org.kde.breezedark.desktop"
 
-current="$(plasma-apply-colorscheme -l | grep -i 'current')"
+# plasma-apply-looknfeel does not specify which is currently used
+current="$(grep 'LookAndFeelPackage=' ~/.config/kdeglobals)"
 case "$current" in
-    *"$COLOR_DARK"*)
-        plasma-apply-colorscheme "$COLOR_LIGHT"
-        notify "Colorscheme set to $COLOR_LIGHT"
+    '')
+        echo "Error reading looknfeel package"
+        exit 1
+        ;;
+    *"$THEME_DARK")
+        echo "Applying light theme ($THEME_LIGHT)"
+        plasma-apply-lookandfeel -a "$THEME_LIGHT"
         ;;
     *)
-        plasma-apply-colorscheme "$COLOR_DARK"
-        notify "Colorscheme set to $COLOR_DARK"
+        echo "Applying dark theme ($THEME_DARK)"
+        plasma-apply-lookandfeel -a "$THEME_DARK"
         ;;
 esac
+
+# always use breeze light cursor
+plasma-apply-cursortheme Breeze_Light
