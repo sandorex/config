@@ -19,5 +19,10 @@ themes {
     }
 }
 
-theme "darklight"
+theme "catppuccin-macchiato"
 
+// hide lines around the screen
+pane_frames false
+
+// do not use unicode
+simplified_ui true
