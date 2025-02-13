@@ -26,3 +26,11 @@ pane_frames false
 
 // do not use unicode
 simplified_ui true
+
+keybinds {
+    shared_except "resize" "move" {
+        // switch tabs quickly even while in locked mode
+        bind "F1" { GoToPreviousTab; }
+        bind "F2" { GoToNextTab; }
+    }
+}

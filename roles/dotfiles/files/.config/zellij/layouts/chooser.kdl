@@ -1,0 +1,5 @@
+layout {
+    pane borderless=true {
+        plugin location="zellij:session-manager"
+    }
+}

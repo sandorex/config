@@ -9,7 +9,7 @@ buildah run "$ctx" sh -c 'cat > /init.d/10-rustup.sh' <<'EOF'
 echo "Setting up rustup"
 
 # install nothing but rustup
-rustup-init -y --default-toolchain none
+rustup-init -y --default-toolchain none &>/dev/null
 
 EOF
 
