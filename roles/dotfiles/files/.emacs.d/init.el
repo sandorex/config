@@ -43,6 +43,8 @@
   :custom
   (display-line-numbers-width 3) ; increase linenum column width to prevent movement while scrolling
 
+  (help-window-select t) ; switch to help buffer automatically
+
   ;; whitespace
   (whitespace-line-column 80)
   (whitespace-style '(face lines-tail))
@@ -65,8 +67,6 @@
   (find-file-visit-truename t)
   (vc-follow-symlinks t)
 
-  (tab-bar-show 1) ; show tab bar only if more than 1 tab
-
   ;; automaticall reload files on change
   (auto-revert-avoid-polling t)
   (auto-revert-interval 5)
@@ -77,13 +77,30 @@
 
   ;; autocompletion tweaks
   (completions-group t)
-  (completions-detailed t)
-  (completions-max-height 16)
-  (completions-sort nil)
+  (completions-detailed t) ; makes C-h have comments
   (completions-format 'one-column)
-  (completion-auto-select 'second-tab) ; autofocus comp buffer on second press of tab
+  (completions-header-format nil)
+  (completions-max-height 16)
   (completion-styles '(basic flex partial-completion emacs22))
   (tab-always-indent 'complete) ; complete or indent on tab
+
+  ;; do not autofocus buffer (remember to use M-Up / M-Down / M-RET !)
+  (completion-auto-select nil)
+
+  ;; NOTE this does not work at the moment?
+  ;; (tab-bar-select-tab-modifiers '(meta) ; use ALT-<NUM> to switch tabs
+  (tab-bar-show 1) ; show tab bar only if more than 1 tab
+  (tab-bar-close-button-show nil)
+  (tab-bar-new-button-show nil)
+  (tab-bar-new-tab-to 'rightmost)
+  (tab-bar-tab-hints t)
+  (tab-bar-format
+   '(
+     ;; tab-bar-format-menu-bar ; menu replacement (TODO add margin)
+     tab-bar-format-history
+     tab-bar-format-tabs
+     tab-bar-separator
+     tab-bar-format-add-tab))
 
   ;; more vim-like scrolling without jumping whole page and centering cursor
   (scroll-margin 2)
@@ -109,7 +126,7 @@
   (blink-cursor-mode -1)      ; disable blinking cursor
   (savehist-mode 1)           ; keep minibuffer command history
   (global-so-long-mode 1)     ; do not hang on long files
-  (context-menu-mode 1)       ; enable context menu with mouse (works in terminal too)
+  (context-menu-mode 1)       ; enable context menu with mouse (supports terminal)
 
   ;; enable narrow-to-region
   (put 'narrow-to-region 'disabled nil))
@@ -118,11 +135,24 @@
 (when (display-graphic-p)
   ;; remove C-z when in GUI as it's annoying
   (keymap-global-unset "C-z"))
+
 (keymap-global-set "C-c x r" 'restart-emacs)
-(keymap-global-set "C-x ;" 'comment-line) ; C-; not supported in terminal
+(keymap-global-set "C-x ;" 'comment-line) ; C-x C-; is not supported in terminal
 (keymap-global-set "C-c d" 'duplicate-line)
 
 (global-set-key [remap list-buffers] 'ibuffer) ; simply better
+
+;; quickly switch tabs
+(keymap-global-set "M-1" (lambda () (interactive) (tab-bar-select-tab 1)))
+(keymap-global-set "M-2" (lambda () (interactive) (tab-bar-select-tab 2)))
+(keymap-global-set "M-3" (lambda () (interactive) (tab-bar-select-tab 3)))
+(keymap-global-set "M-4" (lambda () (interactive) (tab-bar-select-tab 4)))
+(keymap-global-set "M-5" (lambda () (interactive) (tab-bar-select-tab 5)))
+(keymap-global-set "M-6" (lambda () (interactive) (tab-bar-select-tab 6)))
+(keymap-global-set "M-7" (lambda () (interactive) (tab-bar-select-tab 7)))
+(keymap-global-set "M-8" (lambda () (interactive) (tab-bar-select-tab 8)))
+(keymap-global-set "M-9" (lambda () (interactive) (tab-bar-select-tab 9)))
+(keymap-global-set "M-0" (lambda () (interactive) (tab-bar-switch-to-recent-tab)))
 
 ;; make C-x o sticky until other key is pressed
 (defun user--other-window-sticky (count &optional all-frames)
@@ -252,6 +282,7 @@
 
   ;; scroll with compilation but stop at first error
   (setopt compilation-scroll-output 'first-error)
+  (setopt compilation-context-lines 3)
 
   ;; cargo ;;
   (add-to-list 'compilation-error-regexp-alist 'cargo)
