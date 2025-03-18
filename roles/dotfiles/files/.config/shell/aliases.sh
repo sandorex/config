@@ -48,13 +48,15 @@ fi
 
 # use lsd if available
 if command -v lsd &>/dev/null; then
-    function ls() { lsd -F "$@"; }
-    function l() { lsd -aF "$@"; }
-    function ll() { lsd -alF "$@"; }
+    function ls() { lsd -Ft "$@"; }
+    function lls() { lsd -Ftl "$@"; }
+    function l() { lsd -aFt "$@"; }
+    function ll() { lsd -alFt "$@"; }
 else
-    function ls() { command ls -F --color=auto "$@"; }
-    function l() { command ls -aF --color=auto "$@"; }
-    function ll() { command ls -alFh --color=auto "$@"; }
+    function ls() { command ls -Ft --color=auto "$@"; }
+    function lls() { command ls -Ftl --color=auto "$@"; }
+    function l() { command ls -aFt --color=auto "$@"; }
+    function ll() { command ls -alFht --color=auto "$@"; }
 fi
 
 if command -v zellij &>/dev/null; then

@@ -9,10 +9,12 @@ if status is-interactive
     # use lsd if possible
     if command -v lsd &> /dev/null
         alias ls='lsd -F'
+        alias lls='lsd -lF'
         alias l='lsd -aF'
         alias ll='lsd -alF'
     else
         alias ls='ls -F --color=auto'
+        alias lls='ls -lF --color=auto'
         alias l='ls -aF --color=auto'
         alias ll='ls -alFh --color=auto'
     end
