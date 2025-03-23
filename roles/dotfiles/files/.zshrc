@@ -111,8 +111,12 @@ function chpwd() {
 }
 
 function precmd() {
+    # show running in arcam container
+    if [[ -v CONTAINER_NAME ]]; then
+        local _prefix="$CONTAINER_NAME: "
+    fi
     # update the title
-    printf "\033]0;%s\007" "$(print -rP '%~')"
+    printf "\033]0;%s\007" "${_prefix:-}$(print -rP '%~')"
 }
 
 function cdalias() {
@@ -133,3 +137,4 @@ cdalias slowmf "/mnt/slowmf"
 
 unset cdalias
 
+if [ -e /home/sandorex/.nix-profile/etc/profile.d/nix.sh ]; then . /home/sandorex/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer

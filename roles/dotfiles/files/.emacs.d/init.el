@@ -115,6 +115,13 @@
   (global-mark-ring-max 32)
   (set-mark-command-repeat-pop t)
 
+  ;; set window title in xterm-compatible terminals
+  (xterm-set-window-title t)
+
+  ;; set window title format
+  (frame-title-format '(multiple-frames "%b"
+                                        ("" "%b - GNU Emacs")))
+
   :init
   (show-paren-mode 1)         ; highlight matching parentheses
   (winner-mode 1)             ; quickly restore windows

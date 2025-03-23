@@ -11,6 +11,7 @@ if [[ ! -v ZSH_VERSION ]]; then
     compdef() { :; }
 fi
 
+# WARNING edit fish aliases then copy changes here!
 alias a=arcam
 alias e="$EDITOR1"
 alias ee="$EDITOR2"
@@ -26,12 +27,13 @@ alias gs='git status'
 alias gss='git show'
 alias ga='git add'
 alias gau='git add -u'
-alias gp='git add --patch'
+alias gap='git add --patch'
+alias gr='git restore'
 alias gri='git rebase -i'
+alias grm='git rm --cached'
 alias gc='git commit'
-alias gmnc='git merge --no-commit --no-ff'
+alias gm='git merge --no-commit --no-ff'
 alias f="$FILE_MANAGER"
-alias m='tmux'
 alias mv='mv -i' # safe mv, ask on overwrite
 
 # intentionally different command so i know if i am trashing or deleting
