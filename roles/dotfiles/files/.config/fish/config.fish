@@ -18,4 +18,12 @@ if status is-interactive
         alias l='ls -aF --color=auto'
         alias ll='ls -alFh --color=auto'
     end
+
+    # make arrow up/down act like all the other shells
+    bind \e\[A 'up-or-prefix-search'
+    bind \e\[B 'down-or-prefix-search'
+    bind \e\[1\;5A 'up-or-search'
+    bind \e\[1\;5B 'down-or-search'
+
+    bind \cS 'fish_commandline_prepend sudo'
 end
