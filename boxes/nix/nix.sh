@@ -122,7 +122,7 @@ echo
 echo "Installing Nix package manager"
 
 # install locales, sudo and nix installer dependencies
-buildah run "$ctx" sh -c 'apt-get update && apt-get install -y --no-install-recommends locales sudo xz-utils curl ca-certificates git nano && rm -rf /var/cache/apt/archives /var/lib/apt/lists/*'
+buildah run "$ctx" sh -c 'apt-get update && apt-get install -y --no-install-recommends locales sudo less xz-utils curl ca-certificates git nano && rm -rf /var/cache/apt/archives /var/lib/apt/lists/*'
 
 # set the locale properly
 buildah run "$ctx" sh -c "sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen"
