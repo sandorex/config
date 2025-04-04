@@ -55,9 +55,6 @@ export DBX_CONTAINER_NAME=dev
 export DBX_CONTAINER_GENERATE_ENTRY=0
 export DBX_CONTAINER_HOME_PREFIX="$HOME/.dbx"
 
-# use fedora config by default
-export ARCAM_IMAGE=@fedora
-
 export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
 # set ls colors
@@ -67,7 +64,7 @@ eval "$(dircolors --sh "$AGSHELLDIR/util/gruvbox.dircolors")"
 "$AGSHELLDIR/util/console-theming.sh"
 
 # sets env var based on distro its running on
-source "$AGSHELLDIR/util/distro-icon.sh"
+. "$AGSHELLDIR/util/distro-icon.sh"
 
 # check if sourced again needlessly
 [ -n "$__PROFILE_RAN" ] && echo "This unefficiency is unacceptable, ~/.profile was sourced twice!"

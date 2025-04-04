@@ -1,4 +1,4 @@
-;;; init.el -- Minimal Configuration
+;;; init.el --- Minimal Configuration  -*- lexical-binding: t; -*-
 ;;;
 ;;; Commentary:
 ;;; Minimal configuration which uses the least third-party packages
@@ -122,6 +122,13 @@
   (frame-title-format '(multiple-frames "%b"
                                         ("" "%b - GNU Emacs")))
 
+  :config
+  ;; add option 'd' to show diff of file changes
+  (add-to-list 'save-some-buffers-action-alist
+               (list "d"
+                     (lambda (buffer) (diff-buffer-with-file (buffer-file-name buffer)))
+                     "show diff between the buffer and its file"))
+
   :init
   (show-paren-mode 1)         ; highlight matching parentheses
   (winner-mode 1)             ; quickly restore windows
@@ -145,7 +152,8 @@
 
 (keymap-global-set "C-c x r" 'restart-emacs)
 (keymap-global-set "C-x ;" 'comment-line) ; C-x C-; is not supported in terminal
-(keymap-global-set "C-c d" 'duplicate-line)
+(keymap-global-set "C-c d" 'duplicate-dwim)
+(keymap-global-set "C-\\" 'display-local-help) ; display help for symbol under cursor
 
 (global-set-key [remap list-buffers] 'ibuffer) ; simply better
 
