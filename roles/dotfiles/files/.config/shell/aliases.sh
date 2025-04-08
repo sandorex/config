@@ -32,7 +32,7 @@ alias gr='git restore'
 alias gri='git rebase -i'
 alias grm='git rm --cached'
 alias gc='git commit'
-alias gm='git merge --no-commit --no-ff'
+alias gm='git merge --no-commit --squash'
 alias f="$FILE_MANAGER"
 alias mv='mv -i' # safe mv, ask on overwrite
 

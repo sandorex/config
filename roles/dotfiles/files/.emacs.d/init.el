@@ -16,10 +16,7 @@
         modus-themes-subtle-line-numbers t
         modus-themes-vivendi-color-overrides '((bg-main . "#010101"))
 
-        custom-file (concat user-emacs-directory "config/custom-" (system-name) ".el")
-
-        ;; disable backups
-        make-backup-files nil)
+        custom-file (concat user-emacs-directory "config/custom-" (system-name) ".el"))
 
 ;; load machine specific custom file
 (load custom-file 'noerror 'nomessage)
@@ -45,9 +42,17 @@
 
   (help-window-select t) ; switch to help buffer automatically
 
+  ;; TODO idk if this actually works properly
+  (auto-save-file-name-transforms `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'" "/tmp/\\2" t)
+                                    ("." ,(concat user-emacs-directory "saves/") t)))
+  (backup-directory-alist `(("." . ,(concat user-emacs-directory "saves/"))))
+  (backup-by-copying t)
+  (lock-file-name-transforms '(("." "/tmp/elocks" t)))
+
   ;; whitespace
   (whitespace-line-column 80)
   (whitespace-style '(face lines-tail))
+  (show-trailing-whitespace t)
   (fill-column 80)
 
   ;; enter spaces not tabs
@@ -61,7 +66,6 @@
 
   (use-short-answers t)
   (confirm-kill-emacs 'yes-or-no-p)
-  (create-lockfiles nil) ; disable annoying lockfiles
 
   ;; redirect to link target when visting links
   (find-file-visit-truename t)
@@ -83,24 +87,9 @@
   (completions-max-height 16)
   (completion-styles '(basic flex partial-completion emacs22))
   (tab-always-indent 'complete) ; complete or indent on tab
+  (completion-auto-select nil) ; do not autofocus buffer (remember to use M-Up / M-Down / M-RET !)
 
-  ;; do not autofocus buffer (remember to use M-Up / M-Down / M-RET !)
-  (completion-auto-select nil)
-
-  ;; NOTE this does not work at the moment?
-  ;; (tab-bar-select-tab-modifiers '(meta) ; use ALT-<NUM> to switch tabs
-  (tab-bar-show 1) ; show tab bar only if more than 1 tab
-  (tab-bar-close-button-show nil)
-  (tab-bar-new-button-show nil)
-  (tab-bar-new-tab-to 'rightmost)
-  (tab-bar-tab-hints t)
-  (tab-bar-format
-   '(
-     ;; tab-bar-format-menu-bar ; menu replacement (TODO add margin)
-     tab-bar-format-history
-     tab-bar-format-tabs
-     tab-bar-separator
-     tab-bar-format-add-tab))
+  (suggest-key-bindings nil) ; annoying suggestions that block next keybindings
 
   ;; more vim-like scrolling without jumping whole page and centering cursor
   (scroll-margin 2)
@@ -200,24 +189,7 @@
 
 (keymap-global-set "C-x z" 'zoom-window)
 
-;; (keymap-global-set "C-S-<up>" 'move-line-up)
-;; (keymap-global-set "C-S-<down>" 'move-line-down)
-
 ;;; custom functions (interactive) ;;;
-
-;; TODO make it work with multiple lines
-;; ;; move line up
-;; (defun move-line-up ()
-;;   (interactive)
-;;   (transpose-lines 1)
-;;   (previous-line 2))
-
-;; ;; move line down
-;; (defun move-line-down ()
-;;   (interactive)
-;;   (next-line 1)
-;;   (transpose-lines 1)
-;;   (previous-line 1))
 
 ;; TODO make it ask for file and default to the emacs-abbrevs
 (defun load-safe-abbrevs (&optional file)
@@ -328,6 +300,8 @@
   :init
   ;; use treesitter rust mode
   (add-to-list 'auto-mode-alist '("\\.rs\\'" . rust-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.yml\\'" . yaml-ts-mode))
+  (add-to-list 'auto-mode-alist '("\\.yaml\\'" . yaml-ts-mode))
   :config
   ;; TODO install these automatically
   (setopt treesit-language-source-alist

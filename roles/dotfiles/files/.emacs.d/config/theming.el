@@ -2,6 +2,31 @@
 ;;; Commentary:
 ;;; Code:
 
+(defun my/tab-bar-tab-name-format (tab i)
+  "Custom tab name formatter (just adds padding before the tab index)"
+  (let ((current-p (eq (car tab) 'current-tab)))
+    (propertize
+     (concat (if tab-bar-tab-hints (format " %d " i) " ")
+             (alist-get 'name tab)
+             (or (and tab-bar-close-button-show
+                      (not (eq tab-bar-close-button-show
+                               (if current-p 'non-selected 'selected)))
+                      tab-bar-close-button)
+                 ""))
+     'face (funcall tab-bar-tab-face-function tab))))
+
+(setq tab-bar-tab-name-format-function 'my/tab-bar-tab-name-format
+        tab-bar-format '(
+                         ;; show menu bar but use ASCII and with padding spaces
+                         (lambda () '((menu-bar menu-item " @ " tab-bar-menu-bar :help "Menu Bar")))
+                         tab-bar-format-tabs
+                         (lambda () " ")) ; space makes the last tab not span till the end
+        tab-bar-show 1 ; show tab bar only if more than 1 tab
+        tab-bar-close-button-show nil
+        tab-bar-new-tab-to 'rightmost
+        tab-bar-tab-hints t
+        tab-bar-separator "")
+
 ;; set the modeline format
 (setopt mode-line-format
         '("%e"
