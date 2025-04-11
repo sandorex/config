@@ -43,9 +43,9 @@
   (help-window-select t) ; switch to help buffer automatically
 
   ;; TODO idk if this actually works properly
-  (auto-save-file-name-transforms `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'" "/tmp/\\2" t)
-                                    ("." ,(concat user-emacs-directory "saves/") t)))
-  (backup-directory-alist `(("." . ,(concat user-emacs-directory "saves/"))))
+  (auto-save-file-name-transforms `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'" "/tmp/\\2" t)))
+                                    ;; ("." "~/.emacs-save/" t)))
+  (backup-directory-alist `(("." . "~/.emacs-saves/")))
   (backup-by-copying t)
   (lock-file-name-transforms '(("." "/tmp/elocks" t)))
 

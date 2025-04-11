@@ -11,6 +11,8 @@
     p = add --patch
     i = add --interactive
 
+    graph = log --oneline --decorate --all --graph
+
     # auto commit with hostname
     autocommit = "!git commit --message=\"#A $(hostname)\" --edit"
     # commit empty commit
