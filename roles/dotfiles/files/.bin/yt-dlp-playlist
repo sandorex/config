@@ -10,4 +10,5 @@ yt-dlp --sleep-interval 3 \
        --download-archive ytdlp-archive.txt \
        --yes-playlist \
        --sponsorblock-remove default \
+       --exec 'rsgain custom' \
        "$@"
