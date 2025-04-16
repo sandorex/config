@@ -16,7 +16,6 @@ DNF_ARGS=(
 )
 PUBLISH=0
 ALL=0
-DELETE_CACHE=0
 
 export CACHE="cache"
 DNF_CACHE="$CACHE/dnf"
@@ -81,11 +80,6 @@ while [ $# -gt 0 ]; do
 
         --publish)
             PUBLISH=1
-            shift
-            ;;
-
-        --delete-cache)
-            DELETE_CACHE=1
             shift
             ;;
 
@@ -307,12 +301,7 @@ EOF
 
 buildah config --entrypoint /help.sh "$ctx"
 
-# delete cache in CI
-if [[ "$DELETE_CACHE" -eq 1 ]]; then
-    rm -rf "${CACHE:?}"
-fi
-
-buildah commit --squash "$ctx" "$NAME"
+buildah commit "$ctx" "$NAME"
 
 # add additional tags
 buildah tag "$NAME" "$REPO/$NAME:latest"

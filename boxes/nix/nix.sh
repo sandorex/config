@@ -9,7 +9,6 @@ cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 REPO='ghcr.io/sandorex'
 DOTFILES="$PWD/../../dotfiles"
 NAME=''
-OPTIONS=()
 PUBLISH=0
 ALL=0
 
@@ -37,13 +36,6 @@ while [ $# -gt 0 ]; do
         --all)
             ALL=1
             shift
-            ;;
-
-        --)
-            # consume all the rest as options
-            shift
-            OPTIONS+=("$@")
-            break
             ;;
 
         -h|--help)
@@ -205,7 +197,7 @@ EOF
 
 buildah config --entrypoint /help.sh "$ctx"
 
-buildah commit --squash "$ctx" "$NAME"
+buildah commit "$ctx" "$NAME"
 
 # add additional tags
 buildah tag "$NAME" "$REPO/$NAME:latest"
