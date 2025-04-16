@@ -83,6 +83,11 @@ while [ $# -gt 0 ]; do
             shift
             ;;
 
+        --delete-cache)
+            DELETE_CACHE=1
+            shift
+            ;;
+
         --all)
             ALL=1
             shift
@@ -253,33 +258,34 @@ buildah run "$ctx" sh -c 'echo "zsh-newuser-install() {}" >> /etc/zshenv'
 
 ./scripts/rustup.sh
 
+# TODO this is absolutely old config
 # TODO add zig cache to volumes
 # this is the arcam config, currently does not need to change between options
-buildah run "$ctx" sh -c 'cat > /config.toml' <<EOF
-[[config]]
-name = "$NAME"
-image = "$REPO/$NAME"
-network = true
-engine_args_podman = [
-    # persist neovim plugins
-    "--volume=box-nvim:\$HOME/.local/share/nvim",
-
-    # persist cargo packages
-    "--volume=box-cargo:\$HOME/.cargo/registry",
-
-    # persist rustup toolchains
-    "--volume=box-rustup:/opt/rustup",
-]
-on_init_pre = [
-    # all volumes are owned by root by default
-    "sudo chown \$USER:\$USER ~/.local/share/nvim ~/.cargo ~/.cargo/registry",
-]
-
-[config.env]
-# force neovim to use terminal to read/write clipboard
-"NVIM_FORCE_OSC52" = "true"
-
-EOF
+#buildah run "$ctx" sh -c 'cat > /config.toml' <<EOF
+#[[config]]
+#name = "$NAME"
+#image = "$REPO/$NAME"
+#network = true
+#engine_args_podman = [
+#    # persist neovim plugins
+#    "--volume=box-nvim:\$HOME/.local/share/nvim",
+#
+#    # persist cargo packages
+#    "--volume=box-cargo:\$HOME/.cargo/registry",
+#
+#    # persist rustup toolchains
+#    "--volume=box-rustup:/opt/rustup",
+#]
+#on_init_pre = [
+#    # all volumes are owned by root by default
+#    "sudo chown \$USER:\$USER ~/.local/share/nvim ~/.cargo ~/.cargo/registry",
+#]
+#
+#[config.env]
+## force neovim to use terminal to read/write clipboard
+#"NVIM_FORCE_OSC52" = "true"
+#
+#EOF
 
 buildah run "$ctx" sh -c 'cat > /help.sh; chmod +x /help.sh' <<EOF
 #!/bin/sh
@@ -299,6 +305,11 @@ eof
 EOF
 
 buildah config --entrypoint /help.sh "$ctx"
+
+# delete cache in CI
+if [[ "$DELETE_CACHE" -eq 1 ]]; then
+    rm -rf "${CACHE:?}"
+fi
 
 buildah commit --squash "$ctx" "$NAME"
 
