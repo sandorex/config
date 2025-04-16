@@ -16,6 +16,7 @@ DNF_ARGS=(
 )
 PUBLISH=0
 ALL=0
+DELETE_CACHE=0
 
 export CACHE="cache"
 DNF_CACHE="$CACHE/dnf"
