@@ -1,4 +1,3 @@
-function gll --wraps='git log' --description 'alias gll=git log'
-  git log $argv
-        
+function gll --wraps='git ll' --description 'alias gll=git ll'
+  git ll $argv        
 end

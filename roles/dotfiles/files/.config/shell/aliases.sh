@@ -7,7 +7,7 @@
 unalias -a
 
 # make compdef a noop on bash
-if [[ ! -v ZSH_VERSION ]]; then
+if [[ -z "$ZSH_VERSION" ]]; then
     compdef() { :; }
 fi
 
@@ -21,8 +21,8 @@ alias s='sudo'
 alias g='git'
 alias gd='git diff'
 alias gds='git diff --staged'
-alias gl='git log --oneline'
-alias gll='git log'
+alias gl='git l'
+alias gll='git ll'
 alias gs='git status'
 alias gss='git show'
 alias ga='git add'

@@ -2,12 +2,42 @@
     name = sandorex
     email = rzhw3h@gmail.com
 
+[core]
+    whitespace = error
+
+[status]
+    branch = true
+    showStash = true
+    showUntrackedFiles = all
+
+[diff]
+    renames = copies
+
+[commit]
+    # show diff in commit msg template
+    verbose = 1
+
+[tag]
+    sort = "-v:refname"
+
+[push]
+    default = tracking
+    followTags = true
+
+[rebase]
+    missingCommitsCheck = warn
+
+[init]
+    defaultBranch = main
+    templateDir = ~/.config/git/template
+
 [alias]
     s = status
     ss = status -sb # less detailed short stats
     d = diff
     ds = diff --staged # show only files to be commited
-    l = "log --date=iso --format='%C(auto) %h %d %s %Cgreen [%ad]'"
+    l = "log --graph --all --pretty=format:\"%C(magenta)%h %C(white) %an  %ar%C(blue)  %D%n%s%n\""
+    ll = "log --date=iso --format='%C(auto) %h %d %s %Cgreen [%ad]'"
     p = add --patch
     i = add --interactive
 
@@ -27,20 +57,10 @@
     hl = "!git remote update; git l HEAD..origin/HEAD"
     hd = "!git remote update; git diff HEAD..origin/HEAD"
 
-[push]
-    default=tracking
+[url "git@github.com:sandorex/"]
+    insteadOf = gh:
 
-# this can cause problems with cargo
-# allows using ssh keys with https remote
-#[url "git@github.com:sandorex/"]
-#    insteadOf = https://github.com/sandorex/
-#
-#[url "git@gitlab.com:sandorex/"]
-#    insteadOf = https://gitlab.com/sandorex/
-
-[init]
-    defaultBranch = main
-    templateDir = ~/.git-template
+[url "git@gitlab.com:sandorex/"]
+    insteadOf = gl:
 
 # vim: ft=gitconfig
-

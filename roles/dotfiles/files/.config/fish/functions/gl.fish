@@ -1,4 +1,3 @@
-function gl --wraps='git log --oneline' --description 'alias gl=git log --oneline'
-  git log --oneline $argv
-        
+function gl --wraps='git l' --description 'alias gl=git l'
+  git l $argv
 end
