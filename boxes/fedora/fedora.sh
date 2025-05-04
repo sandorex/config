@@ -30,6 +30,7 @@ DNF=(
     fish
     nano
     neovim
+    helix
     emacs-nox
     glibc-langpack-en
 )
