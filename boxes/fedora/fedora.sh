@@ -63,7 +63,7 @@ UTILS_PIP=(
     git-cliff
 )
 
-IMAGE_VERSION="41"
+IMAGE_VERSION="42"
 IMAGE="registry.fedoraproject.org/fedora-toolbox:$IMAGE_VERSION"
 
 POSITIONAL_ARGS=()
