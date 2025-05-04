@@ -135,5 +135,7 @@ copy_or_link "$DOTFILES"/.config/bash "$TARGET"/.config/bash
 copy_or_link "$DOTFILES"/.zshrc "$TARGET"/.zshrc
 copy_or_link "$DOTFILES"/.config/zsh "$TARGET"/.config/zsh
 
+copy_or_link "$DOTFILES"/.config/helix "$TARGET"/.config/helix
+
 # TODO do the rest
 

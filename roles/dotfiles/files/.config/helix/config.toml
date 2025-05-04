@@ -1,0 +1,5 @@
+theme = "catppuccin_mocha"
+
+[keys.normal]
+C-up = "@10k"
+C-down = "@10j"
