@@ -3,3 +3,13 @@ theme = "catppuccin_mocha"
 [keys.normal]
 C-up = "@10k"
 C-down = "@10j"
+C-left = "@5h"
+C-right = "@5l"
+
+# quick write/quit
+space."S-w" = ":w"
+space."S-q" = ":q"
+
+# quick theme change
+space.t.t.d = ":theme catppuccin_mocha"
+space.t.t.l = ":theme catppuccin_latte"

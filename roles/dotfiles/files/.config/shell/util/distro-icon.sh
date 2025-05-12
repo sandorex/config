@@ -81,7 +81,7 @@ case "$id" in
 esac
 
 # make all containers gray
-if [ -v container ]; then
+if [ -n "$container" ]; then
     PROMPT_ICON_COLOR=7
     PROMPT_ICON_COLOR_HEX='ABAFBD'
 fi
