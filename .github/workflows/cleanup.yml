@@ -1,13 +1,23 @@
 on:
   workflow_dispatch:
 
+# removes old packages of all images on demand
 jobs:
   cleanup-old-containers:
     name: Delete old containers
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package:
+          - arcam-fedora
+          - arcam-fedora-full
+          - arcam-fedora-mini
+          - arcam-fedora-nix
+
+          - arcam-nix
     steps:
       - uses: actions/delete-package-versions@v5
         with:
-          package-name: 'dev-fedora'
+          package-name: '${{ matrix.package }}'
           package-type: 'container'
           min-versions-to-keep: 5

@@ -1,5 +1,14 @@
 theme = "catppuccin_mocha"
 
+[editor.whitespace.render]
+space = "none"
+tab = "all"
+newline = "none"
+
+[editor.whitespace.characters]
+tab = "·"
+tabpad = "·"
+
 [keys.normal]
 C-up = "@10k"
 C-down = "@10j"

@@ -12,7 +12,7 @@ NAME=''
 PUBLISH=0
 ALL=0
 
-IMAGE_VERSION="bookworm"
+IMAGE_VERSION="bookworm-slim"
 IMAGE="debian:$IMAGE_VERSION"
 
 POSITIONAL_ARGS=()
@@ -97,28 +97,21 @@ if command -v git &>/dev/null; then
     GIT_SHA="$(git rev-parse --short=10 HEAD)"
 fi
 
-export ctx="$(buildah from --security-opt label=disable "$IMAGE")"
+ctx="$(buildah from --security-opt label=disable "$IMAGE")"
+export ctx
 
 echo "Building image '$NAME' from 'debian:$IMAGE_VERSION'"
 
 buildah config --label name="arcam-nix" \
                --label summary="Debian based arcam container image with nix package manager" \
                --label maintainer="Sandorex <rzhw3h@gmail.com>" \
-               --env LANG='en_US.UTF-8' \
-               --env LANGUAGE='en_US.UTF-8' \
-               --env LC_ALL='en_US.UTF-8' \
-               --env LOCALE_ARCHIVE='/usr/lib/locale/locale-archive' \
                "$ctx"
 
 echo
 echo "Installing Nix package manager"
 
 # install locales, sudo and nix installer dependencies
-buildah run "$ctx" sh -c 'apt-get update && apt-get install -y --no-install-recommends locales sudo less xz-utils curl ca-certificates git nano && rm -rf /var/cache/apt/archives /var/lib/apt/lists/*'
-
-# set the locale properly
-buildah run "$ctx" sh -c "sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen"
-buildah run "$ctx" sh -c "locale-gen"
+buildah run "$ctx" sh -c 'apt-get update && apt-get install -y --no-install-recommends sudo bash less xz-utils curl ca-certificates git nano && rm -rf /var/cache/apt/archives /var/lib/apt/lists/*'
 
 # bash is required as <(cmd) is a bashism
 buildah run "$ctx" bash -c 'sh <(curl -L https://nixos.org/nix/install) --daemon --yes'
@@ -128,10 +121,24 @@ buildah run "$ctx" mkdir /init.d
 # daemon is required for nix to work properly
 buildah run "$ctx" sh -c 'cat > /init.d/10-nix.sh' <<EOF
 #!/usr/bin/env bash
+set -euo pipefail
+
 echo "Executing nix-daemon"
 
 # execute daemon and disown it
 nohup asroot /nix/var/nix/profiles/default/bin/nix-daemon &> /dev/null &
+
+# if nix is mounted, set it up properly
+if findmnt /nix &>/dev/null &>/dev/null; then
+    if [ "$(ls -A /nix)"]; then
+        # the volume is empty so copy whole store
+        asroot cp -ra /nix-builtin/* /nix/
+    else
+        # volume is not empty so just copy packages
+        # login shell so nix is in PATH
+        asroot sh -l -c 'nix copy --all --from file:///nix-builtin/store'
+    fi
+fi
 
 EOF
 
@@ -150,35 +157,24 @@ else
     echo "Dotfiles not found, skipped.."
 fi
 
+# hardlink the builtin so its still accessible even if mounted over
+buildah run "$ctx" sh -c 'sudo cp -al /nix /nix-builtin'
+
+# TODO is this required? doesn't arcam chmod automatically?
 # make all init files executable at once, reduces boilerplate code above
 buildah run "$ctx" sh -c 'chmod +x /init.d/* || :'
 
-# TODO config has changed with new arcam
-# # this is the arcam config, currently does not need to change between options
-# buildah run "$ctx" sh -c 'cat > /config.toml' <<EOF
-# name = "$NAME"
-# image = "$REPO/$NAME"
-# network = true
-# engine_args_podman = [
-#     # persist neovim plugins
-#     "--volume=box-nvim:\$HOME/.local/share/nvim",
+# arcam config, stores nix store in a volume
+buildah run "$ctx" sh -c 'cat > /config.toml' <<EOF
+name = "$NAME"
+image = "$REPO/$NAME"
+network = true
+engine_args_podman = [
+    # persist nix store
+    "--volume=box-nix:/nix"
+]
 
-#     # persist cargo packages
-#     "--volume=box-cargo:\$HOME/.cargo/registry",
-
-#     # persist rustup toolchains
-#     "--volume=box-rustup:/opt/rustup",
-# ]
-# on_init_pre = [
-#     # all volumes are owned by root by default
-#     "sudo chown \$USER:\$USER ~/.local/share/nvim ~/.cargo ~/.cargo/registry",
-# ]
-
-# [config.env]
-# # force neovim to use terminal to read/write clipboard
-# "NVIM_FORCE_OSC52" = "true"
-
-# EOF
+EOF
 
 buildah run "$ctx" sh -c 'cat > /help.sh; chmod +x /help.sh' <<EOF
 #!/bin/sh
