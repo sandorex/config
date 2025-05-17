@@ -1,0 +1,53 @@
+- name: _Check if running on correct machine
+  ansible.builtin.pause:
+    prompt: 'This machine does not appear to be "{{ ansible_play_name }}", if you want to continue type "yes" and press enter'
+  when: ansible_nodename | lower != ansible_play_name or ansible_env.container is defined
+  register: answer
+  failed_when: answer.user_input | lower != 'yes'
+  tags: always
+
+- name: _Check if running on correct distro
+  ansible.builtin.pause:
+    prompt: 'This machine does not appear to be running "{{ distro }} {{ distro_version }}", if you want to continue type "yes" and press enter'
+  when: ansible_distribution != distro or ansible_distribution_major_version != distro_version
+  register: answer
+  failed_when: answer.user_input | lower != 'yes'
+  tags: always
+
+  # NOTE: if sudo is authenticated and it has not expired then root tasks will be ran anyway
+- name: _Test if password is given
+  ansible.builtin.command:
+    cmd: whoami
+  become: yes
+  register: output
+  ignore_errors: yes
+  changed_when: false
+  tags: always
+
+- name: _Enable root tasks
+  ansible.builtin.set_fact:
+    run_root_tasks: '{{ output.rc == 0 }}'
+  tags: always
+
+- name: Warn about root tasks
+  when: not run_root_tasks
+  ansible.builtin.debug:
+    msg: 'Use -K / --ask-become-pass to run tasks that require root priviledges'
+  tags: always
+
+- when: run_root_tasks
+  ansible.builtin.debug:
+    msg: 'Running tasks that require root priviledges'
+  tags: always
+
+- name: _Ensure ~/.config directory exists
+  ansible.builtin.file:
+    path: '{{ ansible_env.HOME }}/.config'
+    state: directory
+  tags: always
+
+- name: _Load defaults
+  ansible.builtin.include_vars:
+    file: '{{ playbook_dir }}/../default.yml'
+  tags: always
+

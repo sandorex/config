@@ -138,8 +138,9 @@ if [[ "$ALL" -eq 1 ]]; then
 
     ## DEFINE IMAGES HERE !! ##
 
-    "$0" "$arg" --name "arcam-fedora-full" -- all
-    "$0" "$arg" --name "arcam-fedora-mini"
+    # these are pretty much useless
+    # "$0" "$arg" --name "arcam-fedora-full" -- all
+    # "$0" "$arg" --name "arcam-fedora-mini"
     "$0" "$arg" --name "arcam-fedora-nix" -- nix
     "$0" "$arg" --name "arcam-fedora" -- utils zig
 

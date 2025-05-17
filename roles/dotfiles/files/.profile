@@ -10,6 +10,7 @@ export AGSHELLDIR="$HOME/.config/shell"     # agnostic shell stuff
 
 PATH="$PATH:$HOME/.bin"
 PATH="$PATH:$HOME/.local/bin"
+PATH="$PATH:$HOME/.local/share/bob/nvim-bin"
 PATH="$PATH:$HOME/.bin/polyfill"        # fallback path for optional software
 
 export PATH
@@ -69,4 +70,3 @@ eval "$(dircolors --sh "$AGSHELLDIR/util/gruvbox.dircolors")"
 # check if sourced again needlessly
 [ -n "$__PROFILE_RAN" ] && echo "This unefficiency is unacceptable, ~/.profile was sourced twice!"
 export __PROFILE_RAN=1
-
