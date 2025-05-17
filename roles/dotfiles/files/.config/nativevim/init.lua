@@ -8,4 +8,5 @@ require("core.treesitter")
 require("core.lsp")
 require("core.statusline")
 require("core.keybindings")
+require("core.functions")
 
