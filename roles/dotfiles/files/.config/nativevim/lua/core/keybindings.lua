@@ -1,20 +1,27 @@
 -- all keybindings should be here
 
--- leader --
-vim.keymap.set("n", "<leader>w", ":w<cr>", { silent = true, desc = ":w" })
-vim.keymap.set("n", "<leader>q", ":q<cr>", { silent = true, desc = ":q" })
+-- make wildchar trigger autocompletion in command mode (<tab> by default)
+vim.o.wildcharm = vim.o.wildchar
 
-vim.keymap.set("n", "<leader>f", ":e .<cr>", { silent = true, desc = "netrw cwd" })
-vim.keymap.set("n", "<leader>F", ":e %:p:h<cr>", { silent = true, desc = "netrw cur buf dir" })
+vim.keymap.set("n", "<leader>w", "<cmd>w<cr>", { desc = ":w" })
+vim.keymap.set("n", "<leader>q", "<cmd>q<cr>", { desc = ":q" })
 
--- non-leader --
+vim.keymap.set("v", "p", "\"_dP", { desc = "Paste without yanking", silent = true })
+vim.keymap.set("n", "<s-u>", "<cmd>redo<cr>", { desc = "Redo" })
+
+vim.keymap.set("n", "<leader>f", "<cmd>e .<cr>", { desc = "netrw cwd" })
+vim.keymap.set("n", "<leader>F", "<cmd>e %:p:h<cr>", { desc = "netrw cur buf dir" })
+
+vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
+vim.keymap.set("n", "<leader>D", vim.diagnostic.setloclist, { desc = "Open diagnostics list" })
+
 vim.keymap.set("i", "<c-space>", vim.lsp.completion.get, { silent = true, desc = "Trigger autocompletion" })
 vim.keymap.set("i", "<c-w>", vim.lsp.buf.hover, { silent = true, desc = "Trigger hover in insert mode" })
 
--- switch buffers easily
-vim.keymap.set("n", "<c-x>", ":bprev<cr>", { silent = true, desc = "Goto prev buffer" })
-vim.keymap.set("n", "<c-c>", ":bnext<cr>", { silent = true, desc = "Goto next buffer" })
+vim.keymap.set("n", "<c-x>", "<cmd>bprev<cr>", { desc = "Goto prev buffer" })
+vim.keymap.set("n", "<c-c>", "<cmd>bnext<cr>", { desc = "Goto next buffer" })
+vim.keymap.set("n", "<c-b>", "<cmd>bdelete<cr>", { desc = "Delete current buffer" })
 
--- delete buffers easily
-vim.keymap.set("n", "<c-b>", ":bdelete<cr>", { silent = true, desc = "Delete current buffer" })
+-- wildcharm --
+vim.keymap.set("n", "<leader>b", ":buffer<space><tab>", { desc = "Select buffer shorthand", silent = false })
 

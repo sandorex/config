@@ -19,7 +19,7 @@ vim.o.pumheight = 10        -- max height of completion menu
 
 vim.o.list = true           -- use special characters to represent things like tabs or trailing spaces
 vim.opt.listchars = {       -- NOTE: using `vim.opt` instead of `vim.o` to pass rich object
-    tab = "▏ ",
+    tab = "> ",
     trail = "·",
     extends = "»",
     precedes = "«",
@@ -37,6 +37,7 @@ vim.o.smartindent = true -- auto-indenting when starting a new line
 vim.o.shiftround = true  -- round indent to multiple of 'shiftwidth'
 vim.o.shiftwidth = 0     -- 0 to follow the 'tabstop' value
 vim.o.tabstop = 4        -- tab width
+vim.o.expandtab = true   -- use spaces instead of tabs
 
 vim.o.undofile = true    -- enable persistent undo
 vim.o.undolevels = 10000 -- 10x more undo levels
@@ -50,12 +51,12 @@ vim.g.netrw_banner = 0
 
 -- smart filtering for directories
 vim.opt.wildignore:append {
-	"*.pyc",
-	"node_modules",
+    "*.pyc",
+    "node_modules",
 }
 vim.opt.path:append {
-	"src/**",
-	"config/",
-	"cmake/",
+    "src/**",
+    "config/",
+    "cmake/",
 }
 
