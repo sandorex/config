@@ -1,19 +1,20 @@
 theme = "catppuccin_mocha"
 
 [editor.whitespace.render]
-space = "none"
 tab = "all"
-newline = "none"
 
 [editor.whitespace.characters]
-tab = "·"
-tabpad = "·"
+tab = ">"
+space = "·"
 
 [keys.normal]
 C-up = "@10k"
 C-down = "@10j"
 C-left = "@5h"
 C-right = "@5l"
+
+"[".b = ":buffer-previous"
+"]".b = ":buffer-next"
 
 # quick write/quit
 space."S-w" = ":w"
