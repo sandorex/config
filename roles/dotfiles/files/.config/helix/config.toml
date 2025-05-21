@@ -16,10 +16,18 @@ C-right = "@5l"
 "[".b = ":buffer-previous"
 "]".b = ":buffer-next"
 
-# quick write/quit
-space."S-w" = ":w"
-space."S-q" = ":q"
+"C-w"."C-x" = ":buffer-close"
+"C-w".x = ":buffer-close"
+space.w.x = ":buffer-close"
 
 # quick theme change
 space.t.t.d = ":theme catppuccin_mocha"
 space.t.t.l = ":theme catppuccin_latte"
+
+[keys.insert]
+# most common keybinding for autocompletion across all editors
+C-space = "completion"
+
+[keys.select]
+# return to normal mode when collapsing selection
+";" = [ "collapse_selection", "normal_mode" ]
