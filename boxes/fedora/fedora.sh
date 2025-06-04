@@ -27,6 +27,7 @@ DNF=(
     just
     curl
     wget
+    zsh
     fish
     nano
     neovim
