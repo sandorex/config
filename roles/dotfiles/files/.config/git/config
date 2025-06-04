@@ -35,8 +35,8 @@
     ss = status -sb # less detailed short stats
     d = diff
     ds = diff --staged # show only files to be commited
-    l = "log --graph --all --pretty=format:\"%C(magenta)%h %C(white) %an  %ar%C(blue)  %D%n%s%n\""
-    ll = "log --date=iso --format='%C(auto) %h %d %s %Cgreen [%ad]'"
+    ll = "log --graph --all --pretty=format:\"%C(magenta)%h %C(white) %an  %ar%C(blue)  %D%n%s%n\""
+    l = "log --date=iso --format='%C(auto) %h %d %s %Cgreen [%ad]'"
     p = add --patch
     i = add --interactive
 

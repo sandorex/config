@@ -28,7 +28,7 @@ function copy() {
             --backup=simple \
             "$src" "$dst"
     else
-        echo "Would copy $src to $dst"
+        echo "@ cp $src -> $dst"
     fi
 }
 
@@ -53,7 +53,7 @@ function link() {
             --backup=simple \
             "$src" "$dst"
     else
-        echo "Would link $dst to $src"
+        echo "@ link $dst -> $src"
     fi
 }
 
@@ -66,9 +66,21 @@ function copy_or_link() {
     fi
 }
 
-# aliases to show changes better
-function chmod() { command chmod --changes "$@"; }
-function mkdir() { command mkdir --verbose --parents "$@"; }
+function perm() {
+    if [[ $DRY_RUN -eq 0 ]]; then
+        chmod --changes "$@"
+    else
+        echo "@ chmod $@"
+    fi
+}
+
+function makedir() {
+    if [[ $DRY_RUN -eq 0 ]]; then
+        mkdir --verbose --parents "$@"
+    else
+        echo "@ mkdir $@"
+    fi
+}
 
 POSITIONAL_ARGS=()
 
@@ -105,9 +117,13 @@ set -- "${POSITIONAL_ARGS[@]}"
 DOTFILES="$(realpath "$(readlink dotfiles)")"
 
 if [[ -n "$1" ]]; then
-    TARGET="$1"
+    TARGET="$(realpath $1)"
 else
     TARGET="$HOME"
+fi
+
+if [[ $DRY_RUN -eq 1 ]]; then
+    echo "@ Dry run, no modifications SHOULD be made @"
 fi
 
 echo "Installing into ${TARGET:?}"
@@ -116,10 +132,10 @@ echo "Installing into ${TARGET:?}"
 exec >install.log
 
 # ssh
-mkdir "$TARGET"/.ssh/connections
+makedir "$TARGET"/.ssh/connections
 copy "$DOTFILES"/.ssh/config "$TARGET"/.ssh/config
-chmod 600 "$TARGET"/.ssh/config
-chmod 700 "$TARGET"/.ssh \
+perm 600 "$TARGET"/.ssh/config
+perm 700 "$TARGET"/.ssh \
           "$TARGET"/.ssh/connections
 echo
 
@@ -135,7 +151,21 @@ copy_or_link "$DOTFILES"/.config/bash "$TARGET"/.config/bash
 copy_or_link "$DOTFILES"/.zshrc "$TARGET"/.zshrc
 copy_or_link "$DOTFILES"/.config/zsh "$TARGET"/.config/zsh
 
+# git
+copy_or_link "$DOTFILES"/.config/git "$TARGET"/.config/git
+
+# zellij
+copy_or_link "$DOTFILES"/.config/zellij "$TARGET"/.config/zellij
+
+# kitty
+copy_or_link "$DOTFILES"/.config/kitty "$TARGET"/.config/kitty
+
+## editors ##
+# nano
+copy_or_link "$DOTFILES"/.config/nano "$TARGET"/.config/nano
+
+# neovim
+copy_or_link "$DOTFILES"/.config/nvim "$TARGET"/.config/nvim
+
+# helix
 copy_or_link "$DOTFILES"/.config/helix "$TARGET"/.config/helix
-
-# TODO do the rest
-

@@ -2,6 +2,7 @@ theme = "catppuccin_mocha"
 
 [editor.whitespace.render]
 tab = "all"
+space = "none"
 
 [editor.whitespace.characters]
 tab = ">"
@@ -10,8 +11,8 @@ space = "·"
 [keys.normal]
 C-up = "@10k"
 C-down = "@10j"
-C-left = "@5h"
-C-right = "@5l"
+C-left = "move_prev_word_start"
+C-right = "move_next_word_start"
 
 "[".b = ":buffer-previous"
 "]".b = ":buffer-next"
@@ -20,6 +21,10 @@ C-right = "@5l"
 "C-w".x = ":buffer-close"
 space.w.x = ":buffer-close"
 
+# toggle show space
+space.t." " = ":toggle whitespace.render.space none all"
+
+# NOTE :toggle does not support theme
 # quick theme change
 space.t.t.d = ":theme catppuccin_mocha"
 space.t.t.l = ":theme catppuccin_latte"
