@@ -1,0 +1,86 @@
+format = "\\[$username@$hostname $os\\] $shell "
+right_format = "\\[ $status \\] $cmd_duration $directory $git_status"
+
+[shell]
+disabled = false
+format = "[$indicator]($style)"
+bash_indicator = "$"
+fish_indicator = ">"
+zsh_indicator = "%"
+powershell_indicator = "ps"
+cmd_indicator = "cmd"
+nu_indicator = "@"
+unknown_indicator = "?"
+
+[status]
+disabled = false
+
+[directory]
+read_only = " 󰌾"
+
+[git_branch]
+symbol = " "
+
+[git_commit]
+tag_symbol = '  '
+
+[hostname]
+ssh_only = false
+format = "[$hostname]($style)"
+
+[username]
+show_always = true
+format = "[$user]($style)"
+
+[nix_shell]
+symbol = " "
+
+[os]
+disabled = false
+
+[os.symbols]
+Alpaquita = " "
+Alpine = " "
+AlmaLinux = " "
+Amazon = " "
+Android = " "
+Arch = " "
+Artix = " "
+CachyOS = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "󰛓 "
+Gentoo = " "
+HardenedBSD = "󰞌 "
+Illumos = "󰈸 "
+Kali = " "
+Linux = " "
+Mabox = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+Nobara = " "
+OpenBSD = "󰈺 "
+openSUSE = " "
+OracleLinux = "󰌷 "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+RockyLinux = " "
+Redox = "󰀘 "
+Solus = "󰠳 "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Void = " "
+Windows = "󰍲 "
