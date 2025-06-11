@@ -5,6 +5,8 @@ set -e -o pipefail
 
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
+# TODO do not backup links
+
 LINK=0
 DRY_RUN=0
 
@@ -137,19 +139,28 @@ copy "$DOTFILES"/.ssh/config "$TARGET"/.ssh/config
 perm 600 "$TARGET"/.ssh/config
 perm 700 "$TARGET"/.ssh \
           "$TARGET"/.ssh/connections
-echo
 
-## shells
+# bin
+copy_or_link "$DOTFILES"/.bin "$TARGET"/.bin
+
+# lsd
+copy_or_link "$DOTFILES"/.config/lsd "$TARGET"/.config/lsd
+
+# shells
 copy_or_link "$DOTFILES"/.profile "$TARGET"/.profile
 copy_or_link "$DOTFILES"/.config/shell "$TARGET"/.config/shell
 
 # bash
 copy_or_link "$DOTFILES"/.bashrc "$TARGET"/.bashrc
 copy_or_link "$DOTFILES"/.config/bash "$TARGET"/.config/bash
+copy_or_link "$DOTFILES"/.inputrc "$TARGET"/.inputrc
 
 # zsh
 copy_or_link "$DOTFILES"/.zshrc "$TARGET"/.zshrc
 copy_or_link "$DOTFILES"/.config/zsh "$TARGET"/.config/zsh
+
+# fish
+copy_or_link "$DOTFILES"/.config/fish "$TARGET"/.config/fish
 
 # git
 copy_or_link "$DOTFILES"/.config/git "$TARGET"/.config/git
@@ -159,6 +170,12 @@ copy_or_link "$DOTFILES"/.config/zellij "$TARGET"/.config/zellij
 
 # kitty
 copy_or_link "$DOTFILES"/.config/kitty "$TARGET"/.config/kitty
+
+# qalculate
+copy_or_link "$DOTFILES"/.local/share/qalculate/definitions "$TARGET"/.local/share/qalculate/definitions
+
+# gitui
+copy_or_link "$DOTFILES"/.config/gitui "$TARGET"/.config/gitui
 
 ## editors ##
 # nano
