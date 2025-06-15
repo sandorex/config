@@ -143,7 +143,7 @@ if [[ "$ALL" -eq 1 ]]; then
     # "$0" "$arg" --name "arcam-fedora-full" -- all
     # "$0" "$arg" --name "arcam-fedora-mini"
     "$0" "$arg" --name "arcam-fedora-nix" -- nix
-    "$0" "$arg" --name "arcam-fedora" -- utils zig
+    "$0" "$arg" --name "arcam-fedora" -- utils
 
     ## DEFINE IMAGES HERE !! ##
 
@@ -256,34 +256,35 @@ buildah run "$ctx" sh -c 'echo "zsh-newuser-install() {}" >> /etc/zshenv'
 
 ./scripts/rustup.sh
 
-# TODO this is absolutely old config
-# TODO add zig cache to volumes
 # this is the arcam config, currently does not need to change between options
-#buildah run "$ctx" sh -c 'cat > /config.toml' <<EOF
-#[[config]]
-#name = "$NAME"
-#image = "$REPO/$NAME"
-#network = true
-#engine_args_podman = [
-#    # persist neovim plugins
-#    "--volume=box-nvim:\$HOME/.local/share/nvim",
-#
-#    # persist cargo packages
-#    "--volume=box-cargo:\$HOME/.cargo/registry",
-#
-#    # persist rustup toolchains
-#    "--volume=box-rustup:/opt/rustup",
-#]
-#on_init_pre = [
-#    # all volumes are owned by root by default
-#    "sudo chown \$USER:\$USER ~/.local/share/nvim ~/.cargo ~/.cargo/registry",
-#]
-#
-#[config.env]
-## force neovim to use terminal to read/write clipboard
-#"NVIM_FORCE_OSC52" = "true"
-#
-#EOF
+buildah run "$ctx" sh -c 'cat > /config.toml' <<EOF
+version = 1
+image = "$REPO/$NAME"
+network = true
+shell = "/bin/fish"
+engine_args = [
+    # persist neovim plugins
+    "--volume=box-nvim:\$HOME/.local/share/nvim",
+
+    # persist cargo packages
+    "--volume=box-cargo:\$HOME/.cargo/registry",
+
+    # persist rustup toolchains
+    "--volume=box-rustup:/opt/rustup",
+
+    # persist nix store
+    "--volume=box-nix:/nix"
+]
+
+# all volumes are owned by root by default
+on_init_pre = """
+    sudo chown \$USER:\$USER ~/.local/share/nvim
+    sudo chown \$USER:\$USER ~/.cargo ~/.cargo/registry
+"""
+
+# force neovim to use terminal to read/write clipboard
+env = [["NVIM_FORCE_OSC52", "true"]]
+EOF
 
 buildah run "$ctx" sh -c 'cat > /help.sh; chmod +x /help.sh' <<EOF
 #!/bin/sh
