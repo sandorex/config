@@ -166,6 +166,7 @@ buildah run "$ctx" sh -c 'chmod +x /init.d/* || :'
 
 # arcam config, stores nix store in a volume
 buildah run "$ctx" sh -c 'cat > /config.toml' <<EOF
+version = "1"
 image = "$REPO/$NAME"
 network = true
 engine_args = [

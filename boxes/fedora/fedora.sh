@@ -258,7 +258,7 @@ buildah run "$ctx" sh -c 'echo "zsh-newuser-install() {}" >> /etc/zshenv'
 
 # this is the arcam config, currently does not need to change between options
 buildah run "$ctx" sh -c 'cat > /config.toml' <<EOF
-version = 1
+version = "1"
 image = "$REPO/$NAME"
 network = true
 shell = "/bin/fish"
