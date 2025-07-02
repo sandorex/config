@@ -1,0 +1,11 @@
+{
+    "elefant_foot_compensation": "0.25",
+    "from": "User",
+    "inherits": "0.20mm Standard @Creality Ender3V2Neo",
+    "is_custom_defined": "0",
+    "name": "0.20mm Standard @Creality Ender3V2Neo - Copy",
+    "print_settings_id": "0.20mm Standard @Creality Ender3V2Neo - Copy",
+    "version": "2.3.0.3",
+    "wall_sequence": "inner-outer-inner wall",
+    "xy_hole_compensation": "0.15"
+}
