@@ -79,7 +79,7 @@ _comp_options+=(globdots)
 
 ## PROMPT ##
 # prompt expansion https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
-PROMPT="[%F{magenta}%n%f@%F{blue}%m%F{${PROMPT_ICON_COLOR}} ${PROMPT_ICON} %f] %F{$PROMPT_ICON_COLOR}%(1j.%U.)%%%u%f "
+PROMPT="%F{blue}%(1j.!.)%F{yellow}%B%%%b%u%f "
 
 # shows exit code if last command exited with non-zero
 RPROMPT="%(?..%F{red}[ %?%  ] %f)%F{243}%27<..<%~%f"
@@ -89,8 +89,6 @@ source "$SHELLDIR/keybindings.zsh"
 
 ## PLUGINS ##
 
-# TODO it does not work in all terminals also does not work in nested shells
-#source "$SHELLDIR/plugins/smart-terminal.zsh"
 source "$SHELLDIR/plugins/execution-time.zsh"
 
 # load last

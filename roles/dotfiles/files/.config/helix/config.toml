@@ -23,6 +23,7 @@ space.w.x = ":buffer-close"
 
 # toggle show space
 space.t." " = ":toggle whitespace.render.space none all"
+space.t."w" = [ ":toggle soft-wrap.enable", ":redraw" ]
 
 # NOTE :toggle does not support theme
 # quick theme change

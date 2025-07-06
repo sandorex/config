@@ -50,11 +50,20 @@ __center_align_printf() {
 
 # minimal prompt
 __prompt_cmd() {
-    code=$?
+    local code=$?
     if [ "$code" -ne 0 ]; then
         tput setaf 1
         __center_align_printf "Exited with non-zero code $code"
         tput sgr0
+    fi
+
+    # detect background jobs
+    jobs %% &>/dev/null
+    code=$?
+    if [ "$code" -eq 0 ]; then
+        _BASH_JOBS="!"
+    else
+        _BASH_JOBS=""
     fi
 
     # set title
@@ -62,7 +71,7 @@ __prompt_cmd() {
 }
 
 PROMPT_COMMAND="__prompt_cmd ; $PROMPT_COMMAND"
-PS1='$\[$(tput sgr0)\] '
+PS1='\[$(tput setaf 4)\]$_BASH_JOBS\[$(tput setaf 11)\]$\[$(tput sgr0)\] '
 
 # enable bash completion
 if ! shopt -oq posix; then
