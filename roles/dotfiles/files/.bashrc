@@ -63,7 +63,7 @@ __prompt_cmd() {
     if [ "$code" -eq 0 ]; then
         _BASH_JOBS="!"
     else
-        _BASH_JOBS=""
+        _BASH_JOBS=" "
     fi
 
     # set title

@@ -79,7 +79,7 @@ _comp_options+=(globdots)
 
 ## PROMPT ##
 # prompt expansion https://zsh.sourceforge.io/Doc/Release/Prompt-Expansion.html
-PROMPT="%F{blue}%(1j.!.)%F{yellow}%B%%%b%u%f "
+PROMPT="%F{blue}%(1j.!. )%F{yellow}%B%%%b%u%f "
 
 # shows exit code if last command exited with non-zero
 RPROMPT="%(?..%F{red}[ %?%  ] %f)%F{243}%27<..<%~%f"
