@@ -1,0 +1,135 @@
+{
+  "wlr/taskbar": {
+    "format": "{icon}",
+    "icon-size": 20,
+    "tooltip-format": "{title}",
+    "on-click": "activate",
+    "on-click-middle": "close",
+    "ignore-list": [
+      "kitty"
+    ],
+    // "app_ids-mapping": {
+    //   "firefoxdeveloperedition": "firefox-developer-edition"
+    // },
+    "rewrite": {
+      "Firefox Web Browser": "Firefox"
+    }
+  },
+  "custom/start": {
+    "format": "  <span font='12'></span>  ",
+    "tooltip": false,
+    "on-click": "rofi -show drun -show-icons"
+  },
+  "mpris": {
+    "format": "󰎇 {title} {player_icon} 󰎇",
+    "format-paused": "{title} {player_icon}",
+    "format-len": 20,
+    "format-paused-len": 15,
+    "player-icons": {
+      "default": "",
+      "chromium": " ",
+    },
+    // "ignored-players": ["firefox"]
+  },
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+      "activated": "",
+      "deactivated": ""
+    }
+  },
+  "group/tray": {
+    "orientation": "horizontal",
+    "drawer": {
+      "transition-left-to-right": false,
+      "children-class": "tray-group"
+    },
+    "modules": [
+      "network",
+      "tray"
+    ]
+  },
+  "network": {
+    "format-wifi": "{essid} ({signalStrength}%)  ",
+    "format-ethernet": "<span font='11'>󰈀 </span>",
+    "format-disconnected": "Disconnected ⚠",
+    "tooltip-format": "{ifname} {ipaddr}/{cidr}",
+    "tooltip-format-wifi": "{ifname } {essid} {frequency}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "extras/terminal.sh --title 'NetworkManager TUI' nmtui",
+  },
+  "tray": {
+    "icon-size": 20,
+    "spacing": 10
+  },
+  "clock": {
+    "format": " {:%d/%m %H:%M} ",
+    "tooltip-format": "<tt><small>{calendar}</small></tt>",
+    "calendar": { // TODO needs more work on style
+      "mode": "year",
+      "mode-mon-col": 3,
+      "weeks-pos": "right",
+      "on-scroll": 1,
+      "format": {
+        "months": "<span color='#ffead3'><b>{}</b></span>",
+        "days": "<span color='#ecc6d9'><b>{}</b></span>",
+        "weeks": "<span color='#99ffdd'><b>W{}</b></span>",
+        "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+        "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+      }
+    },
+    "actions": {
+      "on-click-right": "mode",
+      "on-scroll-up": "shift_up",
+      "on-scroll-down": "shift_down"
+    }
+  },
+  "temperature": {
+    "hwmon-path": "/sys/class/hwmon/hwmon2/temp3_input",
+    "format": "",
+    "format-critical": "{temperatureC}°C",
+    "critical-threshold": 50
+  },
+  "pulseaudio": {
+    "format": "<span font='12'>{icon}</span>{volume}%",
+    "format-bluetooth": "<span font='12'>󰂰 </span>{volume}%",
+    "format-bluetooth-muted": "<span font='12'>󰂰 󰖁 </span>",
+    "format-muted": "<span font='12'>󰖁 </span",
+    "format-icons": {
+      // use `pactl list sinks` to find names
+      "alsa_output.pci-0000_0a_00.1.hdmi-stereo": "󰡁 ",
+      "alsa_output.pci-0000_0a_00.6.analog-stereo": " ",
+      "default": ["", " ", " "]
+    },
+    "ignored-sinks": [
+      "Easy Effects Sink"
+    ],
+    "on-click": "pavucontrol"
+    // TODO on middle click mute output use `pactl`
+  },
+  "bluetooth": {
+    "format-on": "<span font='12' color='#00BFFF'>  </span>",
+    "format-disabled": "<span font='12' color='#FFFFFF77'> 󰂲 </span>",
+    "format-off": "<span font='12' color='#FFFFFF77'> 󰂲 </span>",
+    "format-no-controller": "",
+    "format-connected": "<span font='12' color='#00BFFF'>  </span>",
+    // "format-connected": "<span color='#00BFFF'> 󰂱 </span> {device_alias} ",
+    // "format-connected-battery": "<span color='#00BFFF'> 󰂱 </span> {device_alias}{device_battery_percentage}% ",
+    "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
+    "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
+    "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%"
+  },
+  "custom/power": { // TODO add padding to the right
+      "format" : " <span font='14'>󰤂</span> ",
+      "tooltip": false,
+      "menu": "on-click",
+      "menu-file": "extras/power_menu.xml",
+      "menu-actions": {
+          "shutdown": "shutdown",
+          "reboot": "reboot",
+          "suspend": "systemctl suspend",
+          "hibernate": "systemctl hibernate"
+      }
+  }
+}
