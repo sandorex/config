@@ -14,6 +14,7 @@
   "modules-right": [
     "temperature",
     "idle_inhibitor",
+    "group/brightness",
     "bluetooth",
     "pulseaudio",
     "group/tray",

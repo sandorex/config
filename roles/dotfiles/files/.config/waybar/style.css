@@ -87,13 +87,20 @@ button:hover {
   }
 }
 
+tooltip {
+  background-color: rgba(43, 48, 59, 1.0);
+}
+
+tooltip label {
+  color: white;
+}
+
 label:focus {
   background-color: #000000;
 }
 
 #network {
   padding: 0;
-  /* padding-left: 10px; */
 }
 
 #network.disconnected {
@@ -101,7 +108,6 @@ label:focus {
 }
 
 #pulseaudio.muted {
-  /* background-color: #90b1b1; */
   color: #d36363;
 }
 

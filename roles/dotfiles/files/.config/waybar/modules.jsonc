@@ -16,15 +16,46 @@
     }
   },
   "custom/start": {
-    "format": "  <span font='12'></span>  ",
+    "format": "  <span font='12'> </span> ",
     "tooltip": false,
     "on-click": "rofi -show drun -show-icons"
+  },
+  "group/brightness": {
+    "orientation": "horizontal",
+    "drawer": {
+      "transition-left-to-right": false,
+      "click-to-reveal": true,
+    },
+    "modules": [
+      "custom/brightness",
+      "custom/brightness-0",
+      "custom/brightness-1"
+    ]
+  },
+  "custom/brightness": {
+    "format": "  <span font='12'>󰃟 </span> ",
+    "interval": 60,
+    "exec": "extras/brightness.py @ 'DELL U2414H' 'VA249'",
+    "tooltip-format": "{}",
+    "on-scroll-up": "extras/brightness.py +5 'DELL U2414H' 'VA249'",
+    "on-scroll-down": "extras/brightness.py -5 'DELL U2414H' 'VA249'"
+  },
+  "custom/brightness-0": {
+    "format": " DELL ",
+    "tooltip": false,
+    "on-scroll-up": "extras/brightness.py +5 'DELL U2414H'",
+    "on-scroll-down": "extras/brightness.py -5 'DELL U2414H'"
+  },
+  "custom/brightness-1": {
+    "format": " ASUS ",
+    "tooltip": false,
+    "on-scroll-up": "extras/brightness.py +5 'VA249'",
+    "on-scroll-down": "extras/brightness.py -5 'VA249'"
   },
   "mpris": {
     "format": "󰎇 {title} {player_icon} 󰎇",
     "format-paused": "{title} {player_icon}",
-    "format-len": 20,
-    "format-paused-len": 15,
+    "max-length": 45,
     "player-icons": {
       "default": "",
       "chromium": " ",
@@ -42,7 +73,6 @@
     "orientation": "horizontal",
     "drawer": {
       "transition-left-to-right": false,
-      "children-class": "tray-group"
     },
     "modules": [
       "network",
@@ -64,8 +94,8 @@
   },
   "clock": {
     "format": " {:%d/%m %H:%M} ",
-    "tooltip-format": "<tt><small>{calendar}</small></tt>",
-    "calendar": { // TODO needs more work on style
+    "tooltip-format": "<tt>{calendar}</tt>",
+    "calendar": {
       "mode": "year",
       "mode-mon-col": 3,
       "weeks-pos": "right",
@@ -99,13 +129,15 @@
       // use `pactl list sinks` to find names
       "alsa_output.pci-0000_0a_00.1.hdmi-stereo": "󰡁 ",
       "alsa_output.pci-0000_0a_00.6.analog-stereo": " ",
+      "alsa_output.pci-0000_0a_00.6.analog-stereo-muted": "󰟎 ",
       "default": ["", " ", " "]
     },
+    "max-volume": 120,
     "ignored-sinks": [
       "Easy Effects Sink"
     ],
-    "on-click": "pavucontrol"
-    // TODO on middle click mute output use `pactl`
+    "on-click": "pavucontrol",
+    "on-click-middle": "pactl set-sink-mute @DEFAULT_SINK@ toggle"
   },
   "bluetooth": {
     "format-on": "<span font='12' color='#00BFFF'>  </span>",
@@ -113,23 +145,22 @@
     "format-off": "<span font='12' color='#FFFFFF77'> 󰂲 </span>",
     "format-no-controller": "",
     "format-connected": "<span font='12' color='#00BFFF'>  </span>",
-    // "format-connected": "<span color='#00BFFF'> 󰂱 </span> {device_alias} ",
-    // "format-connected-battery": "<span color='#00BFFF'> 󰂱 </span> {device_alias}{device_battery_percentage}% ",
+    "format-connected-battery": "<span font='12' color='#00BFFF'>  </span>{device_battery_percentage}%",
     "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
     "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
     "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
     "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%"
   },
-  "custom/power": { // TODO add padding to the right
-      "format" : " <span font='14'>󰤂</span> ",
-      "tooltip": false,
-      "menu": "on-click",
-      "menu-file": "extras/power_menu.xml",
-      "menu-actions": {
-          "shutdown": "shutdown",
-          "reboot": "reboot",
-          "suspend": "systemctl suspend",
-          "hibernate": "systemctl hibernate"
-      }
+  "custom/power": {
+    "format" : " <span font='14'>󰤂</span> ",
+    "tooltip": false,
+    "menu": "on-click",
+    "menu-file": "extras/power_menu.xml",
+    "menu-actions": {
+      "shutdown": "shutdown",
+      "reboot": "reboot",
+      "suspend": "systemctl suspend",
+      "hibernate": "systemctl hibernate"
+    }
   }
 }
