@@ -28,29 +28,35 @@
     },
     "modules": [
       "custom/brightness",
-      "custom/brightness-0",
-      "custom/brightness-1"
+      "custom/brightness-1",
+      "custom/brightness-0"
     ]
   },
   "custom/brightness": {
     "format": "  <span font='12'>󰃟 </span> ",
-    "interval": 60,
-    "exec": "extras/brightness.py @ 'DELL U2414H' 'VA249'",
-    "tooltip-format": "{}",
-    "on-scroll-up": "extras/brightness.py +5 'DELL U2414H' 'VA249'",
-    "on-scroll-down": "extras/brightness.py -5 'DELL U2414H' 'VA249'"
+    "tooltip": false,
+    "on-scroll-up": "extras/brightness.py inc 5 'DELL U2414H' 'VA249' && pkill -RTMIN+1 waybar",
+    "on-scroll-down": "extras/brightness.py dec 5 'DELL U2414H' 'VA249' && pkill -RTMIN+1 waybar"
   },
   "custom/brightness-0": {
-    "format": " DELL ",
+    "format": " D {}% ",
     "tooltip": false,
-    "on-scroll-up": "extras/brightness.py +5 'DELL U2414H'",
-    "on-scroll-down": "extras/brightness.py -5 'DELL U2414H'"
+    "interval": "once",
+    "signal": 1,
+    "exec": "extras/brightness.py get 'DELL U2414H'",
+    "exec-on-event": false,
+    "on-scroll-up": "extras/brightness.py inc 5 'DELL U2414H' && pkill -RTMIN+1 waybar",
+    "on-scroll-down": "extras/brightness.py dec 5 'DELL U2414H' && pkill -RTMIN+1 waybar"
   },
   "custom/brightness-1": {
-    "format": " ASUS ",
+    "format": " A {}% ",
     "tooltip": false,
-    "on-scroll-up": "extras/brightness.py +5 'VA249'",
-    "on-scroll-down": "extras/brightness.py -5 'VA249'"
+    "interval": "once",
+    "signal": 1,
+    "exec": "extras/brightness.py get 'VA249'",
+    "exec-on-event": false,
+    "on-scroll-up": "extras/brightness.py inc 5 'VA249' && pkill -RTMIN+1 waybar",
+    "on-scroll-down": "extras/brightness.py dec 5 'VA249' && pkill -RTMIN+1 waybar"
   },
   "mpris": {
     "format": "󰎇 {title} {player_icon} 󰎇",
@@ -115,6 +121,7 @@
     }
   },
   "temperature": {
+    "interval": 15,
     "hwmon-path": "/sys/class/hwmon/hwmon2/temp3_input",
     "format": "",
     "format-critical": "{temperatureC}°C",
@@ -155,7 +162,7 @@
     "format" : " <span font='14'>󰤂</span> ",
     "tooltip": false,
     "menu": "on-click",
-    "menu-file": "extras/power_menu.xml",
+    "menu-file": "power_menu.xml",
     "menu-actions": {
       "shutdown": "shutdown",
       "reboot": "reboot",

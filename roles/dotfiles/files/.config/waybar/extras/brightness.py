@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# simple script to change monitor brightness supporting multiple monitors at once
+# simple brightness script for waybar
 
 import sys
 import subprocess
@@ -7,14 +7,19 @@ import re
 
 PAT_VALUE = re.compile(r"current value =\s*(\d+)")
 def get_value(monitor):
-    process = subprocess.run(["ddcutil", "--model", monitor, "getvcp", "10"], capture_output=True, check=True)
+    try:
+        process = subprocess.run(["ddcutil", "--model", monitor, "getvcp", "10"], capture_output=True, check=True)
+    except subprocess.CalledProcessError:
+        # prevent failure as it messes with waybar
+        return "?"
+
     stdout = process.stdout.decode("utf-8")
     matches = PAT_VALUE.search(stdout)
 
     return matches.group(1)
 
 def set_value(monitor, value):
-    subprocess.run(["ddcutil", "--model", monitor, "setvcp", "10", str(value)], capture_output=True, check=True)
+    subprocess.run(["ddcutil", "--model", monitor, "setvcp", "10", str(value)], capture_output=True)
 
 def increment_value(monitor, value):
     sign = "+"
@@ -24,49 +29,84 @@ def increment_value(monitor, value):
 
     assert(value >= 0)
     
-    subprocess.run(["ddcutil", "--model", monitor, "setvcp", "10", sign, str(value)], capture_output=True, check=True)
+    subprocess.run(["ddcutil", "--model", monitor, "setvcp", "10", sign, str(value)], capture_output=True)
 
 if len(sys.argv) < 3:
-    print("Usage: {} <[ + | - ]brightness | get> <MONITOR MODELS...>".format(sys.argv[0]))
+    print("""Usage: {} <cmd>
+
+Commands:
+    tooltip <MONITORS...>
+    get <MONITORS...>
+    set <VALUE> <MONITORS...>
+    inc <VALUE> <MONITORS...>
+    dec <VALUE> <MONITORS...>
+""".format(sys.argv[0]))
     sys.exit(1)
 
-increment = False
-val = sys.argv[1]
-monitors = sys.argv[2:]
-
-match val[:1]:
-    case "-" | "+":
-        increment = True
-    case "@":
+match sys.argv[1]:
+    case "tooltip":
         output = ""
-        
-        for monitor in monitors:
-            output += "{} {}\r".format(monitor, get_value(monitor))
+
+        for monitor in sys.argv[2:]:
+            output += "{} {:>10}\r".format(monitor, get_value(monitor))
 
         print(output.rstrip(), end="")
 
         sys.exit(0)
-    case _:
-        print(f"Invalid argument '{val}'")
-        sys.exit(1)
+    case "get":
+        output = ""
+        
+        for monitor in sys.argv[2:]:
+            output += "{}\r".format(get_value(monitor))
 
-if val[:1] == "-" or val[:1] == "+":
-    increment = True
+        print(output.rstrip(), end="")
 
-try:
-    val = int(val)
-except ValueError:
-    print(f"Invalid value {val}")
-    sys.exit(1)
+        sys.exit(0)
+    case "set":
+        val = sys.argv[2]
+        monitors = sys.argv[3:]
 
-# clamp the value
-if val > 100:
-    val = 100
-elif val < -100:
-    val = -100
+        try:
+            val = abs(int(val))
+        except ValueError:
+            print(f"Invalid value {val}")
+            sys.exit(1)
 
-for monitor in monitors:
-    if increment:
-        increment_value(monitor, val)
-    else:
-        set_value(monitor, val)
+        # clamp the value
+        if val > 100:
+            val = 100
+
+        for monitor in monitors:
+            set_value(monitor, val)
+    case "inc":
+        val = sys.argv[2]
+        monitors = sys.argv[3:]
+
+        try:
+            val = abs(int(val))
+        except ValueError:
+            print(f"Invalid value {val}")
+            sys.exit(1)
+
+        # clamp the value
+        if val > 100:
+            val = 100
+
+        for monitor in monitors:
+            increment_value(monitor, val)
+    case "dec":
+        val = sys.argv[2]
+        monitors = sys.argv[3:]
+
+        try:
+            val = abs(int(val))
+        except ValueError:
+            print(f"Invalid value {val}")
+            sys.exit(1)
+
+        # clamp the value
+        if val > 100:
+            val = 100
+
+        for monitor in monitors:
+            increment_value(monitor, -val)
