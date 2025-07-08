@@ -6,7 +6,8 @@
   "modules-left": [
     "custom/start",
     "hyprland/workspaces",
-    "wlr/taskbar"
+    "wlr/taskbar",
+    "custom/task"
   ],
   "modules-center": [
     "mpris"

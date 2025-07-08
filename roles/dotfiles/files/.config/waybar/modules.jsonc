@@ -20,6 +20,19 @@
     "tooltip": false,
     "on-click": "rofi -show drun -show-icons"
   },
+  "custom/task": {
+    "format": " <span font='14'>{icon}</span> {text} ",
+    "exec": "extras/task.sh waybar",
+    "signal": 2,
+    "format-icons": {
+      "inactive": "󱌟 ",
+      "active": "󰳷 ",
+    },
+    "return-type": "json",
+    "on-click": "extras/task.sh start && pkill -RTMIN+2 waybar",
+    "on-click-right": "extras/task.sh stop && pkill -RTMIN+2 waybar",
+    "on-click-middle": "extras/task.sh done && pkill -RTMIN+2 waybar"
+  },
   "group/brightness": {
     "orientation": "horizontal",
     "drawer": {
