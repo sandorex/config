@@ -16,7 +16,7 @@
     }
   },
   "custom/start": {
-    "format": "  <span font='12'> </span> ",
+    "format": "  <span font='12'> </span>",
     "tooltip": false,
     "on-click": "rofi -show drun -show-icons"
   },
@@ -178,6 +178,7 @@
     "menu": "on-click",
     "menu-file": "power_menu.xml",
     "menu-actions": {
+      "logout": "hyprctl dispatch exit",
       "shutdown": "shutdown",
       "reboot": "reboot",
       "suspend": "systemctl suspend",

@@ -163,3 +163,22 @@ menu {
   background-color: rgba(43, 48, 59, 1.0);
   color: #ffffff;
 }
+
+#workspaces button {
+  padding: 0 10px;
+}
+
+/* #workspaces button.active { */
+  /* background-color: #64727D; */
+/* } */
+
+/* highlight main monitor workspace */
+#workspaces button.hosting-monitor {
+  color: #fb6afa;
+  /* border-radius: 16px; */
+}
+
+/* highlight secondary monitor workspace */
+/* #workspaces button:not(.hosting-monitor) { */
+  /* color: red; */
+/* } */
